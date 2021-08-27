@@ -1,5 +1,5 @@
 {
-    "name": "yiisoft/replace-with-package-name",
+    "name": "yiisoft/definitions",
     "type": "library",
     "description": "_____",
     "keywords": [
@@ -28,7 +28,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.4|^8.0"
+        "php": "^7.4|^8.0",
+        "psr/container": "^1.0|^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
@@ -38,12 +39,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Yiisoft\\_____\\": "src"
+            "Yiisoft\\Definitions\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\_____\\Tests\\": "tests"
+            "Yiisoft\\Definitions\\Tests\\": "tests"
         }
     },
     "extra": {
