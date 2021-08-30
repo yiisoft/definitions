@@ -17,8 +17,8 @@ final class NotFoundException extends Exception implements NotFoundExceptionInte
     public function __construct(string $id, array $buildStack = [])
     {
         $this->id = $id;
-        $buildStackMessage = $buildStack ? 'while building ' . implode(' -> ', $buildStack) : '';
-        parent::__construct(sprintf('No definition or class found for "%s"%s.', $id, $buildStackMessage));
+        $buildStackMessage = $buildStack ? ' while building ' . implode(' -> ', array_keys($buildStack)) : '';
+        parent::__construct(sprintf('No definition or class found for %s%s.', $id, $buildStackMessage));
     }
 
     public function getId(): string
