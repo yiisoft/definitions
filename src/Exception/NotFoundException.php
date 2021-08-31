@@ -25,7 +25,7 @@ final class NotFoundException extends Exception implements NotFoundExceptionInte
             $message = sprintf('%s while building %s', $last, implode(' -> ', $buildStack));
         }
 
-        parent::__construct(sprintf('No definition or class found for %s.', $message));
+        parent::__construct(sprintf('No definition or class found or resolvable for %s.', $message));
     }
 
     public function getId(): string
