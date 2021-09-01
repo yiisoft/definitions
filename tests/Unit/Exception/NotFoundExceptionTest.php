@@ -20,6 +20,6 @@ final class NotFoundExceptionTest extends TestCase
     {
         $exception = new NotFoundException('test');
 
-        $this->assertSame('No definition or class found for "test".', $exception->getMessage());
+        $this->assertSame('No definition or class found or resolvable for test.', $exception->getMessage());
     }
 }
