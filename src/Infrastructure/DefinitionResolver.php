@@ -30,7 +30,7 @@ final class DefinitionResolver
      *
      * @psalm-return array<string,mixed>
      */
-    public static function resolveArray(DependencyResolverInterface $container, array $dependencies): array
+    public static function resolveArray(DependencyResolverInterface $dependencyResolver, array $dependencies): array
     {
         $result = [];
         /** @var mixed $definition */
@@ -46,7 +46,7 @@ final class DefinitionResolver
             }
 
             /** @var mixed */
-            $result[$key] = self::resolve($container, $definition);
+            $result[$key] = self::resolve($dependencyResolver, $definition);
         }
 
         return $result;
@@ -59,14 +59,14 @@ final class DefinitionResolver
      *
      * @return mixed
      */
-    public static function resolve(DependencyResolverInterface $container, $definition)
+    public static function resolve(DependencyResolverInterface $dependencyResolver, $definition)
     {
         if ($definition instanceof DefinitionInterface) {
             /** @var mixed $definition */
-            $definition = $definition->resolve($container);
+            $definition = $definition->resolve($dependencyResolver);
         } elseif (is_array($definition)) {
             /** @psalm-var array<string,mixed> $definition */
-            return self::resolveArray($container, $definition);
+            return self::resolveArray($dependencyResolver, $definition);
         }
 
         return $definition;

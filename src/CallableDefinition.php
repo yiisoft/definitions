@@ -33,14 +33,14 @@ final class CallableDefinition implements DefinitionInterface
         $this->method = $method;
     }
 
-    public function resolve(DependencyResolverInterface $container)
+    public function resolve(DependencyResolverInterface $dependencyResolver)
     {
-        $callable = $this->prepareCallable($this->method, $container);
+        $callable = $this->prepareCallable($this->method, $dependencyResolver);
         $callable = Closure::fromCallable($callable);
         $reflection = new ReflectionFunction($callable);
 
         $dependencies = DefinitionExtractor::getInstance()->fromFunction($reflection);
-        $arguments = DefinitionResolver::resolveArray($container, $dependencies);
+        $arguments = DefinitionResolver::resolveArray($dependencyResolver, $dependencies);
 
         return $reflection->invokeArgs($arguments);
     }
@@ -50,13 +50,13 @@ final class CallableDefinition implements DefinitionInterface
      *
      * @psalm-param callable|array{0:class-string,1:string} $callable
      */
-    private function prepareCallable($callable, DependencyResolverInterface $container): callable
+    private function prepareCallable($callable, DependencyResolverInterface $dependencyResolver): callable
     {
         if (is_array($callable) && !is_object($callable[0])) {
             $reflection = new ReflectionMethod($callable[0], $callable[1]);
             if (!$reflection->isStatic()) {
                 /** @var mixed */
-                $callable[0] = $container->get($callable[0]);
+                $callable[0] = $dependencyResolver->resolve($callable[0]);
             }
         }
 

@@ -35,7 +35,7 @@ final class ParameterDefinition implements DefinitionInterface
         return $this->parameter->isDefaultValueAvailable() || $this->parameter->allowsNull();
     }
 
-    public function resolve(DependencyResolverInterface $container)
+    public function resolve(DependencyResolverInterface $dependencyResolver)
     {
         if ($this->parameter->isDefaultValueAvailable()) {
             return $this->parameter->getDefaultValue();

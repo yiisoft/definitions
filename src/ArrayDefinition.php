@@ -121,9 +121,9 @@ final class ArrayDefinition implements DefinitionInterface
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      */
-    public function resolve(DependencyResolverInterface $container): object
+    public function resolve(DependencyResolverInterface $dependencyResolver): object
     {
-        return ArrayDefinitionBuilder::getInstance()->build($container, $this);
+        return ArrayDefinitionBuilder::getInstance()->build($dependencyResolver, $this);
     }
 
     public function merge(self $other): self
