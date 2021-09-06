@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use Closure;
+use ReflectionFunction;
 use ReflectionMethod;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\DependencyResolverInterface;
+use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
+use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
 
 use function is_array;
 use function is_object;
@@ -32,9 +36,13 @@ final class CallableDefinition implements DefinitionInterface
     public function resolve(DependencyResolverInterface $container)
     {
         $callable = $this->prepareCallable($this->method, $container);
+        $callable = Closure::fromCallable($callable);
+        $reflection = new ReflectionFunction($callable);
 
-        /** @psalm-suppress MixedMethodCall */
-        return $container->invoke($callable);
+        $dependencies = DefinitionExtractor::getInstance()->fromFunction($reflection);
+        $arguments = DefinitionResolver::resolveArray($container, $dependencies);
+
+        return $reflection->invokeArgs($arguments);
     }
 
     /**

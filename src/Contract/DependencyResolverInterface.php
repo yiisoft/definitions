@@ -26,11 +26,4 @@ interface DependencyResolverInterface extends ContainerInterface
      * @psalm-suppress InvalidThrow
      */
     public function resolveReference(string $id);
-
-    /**
-     * Invoke a callable resolving dependencies based on its signature.
-     *
-     * @return mixed Invocation result.
-     */
-    public function invoke(callable $callable);
 }

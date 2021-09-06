@@ -69,7 +69,7 @@ final class DefinitionExtractor
      * @return DefinitionInterface[]
      * @psalm-return array<string, DefinitionInterface>
      */
-    private function fromFunction(ReflectionFunctionAbstract $reflectionFunction): array
+    public function fromFunction(ReflectionFunctionAbstract $reflectionFunction): array
     {
         $result = [];
         foreach ($reflectionFunction->getParameters() as $parameter) {
