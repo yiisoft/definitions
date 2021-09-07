@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions;
 
 use Closure;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\DependencyResolverInterface;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
 use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
 
@@ -21,23 +23,29 @@ final class CallableDefinition implements DefinitionInterface
      * @var array|callable
      * @psalm-var callable|array{0:class-string,1:string}
      */
-    private $method;
+    private $callable;
 
     /**
-     * @param array|callable $method
+     * @param array|callable $callable
      *
-     * @psalm-param callable|array{0:class-string,1:string} $method
+     * @psalm-param callable|array{0:class-string,1:string} $callable
      */
-    public function __construct($method)
+    public function __construct($callable)
     {
-        $this->method = $method;
+        $this->callable = $callable;
     }
 
     public function resolve(DependencyResolverInterface $dependencyResolver)
     {
-        $callable = $this->prepareCallable($this->method, $dependencyResolver);
-        $callable = Closure::fromCallable($callable);
-        $reflection = new ReflectionFunction($callable);
+        try {
+            $reflection = new ReflectionFunction(
+                $this->prepareClosure($this->callable, $dependencyResolver)
+            );
+        } catch (ReflectionException $e) {
+            throw new NotInstantiableException(
+                'Can not instantiate callable definition. Got ' . var_export($this->callable, true)
+            );
+        }
 
         $dependencies = DefinitionExtractor::getInstance()->fromFunction($reflection);
         $arguments = DefinitionResolver::resolveArray($dependencyResolver, $dependencies);
@@ -50,7 +58,7 @@ final class CallableDefinition implements DefinitionInterface
      *
      * @psalm-param callable|array{0:class-string,1:string} $callable
      */
-    private function prepareCallable($callable, DependencyResolverInterface $dependencyResolver): callable
+    private function prepareClosure($callable, DependencyResolverInterface $dependencyResolver): Closure
     {
         if (is_array($callable) && !is_object($callable[0])) {
             $reflection = new ReflectionMethod($callable[0], $callable[1]);
@@ -60,6 +68,6 @@ final class CallableDefinition implements DefinitionInterface
             }
         }
 
-        return $callable;
+        return Closure::fromCallable($callable);
     }
 }

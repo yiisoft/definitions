@@ -7,6 +7,7 @@ namespace Yiisoft\Definitions\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\CallableDefinition;
 use Yiisoft\Definitions\Exception\NotFoundException;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Tests\Objects\Car;
 use Yiisoft\Definitions\Tests\Objects\CarFactory;
 use Yiisoft\Definitions\Tests\Objects\ColorInterface;
@@ -38,5 +39,14 @@ final class CallableDefinitionTest extends TestCase
 
         $this->assertInstanceOf(Car::class, $car);
         $this->assertInstanceOf(ColorPink::class, $car->getColor());
+    }
+
+    public function testReflectionException(): void
+    {
+        $definition = new CallableDefinition(['NonExistsClass', 'run']);
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage('Can not instantiate callable definition. Got array');
+        $definition->resolve(new SimpleDependencyResolver());
     }
 }
