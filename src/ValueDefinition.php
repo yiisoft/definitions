@@ -30,7 +30,7 @@ final class ValueDefinition implements DefinitionInterface
         return $this->type;
     }
 
-    public function resolve(DependencyResolverInterface $container)
+    public function resolve(DependencyResolverInterface $dependencyResolver)
     {
         return $this->value;
     }

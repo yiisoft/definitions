@@ -6,13 +6,12 @@ namespace Yiisoft\Definitions\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\CallableDefinition;
-use Yiisoft\Definitions\Exception\NotFoundException;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Tests\Objects\Car;
 use Yiisoft\Definitions\Tests\Objects\CarFactory;
 use Yiisoft\Definitions\Tests\Objects\ColorInterface;
 use Yiisoft\Definitions\Tests\Objects\ColorPink;
 use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
-use Yiisoft\Injector\Injector;
 
 final class CallableDefinitionTest extends TestCase
 {
@@ -24,13 +23,7 @@ final class CallableDefinitionTest extends TestCase
             [
                 CarFactory::class => new CarFactory(),
                 ColorInterface::class => new ColorPink(),
-            ],
-            static function (string $id) use (&$container) {
-                if ($id === Injector::class) {
-                    return new Injector($container);
-                }
-                throw new NotFoundException($id);
-            }
+            ]
         );
 
         /** @var Car $car */
@@ -38,5 +31,14 @@ final class CallableDefinitionTest extends TestCase
 
         $this->assertInstanceOf(Car::class, $car);
         $this->assertInstanceOf(ColorPink::class, $car->getColor());
+    }
+
+    public function testNonExistsClass(): void
+    {
+        $definition = new CallableDefinition(['NonExistsClass', 'run']);
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage('Can not instantiate callable definition. Got array');
+        $definition->resolve(new SimpleDependencyResolver());
     }
 }

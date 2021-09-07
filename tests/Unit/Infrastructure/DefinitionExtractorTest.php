@@ -8,7 +8,7 @@ use DateTime;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ClassDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Exception\NotInstantiableClassException;
+use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
 use Yiisoft\Definitions\ParameterDefinition;
@@ -19,7 +19,6 @@ use Yiisoft\Definitions\Tests\Objects\NullableInterfaceDependency;
 use Yiisoft\Definitions\Tests\Objects\OptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Objects\OptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
-use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 
 final class DefinitionExtractorTest extends TestCase
 {

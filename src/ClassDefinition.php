@@ -41,15 +41,15 @@ final class ClassDefinition implements DefinitionInterface
     /**
      * @throws InvalidConfigException
      */
-    public function resolve(DependencyResolverInterface $container)
+    public function resolve(DependencyResolverInterface $dependencyResolver)
     {
         if ($this->isUnionType()) {
-            return $this->resolveUnionType($container);
+            return $this->resolveUnionType($dependencyResolver);
         }
 
         try {
             /** @var mixed */
-            $result = $container->get($this->class);
+            $result = $dependencyResolver->resolve($this->class);
         } catch (Throwable $t) {
             if ($this->optional) {
                 return null;
@@ -71,14 +71,14 @@ final class ClassDefinition implements DefinitionInterface
      *
      * @return mixed
      */
-    private function resolveUnionType(DependencyResolverInterface $container)
+    private function resolveUnionType(DependencyResolverInterface $dependencyResolver)
     {
         $types = explode('|', $this->class);
 
         foreach ($types as $type) {
             try {
                 /** @var mixed */
-                $result = $container->get($type);
+                $result = $dependencyResolver->resolve($type);
                 if (!$result instanceof $type) {
                     $actualType = $this->getValueType($result);
                     throw new InvalidConfigException(

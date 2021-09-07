@@ -58,8 +58,8 @@ final class DynamicReference implements ReferenceInterface
         return new self($id);
     }
 
-    public function resolve(DependencyResolverInterface $container)
+    public function resolve(DependencyResolverInterface $dependencyResolver)
     {
-        return $this->definition->resolve($container);
+        return $this->definition->resolve($dependencyResolver);
     }
 }

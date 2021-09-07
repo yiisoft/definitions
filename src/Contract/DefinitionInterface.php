@@ -15,7 +15,7 @@ use Yiisoft\Definitions\Exception\NotInstantiableException;
 interface DefinitionInterface
 {
     /**
-     * @param DependencyResolverInterface $container
+     * @param DependencyResolverInterface $dependencyResolver
      *
      * @throws CircularReferenceException
      * @throws NotFoundException
@@ -24,5 +24,5 @@ interface DefinitionInterface
      *
      * @return mixed|object
      */
-    public function resolve(DependencyResolverInterface $container);
+    public function resolve(DependencyResolverInterface $dependencyResolver);
 }

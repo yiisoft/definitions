@@ -7,7 +7,7 @@ namespace Yiisoft\Definitions\Tests\Support;
 use Closure;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DependencyResolverInterface;
-use Yiisoft\Injector\Injector;
+use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class SimpleDependencyResolver implements DependencyResolverInterface
@@ -16,27 +16,24 @@ final class SimpleDependencyResolver implements DependencyResolverInterface
 
     public function __construct(array $definitions = [], Closure $factory = null)
     {
-        $definitions[ContainerInterface::class] ??= $this;
-        $this->container = new SimpleContainer($definitions, $factory);
+        $this->container = new SimpleContainer(
+            $definitions,
+            $factory ?? function (string $id) {
+                if ($id === ContainerInterface::class) {
+                    return $this->container;
+                }
+                throw new NotFoundException($id);
+            }
+        );
     }
 
-    public function get(string $id)
+    public function resolve(string $id)
     {
         return $this->container->get($id);
     }
 
-    public function has(string $id): bool
-    {
-        return $this->container->has($id);
-    }
-
     public function resolveReference(string $id)
     {
-        return $this->get($id);
-    }
-
-    public function invoke(callable $callable)
-    {
-        return (new Injector($this))->invoke($callable);
+        return $this->resolve($id);
     }
 }

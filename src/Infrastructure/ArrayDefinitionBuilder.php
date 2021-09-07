@@ -46,7 +46,7 @@ final class ArrayDefinitionBuilder
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      */
-    public function build(DependencyResolverInterface $container, ArrayDefinition $definition): object
+    public function build(DependencyResolverInterface $dependencyResolver, ArrayDefinition $definition): object
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
@@ -54,7 +54,7 @@ final class ArrayDefinitionBuilder
 
         $this->injectArguments($dependencies, $constructorArguments);
 
-        $resolved = DefinitionResolver::resolveArray($container, $dependencies);
+        $resolved = DefinitionResolver::resolveArray($dependencyResolver, $dependencies);
 
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
@@ -64,7 +64,7 @@ final class ArrayDefinitionBuilder
             /** @var mixed $value */
             [$type, $name, $value] = $item;
             /** @var mixed */
-            $value = DefinitionResolver::resolve($container, $value);
+            $value = DefinitionResolver::resolve($dependencyResolver, $value);
             if ($type === ArrayDefinition::TYPE_METHOD) {
                 /** @var mixed */
                 $setter = call_user_func_array([$object, $name], $value);

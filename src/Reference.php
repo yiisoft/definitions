@@ -47,8 +47,8 @@ final class Reference implements ReferenceInterface
         return new self($id);
     }
 
-    public function resolve(DependencyResolverInterface $container)
+    public function resolve(DependencyResolverInterface $dependencyResolver)
     {
-        return $container->resolveReference($this->id);
+        return $dependencyResolver->resolveReference($this->id);
     }
 }
