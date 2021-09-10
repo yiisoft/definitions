@@ -71,6 +71,7 @@ final class ParameterDefinition implements DefinitionInterface
     {
         /**
          * @psalm-suppress UndefinedDocblockClass
+         *
          * @var ReflectionNamedType|ReflectionUnionType $type Could not be `null`
          * because in self::resolve() checked `$this->parameter->allowsNull()`.
          */
