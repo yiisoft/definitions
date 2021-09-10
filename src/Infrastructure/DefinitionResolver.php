@@ -77,7 +77,7 @@ final class DefinitionResolver
      *
      * @throws InvalidConfigException
      *
-     * @return array|CallableDefinition|DefinitionInterface|ValueDefinition
+     * @return array|ReferenceInterface|ValueDefinition
      */
     public static function ensureResolvable($value)
     {
