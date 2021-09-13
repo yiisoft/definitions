@@ -69,11 +69,13 @@ final class ParameterDefinition implements DefinitionInterface
 
     private function getType(): string
     {
+        /**
+         * @psalm-suppress UndefinedDocblockClass
+         *
+         * @var ReflectionNamedType|ReflectionUnionType $type Could not be `null`
+         * because in self::resolve() checked `$this->parameter->allowsNull()`.
+         */
         $type = $this->parameter->getType();
-
-        if ($type === null) {
-            return 'undefined';
-        }
 
         /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
         if ($type instanceof ReflectionUnionType) {

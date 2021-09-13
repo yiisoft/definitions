@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Infrastructure;
 
-use Yiisoft\Definitions\CallableDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\DependencyResolverInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
@@ -77,7 +76,7 @@ final class DefinitionResolver
      *
      * @throws InvalidConfigException
      *
-     * @return array|CallableDefinition|DefinitionInterface|ValueDefinition
+     * @return array|ReferenceInterface|ValueDefinition
      */
     public static function ensureResolvable($value)
     {

@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Tests\Unit\Infrastructure;
 
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Infrastructure\DefinitionValidator;
+use Yiisoft\Definitions\Reference;
+use Yiisoft\Definitions\Tests\Objects\Car;
+use Yiisoft\Definitions\Tests\Objects\CarFactory;
+use Yiisoft\Definitions\Tests\Objects\ColorPink;
+use Yiisoft\Definitions\Tests\Objects\GearBox;
 use Yiisoft\Definitions\Tests\Objects\Phone;
+use Yiisoft\Definitions\ValueDefinition;
 
 final class DefinitionValidatorTest extends TestCase
 {
@@ -107,6 +114,48 @@ final class DefinitionValidatorTest extends TestCase
             '$dev' => true,
             'setId()' => [24],
             $key => $value,
+        ]);
+    }
+
+    public function dataValidate(): array
+    {
+        return [
+            'ready-object' => [new stdClass()],
+            'reference' => [Reference::to('test')],
+            'class-name' => [Car::class],
+            'callable' => [[CarFactory::class, 'create']],
+            'array-definition' => [['class' => ColorPink::class]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataValidate
+     */
+    public function testValidate($definition, ?string $id = null): void
+    {
+        DefinitionValidator::validate($definition, $id);
+        $this->assertSame(1, 1);
+    }
+
+    public function testInteger(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: 42');
+        DefinitionValidator::validate(42);
+    }
+
+    public function testDefinitionInArguments(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Only references are allowed in constructor arguments, a definition object was provided: ' .
+            ValueDefinition::class
+        );
+        DefinitionValidator::validate([
+            'class' => GearBox::class,
+            '__construct()' => [
+                new ValueDefinition(56),
+            ],
         ]);
     }
 }

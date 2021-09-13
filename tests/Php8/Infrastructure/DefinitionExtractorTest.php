@@ -6,11 +6,15 @@ namespace Yiisoft\Definitions\Tests\Php8\Infrastructure;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
+use ReflectionFunction;
 use Yiisoft\Definitions\ClassDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
+use Yiisoft\Definitions\ParameterDefinition;
+use Yiisoft\Definitions\Tests\Objects\ColorInterface;
 use Yiisoft\Definitions\Tests\Objects\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Objects\UnionCar;
+use Yiisoft\Definitions\Tests\Objects\UnionSelfDependency;
 use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
 
 final class DefinitionExtractorTest extends TestCase
@@ -42,5 +46,25 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
         $resolved = $dependencies['engine']->resolve($dependencyResolver);
         $this->assertInstanceOf(EngineMarkOne::class, $resolved);
+    }
+
+    public function testUnionScalarTypes(): void
+    {
+        $extractor = DefinitionExtractor::getInstance();
+
+        $definition = $extractor->fromFunction(
+            new ReflectionFunction(static fn (string|int $a): bool => true),
+        )['a'];
+
+        $this->assertInstanceOf(ParameterDefinition::class, $definition);
+    }
+
+    public function testFromClassWithUnionSelfDependency(): void
+    {
+        /** @var ClassDefinition $definition */
+        $definition = DefinitionExtractor::getInstance()->fromClassName(UnionSelfDependency::class)['a'];
+
+        $this->assertInstanceOf(ClassDefinition::class, $definition);
+        $this->assertSame(UnionSelfDependency::class . '|' . ColorInterface::class, $definition->getType());
     }
 }

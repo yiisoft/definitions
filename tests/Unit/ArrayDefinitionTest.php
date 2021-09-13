@@ -6,6 +6,7 @@ namespace Yiisoft\Definitions\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ArrayDefinition;
+use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Tests\Objects\Phone;
 use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
 
@@ -216,5 +217,20 @@ final class ArrayDefinitionTest extends TestCase
         $c = $a->merge($b);
         $this->assertNotSame($a, $c);
         $this->assertNotSame($b, $c);
+    }
+
+    public function testArgumentsIndexedBothByNameAndByPosition(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            'class' => Phone::class,
+            '__construct()' => ['name' => 'Taruto', '1.0'],
+        ]);
+        $dependencyResolver = new SimpleDependencyResolver();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Arguments indexed both by name and by position are not allowed in the same array.'
+        );
+        $definition->resolve($dependencyResolver);
     }
 }

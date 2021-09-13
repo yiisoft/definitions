@@ -9,15 +9,18 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ClassDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotFoundException;
+use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Objects\Car;
+use Yiisoft\Definitions\Tests\Objects\EngineInterface;
 use Yiisoft\Definitions\Tests\Objects\GearBox;
 use Yiisoft\Definitions\Tests\Objects\NullableConcreteDependency;
 use Yiisoft\Definitions\Tests\Objects\NullableInterfaceDependency;
 use Yiisoft\Definitions\Tests\Objects\OptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Objects\OptionalInterfaceDependency;
+use Yiisoft\Definitions\Tests\Objects\SelfDependency;
 use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
 
 final class DefinitionExtractorTest extends TestCase
@@ -106,5 +109,32 @@ final class DefinitionExtractorTest extends TestCase
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['car']->resolve($container));
+    }
+
+    public function testFromNonExistingClass(): void
+    {
+        $extractor = DefinitionExtractor::getInstance();
+
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('No definition or class found or resolvable for NonExistingClass.');
+        $extractor->fromClassName('NonExistingClass');
+    }
+
+    public function testFromNotInstantiableClass(): void
+    {
+        $extractor = DefinitionExtractor::getInstance();
+
+        $this->expectException(NotInstantiableClassException::class);
+        $this->expectExceptionMessage('Can not instantiate ' . EngineInterface::class . '.');
+        $extractor->fromClassName(EngineInterface::class);
+    }
+
+    public function testFromClassWithSelfDependency(): void
+    {
+        /** @var ClassDefinition $definition */
+        $definition = DefinitionExtractor::getInstance()->fromClassName(SelfDependency::class)['a'];
+
+        $this->assertInstanceOf(ClassDefinition::class, $definition);
+        $this->assertSame(SelfDependency::class, $definition->getType());
     }
 }
