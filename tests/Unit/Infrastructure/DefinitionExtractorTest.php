@@ -117,7 +117,7 @@ final class DefinitionExtractorTest extends TestCase
 
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('No definition or class found or resolvable for NonExistsClass.');
-        $extractor->fromClassName('NonExistsClass');
+        $extractor->fromClassName('NonExistingClass');
     }
 
     public function testFromNotInstantiableClass(): void
