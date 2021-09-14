@@ -15,7 +15,9 @@
 [![static analysis](https://github.com/yiisoft/definitions/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/definitions/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/definitions/coverage.svg)](https://shepherd.dev/github/yiisoft/definitions)
 
-The package ...
+The package provides definition syntax. Definition is describing a way to create and configure a service or an object.
+It is used by [yiisoft/di](https://github.com/yiisoft/di) and [yiisoft/factory](https://github.com/yiisoft/factory)
+but could be used in other [PSR-11](https://www.php-fig.org/psr/psr-11/) compatible packages as well.
 
 ## Requirements
 
@@ -30,6 +32,16 @@ composer require yiisoft/definitions --prefer-dist
 ```
 
 ## General usage
+
+
+
+Out of the box the following definitions are provided:
+
+- ClassDefinition
+- ArrayDefinition
+- CallableDefinition
+- ParameterDefinition
+- ValueDefinition
 
 ## Testing
 
