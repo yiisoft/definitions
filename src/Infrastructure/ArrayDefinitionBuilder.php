@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Infrastructure;
 
+use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\DependencyResolverInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
@@ -46,7 +46,7 @@ final class ArrayDefinitionBuilder
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      */
-    public function build(DependencyResolverInterface $dependencyResolver, ArrayDefinition $definition): object
+    public function build(ContainerInterface $container, ?ContainerInterface $referenceContainer, ArrayDefinition $definition): object
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
@@ -54,7 +54,7 @@ final class ArrayDefinitionBuilder
 
         $this->injectArguments($dependencies, $constructorArguments);
 
-        $resolved = DefinitionResolver::resolveArray($dependencyResolver, $dependencies);
+        $resolved = DefinitionResolver::resolveArray($container, $referenceContainer, $dependencies);
 
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
@@ -64,7 +64,7 @@ final class ArrayDefinitionBuilder
             /** @var mixed $value */
             [$type, $name, $value] = $item;
             /** @var mixed */
-            $value = DefinitionResolver::resolve($dependencyResolver, $value);
+            $value = DefinitionResolver::resolve($container, $referenceContainer, $value);
             if ($type === ArrayDefinition::TYPE_METHOD) {
                 /** @var mixed */
                 $setter = call_user_func_array([$object, $name], $value);

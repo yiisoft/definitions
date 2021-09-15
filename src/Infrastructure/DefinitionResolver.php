@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Infrastructure;
 
+use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\DependencyResolverInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\ParameterDefinition;
@@ -29,7 +29,7 @@ final class DefinitionResolver
      *
      * @psalm-return array<string,mixed>
      */
-    public static function resolveArray(DependencyResolverInterface $dependencyResolver, array $dependencies): array
+    public static function resolveArray(ContainerInterface $container, ?ContainerInterface $referenceContainer, array $dependencies): array
     {
         $result = [];
         /** @var mixed $definition */
@@ -45,7 +45,7 @@ final class DefinitionResolver
             }
 
             /** @var mixed */
-            $result[$key] = self::resolve($dependencyResolver, $definition);
+            $result[$key] = self::resolve($container, $referenceContainer, $definition);
         }
 
         return $result;
@@ -58,14 +58,15 @@ final class DefinitionResolver
      *
      * @return mixed
      */
-    public static function resolve(DependencyResolverInterface $dependencyResolver, $definition)
+    public static function resolve(ContainerInterface $container, ?ContainerInterface $referenceContainer, $definition)
     {
         if ($definition instanceof DefinitionInterface) {
+            $container = $referenceContainer !== null && $definition instanceof ReferenceInterface ? $referenceContainer : $container;
             /** @var mixed $definition */
-            $definition = $definition->resolve($dependencyResolver);
+            $definition = $definition->resolve($container);
         } elseif (is_array($definition)) {
             /** @psalm-var array<string,mixed> $definition */
-            return self::resolveArray($dependencyResolver, $definition);
+            return self::resolveArray($container, $referenceContainer, $definition);
         }
 
         return $definition;

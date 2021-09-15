@@ -11,7 +11,7 @@ use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Objects\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Objects\EngineMarkTwo;
 use Yiisoft\Definitions\Tests\Objects\UnionCar;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
 {
@@ -20,7 +20,7 @@ final class ParameterDefinitionTest extends TestCase
         $definition = new ParameterDefinition(
             (new ReflectionClass(UnionCar::class))->getConstructor()->getParameters()[0]
         );
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
@@ -30,6 +30,6 @@ final class ParameterDefinitionTest extends TestCase
             UnionCar::class . '::__construct()"' .
             '. Please specify argument explicitly.'
         );
-        $definition->resolve($dependencyResolver);
+        $definition->resolve($container);
     }
 }

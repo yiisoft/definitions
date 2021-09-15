@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\DependencyResolverInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
@@ -32,6 +32,7 @@ final class ArrayDefinition implements DefinitionInterface
      */
     private string $class;
     private array $constructorArguments;
+    private ?ContainerInterface $referenceContainer = null;
 
     /**
      * @psalm-var array<string, MethodOrPropertyItem>
@@ -47,6 +48,11 @@ final class ArrayDefinition implements DefinitionInterface
         $this->class = $class;
         $this->constructorArguments = $constructorArguments;
         $this->methodsAndProperties = $methodsAndProperties;
+    }
+
+    public function setReferenceContainer(?ContainerInterface $referenceContainer): void
+    {
+        $this->referenceContainer = $referenceContainer;
     }
 
     /**
@@ -121,9 +127,9 @@ final class ArrayDefinition implements DefinitionInterface
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      */
-    public function resolve(DependencyResolverInterface $dependencyResolver): object
+    public function resolve(ContainerInterface $container): object
     {
-        return ArrayDefinitionBuilder::getInstance()->build($dependencyResolver, $this);
+        return ArrayDefinitionBuilder::getInstance()->build($container, $this->referenceContainer, $this);
     }
 
     public function merge(self $other): self

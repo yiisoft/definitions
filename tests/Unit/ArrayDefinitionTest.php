@@ -8,13 +8,13 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Tests\Objects\Phone;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ArrayDefinitionTest extends TestCase
 {
     public function testClass(): void
     {
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $class = Phone::class;
 
@@ -22,7 +22,7 @@ final class ArrayDefinitionTest extends TestCase
             ArrayDefinition::CLASS_NAME => $class,
         ]);
 
-        self::assertInstanceOf(Phone::class, $definition->resolve($dependencyResolver));
+        self::assertInstanceOf(Phone::class, $definition->resolve($container));
     }
 
     public function dataConstructor(): array
@@ -41,7 +41,7 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testConstructor(?string $name, ?string $version, array $constructorArguments): void
     {
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
@@ -49,7 +49,7 @@ final class ArrayDefinitionTest extends TestCase
         ]);
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($dependencyResolver);
+        $phone = $definition->resolve($container);
 
         self::assertSame($name, $phone->getName());
         self::assertSame($version, $phone->getVersion());
@@ -57,7 +57,7 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testConstructorWithVariadicAndIntKeys(): void
     {
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $colors = ['red', 'green', 'blue'];
         $definition = ArrayDefinition::fromConfig([
@@ -72,7 +72,7 @@ final class ArrayDefinitionTest extends TestCase
         ]);
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($dependencyResolver);
+        $phone = $definition->resolve($container);
 
         self::assertSame($colors, $phone->getColors());
     }
@@ -91,14 +91,14 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testSetProperties(bool $dev, ?string $codeName, array $setProperties): void
     {
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $definition = ArrayDefinition::fromConfig(array_merge([
             ArrayDefinition::CLASS_NAME => Phone::class,
         ], $setProperties));
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($dependencyResolver);
+        $phone = $definition->resolve($container);
 
         self::assertSame($dev, $phone->dev);
         self::assertSame($codeName, $phone->codeName);
@@ -141,7 +141,7 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testCallMethods(?string $id, array $apps, array $callMethods): void
     {
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $definition = ArrayDefinition::fromConfig(array_merge(
             [
@@ -151,7 +151,7 @@ final class ArrayDefinitionTest extends TestCase
         ));
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($dependencyResolver);
+        $phone = $definition->resolve($container);
 
         self::assertSame($id, $phone->getId());
         self::assertSame($apps, $phone->getApps());
@@ -159,7 +159,7 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testCallFluentMethod(): void
     {
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $author = 'Sergei';
         $country = 'Russia';
@@ -173,7 +173,7 @@ final class ArrayDefinitionTest extends TestCase
         );
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($dependencyResolver);
+        $phone = $definition->resolve($container);
 
         self::assertSame($author, $phone->getAuthor());
         self::assertSame($country, $phone->getCountry());
@@ -225,12 +225,12 @@ final class ArrayDefinitionTest extends TestCase
             'class' => Phone::class,
             '__construct()' => ['name' => 'Taruto', '1.0'],
         ]);
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'Arguments indexed both by name and by position are not allowed in the same array.'
         );
-        $definition->resolve($dependencyResolver);
+        $definition->resolve($container);
     }
 }

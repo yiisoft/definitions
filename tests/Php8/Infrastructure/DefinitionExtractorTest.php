@@ -15,28 +15,28 @@ use Yiisoft\Definitions\Tests\Objects\ColorInterface;
 use Yiisoft\Definitions\Tests\Objects\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Objects\UnionCar;
 use Yiisoft\Definitions\Tests\Objects\UnionSelfDependency;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {
         $extractor = DefinitionExtractor::getInstance();
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         /** @var DefinitionInterface[] $dependencies
          */
         $dependencies = $extractor->fromClassName(DateTime::class);
 
         $this->assertCount(2, $dependencies);
-        $this->assertEquals('now', $dependencies['datetime']->resolve($dependencyResolver));
-        $this->assertEquals(null, $dependencies['timezone']->resolve($dependencyResolver));
+        $this->assertEquals('now', $dependencies['datetime']->resolve($container));
+        $this->assertEquals(null, $dependencies['timezone']->resolve($container));
     }
 
     public function testResolveCarConstructor(): void
     {
         $extractor = DefinitionExtractor::getInstance();
-        $dependencyResolver = new SimpleDependencyResolver([
+        $container = new SimpleContainer([
             EngineMarkOne::class => new EngineMarkOne(),
         ]);
 
@@ -44,7 +44,7 @@ final class DefinitionExtractorTest extends TestCase
 
         $this->assertCount(1, $dependencies);
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
-        $resolved = $dependencies['engine']->resolve($dependencyResolver);
+        $resolved = $dependencies['engine']->resolve($container);
         $this->assertInstanceOf(EngineMarkOne::class, $resolved);
     }
 
