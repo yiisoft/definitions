@@ -32,6 +32,9 @@ final class ArrayDefinition implements DefinitionInterface
      */
     private string $class;
     private array $constructorArguments;
+    /**
+      * Container used to resolve references.
+      */
     private ?ContainerInterface $referenceContainer = null;
 
     /**
