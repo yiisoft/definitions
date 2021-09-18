@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Contract;
 
+use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotFoundException;
@@ -24,5 +25,5 @@ interface DefinitionInterface
      *
      * @return mixed|object
      */
-    public function resolve(DependencyResolverInterface $dependencyResolver);
+    public function resolve(ContainerInterface $container);
 }

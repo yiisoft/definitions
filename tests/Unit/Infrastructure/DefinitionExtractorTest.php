@@ -21,7 +21,7 @@ use Yiisoft\Definitions\Tests\Objects\NullableInterfaceDependency;
 use Yiisoft\Definitions\Tests\Objects\OptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Objects\OptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Objects\SelfDependency;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionExtractorTest extends TestCase
 {
@@ -32,7 +32,7 @@ final class DefinitionExtractorTest extends TestCase
         }
 
         $resolver = DefinitionExtractor::getInstance();
-        $container = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(DateTime::class);
@@ -49,7 +49,7 @@ final class DefinitionExtractorTest extends TestCase
     public function testResolveCarConstructor(): void
     {
         $resolver = DefinitionExtractor::getInstance();
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(Car::class);
 
@@ -57,14 +57,14 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
 
-        $this->expectException(NotFoundException::class);
-        $dependencies['engine']->resolve($dependencyResolver);
+        $this->expectException('Yiisoft\Test\Support\Container\Exception\NotFoundException');
+        $dependencies['engine']->resolve($container);
     }
 
     public function testResolveGearBoxConstructor(): void
     {
         $resolver = DefinitionExtractor::getInstance();
-        $container = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(GearBox::class);
         $this->assertCount(1, $dependencies);
@@ -74,7 +74,7 @@ final class DefinitionExtractorTest extends TestCase
     public function testOptionalInterfaceDependency(): void
     {
         $resolver = DefinitionExtractor::getInstance();
-        $container = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(OptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
@@ -84,7 +84,7 @@ final class DefinitionExtractorTest extends TestCase
     public function testNullableInterfaceDependency(): void
     {
         $resolver = DefinitionExtractor::getInstance();
-        $container = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
@@ -94,7 +94,7 @@ final class DefinitionExtractorTest extends TestCase
     public function testOptionalConcreteDependency(): void
     {
         $resolver = DefinitionExtractor::getInstance();
-        $container = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(OptionalConcreteDependency::class);
         $this->assertCount(1, $dependencies);
@@ -104,7 +104,7 @@ final class DefinitionExtractorTest extends TestCase
     public function testNullableConcreteDependency(): void
     {
         $resolver = DefinitionExtractor::getInstance();
-        $container = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);

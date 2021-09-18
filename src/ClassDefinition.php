@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use Psr\Container\ContainerInterface;
 use Throwable;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\DependencyResolverInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
 use function get_class;
@@ -41,15 +41,15 @@ final class ClassDefinition implements DefinitionInterface
     /**
      * @throws InvalidConfigException
      */
-    public function resolve(DependencyResolverInterface $dependencyResolver)
+    public function resolve(ContainerInterface $container)
     {
         if ($this->isUnionType()) {
-            return $this->resolveUnionType($dependencyResolver);
+            return $this->resolveUnionType($container);
         }
 
         try {
             /** @var mixed */
-            $result = $dependencyResolver->resolve($this->class);
+            $result = $container->get($this->class);
         } catch (Throwable $t) {
             if ($this->optional) {
                 return null;
@@ -71,14 +71,14 @@ final class ClassDefinition implements DefinitionInterface
      *
      * @return mixed
      */
-    private function resolveUnionType(DependencyResolverInterface $dependencyResolver)
+    private function resolveUnionType(ContainerInterface $container)
     {
         $types = explode('|', $this->class);
 
         foreach ($types as $type) {
             try {
                 /** @var mixed */
-                $result = $dependencyResolver->resolve($type);
+                $result = $container->get($type);
                 if (!$result instanceof $type) {
                     $actualType = $this->getValueType($result);
                     throw new InvalidConfigException(

@@ -11,7 +11,7 @@ use Yiisoft\Definitions\DynamicReference;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Tests\Objects\EngineInterface;
 use Yiisoft\Definitions\Tests\Objects\EngineMarkOne;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DynamicReferenceTest extends TestCase
 {
@@ -19,11 +19,11 @@ final class DynamicReferenceTest extends TestCase
     {
         $reference = DynamicReference::to(EngineInterface::class);
 
-        $dependencyResolver = new SimpleDependencyResolver([
+        $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
         ]);
 
-        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve($dependencyResolver));
+        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve($container));
     }
 
     public function testClosure(): void
@@ -32,11 +32,12 @@ final class DynamicReferenceTest extends TestCase
             fn (ContainerInterface $container) => $container->get(EngineInterface::class)
         );
 
-        $dependencyResolver = new SimpleDependencyResolver([
+        $container = new SimpleContainer([
+            ContainerInterface::class => &$container,
             EngineInterface::class => new EngineMarkOne(),
         ]);
 
-        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve($dependencyResolver));
+        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve($container));
     }
 
     public function testStaticClosure(): void
@@ -45,22 +46,24 @@ final class DynamicReferenceTest extends TestCase
             static fn (ContainerInterface $container) => $container->get(EngineInterface::class)
         );
 
-        $dependencyResolver = new SimpleDependencyResolver([
+        $container = new SimpleContainer([
+            ContainerInterface::class => &$container,
             EngineInterface::class => new EngineMarkOne(),
         ]);
 
-        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve($dependencyResolver));
+        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve($container));
     }
 
     public function testCallable(): void
     {
         $reference = DynamicReference::to([self::class, 'callableDefinition']);
 
-        $dependencyResolver = new SimpleDependencyResolver([
+        $container = new SimpleContainer([
+            ContainerInterface::class => &$container,
             EngineInterface::class => new EngineMarkOne(),
         ]);
 
-        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve($dependencyResolver));
+        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve($container));
     }
 
     public static function callableDefinition(ContainerInterface $container): EngineInterface
@@ -73,7 +76,7 @@ final class DynamicReferenceTest extends TestCase
         $reference = DynamicReference::to([
             'class' => EngineMarkOne::class,
         ]);
-        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve(new SimpleDependencyResolver()));
+        $this->assertInstanceOf(EngineMarkOne::class, $reference->resolve(new SimpleContainer()));
     }
 
     public function testArrayWithoutClass(): void
