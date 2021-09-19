@@ -17,15 +17,16 @@ interface DefinitionInterface
 {
     /**
      * Resolve this definition.
-     * 
-     * @return mixed|null Ready to use object or null if definition can
-     * not be resolved and is marked as optional.
+     *
      * @throws InvalidConfigException If an object of incorrect type was created.
      * @throws CircularReferenceException If there is a circular reference detected
      * when resolving the definition.
      * @throws NotFoundException If container does not know how to resolve
      * the definition.
      * @throws NotInstantiableException If an object can not be instantiated.
+     *
+     * @return mixed|null Ready to use object or null if definition can
+     * not be resolved and is marked as optional.
      */
     public function resolve(ContainerInterface $container);
 }

@@ -69,7 +69,7 @@ final class ClassDefinition implements DefinitionInterface
 
     /**
      * Resolve union type string provided as a class name.
-     * 
+     *
      * @throws InvalidConfigException If an object of incorrect type was created.
      * @throws Throwable
      *
@@ -110,7 +110,7 @@ final class ClassDefinition implements DefinitionInterface
 
     /**
      * Get type of the value provided.
-     * 
+     *
      * @param mixed $value Value to get type for.
      */
     private function getValueType($value): string
