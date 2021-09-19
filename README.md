@@ -15,9 +15,13 @@
 [![static analysis](https://github.com/yiisoft/definitions/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/definitions/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/definitions/coverage.svg)](https://shepherd.dev/github/yiisoft/definitions)
 
-The package provides definition syntax. Definition is describing a way to create and configure a service or an object.
-It is used by [yiisoft/di](https://github.com/yiisoft/di) and [yiisoft/factory](https://github.com/yiisoft/factory)
+The package provides syntax constructs describing a way to create and configure a service or an object. It is used by [yiisoft/di](https://github.com/yiisoft/di) and [yiisoft/factory](https://github.com/yiisoft/factory)
 but could be used in other [PSR-11](https://www.php-fig.org/psr/psr-11/) compatible packages as well.
+
+The following are provided:
+
+- Definitions describing services or objects to create. This includes syntax, its validation and resolving it to objects.
+- References and dynamic references to point to other definitions. These include additional utility to refer to multiple definitions at once.
 
 ## Requirements
 
@@ -33,15 +37,61 @@ composer require yiisoft/definitions --prefer-dist
 
 ## General usage
 
+### Definitions
 
+Definition is describing a way to create and configure a service or an object.
+It must implement `Yiisoft\Definitions\Contract\DefinitionInterface` that
+has a single method `resolve(ContainerInterface $container)`. References are
+typically stored in the container or a factory and are resolved into object
+at the moment of obtaining a service instance or creating an object.
 
-Out of the box the following definitions are provided:
+#### `ClassDefinition`
 
-- ClassDefinition
-- ArrayDefinition
-- CallableDefinition
-- ParameterDefinition
-- ValueDefinition
+Class definition points to a class or interface name. Union type could be used as well.
+
+```php
+use \Yiisoft\Definitions\ClassDefintion;
+
+$defintion = new ClassDefintion(MyServiceInterface::class, false);
+$object = $definition->resolve($container);
+```
+
+The second argument above is an "optional" flag. Set it to true if null should be returned instead of throwing an exception when resolving the defintion.
+
+#### `ArrayDefinition`
+
+Array definition allows describing a service or an object declaratively:
+
+```php
+use \Yiisoft\Definitions\ArrayDefinition;
+
+$defintion = ArrayDefinition::fromConfig([
+    'class' => MyServiceInterface::class,
+    '__construct()' => [42], 
+    '$propertyName' => 'value',
+    'setName()' => ['Alex'],
+]);
+$object = $definition->resolve($container);
+```
+
+In the above:
+
+- `class` contains the name of the class to be instantiated.
+- `__construct()` holds an array of constructor arguments.
+- The rest of the config are property values (prefixed with `$`)
+  and method calls, postfixed with `()`. They are set/called
+  in the order they appear in the array.
+
+#### `CallableDefinition`
+
+#### `ParameterDefinition`
+
+#### `ValueDefinition`
+
+### References
+
+References and dynamic references point to other definitions so when defining a
+definition you can use other definitions as its dependencies.
 
 ## Testing
 

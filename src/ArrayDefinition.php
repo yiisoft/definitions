@@ -14,7 +14,7 @@ use Yiisoft\Definitions\Infrastructure\ArrayDefinitionBuilder;
 use function count;
 
 /**
- * Builds object by array config
+ * Builds an object by array config.
  *
  * @psalm-type MethodOrPropertyItem = array{0:string,1:string,2:mixed}
  * @psalm-type ArrayDefinitionConfig = array{class:class-string,'__construct()'?:array}&array<string, mixed>
