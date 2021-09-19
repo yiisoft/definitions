@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\DependencyResolverInterface;
 
 final class ValueDefinition implements DefinitionInterface
 {
@@ -30,7 +30,7 @@ final class ValueDefinition implements DefinitionInterface
         return $this->type;
     }
 
-    public function resolve(DependencyResolverInterface $dependencyResolver)
+    public function resolve(ContainerInterface $container)
     {
         return $this->value;
     }

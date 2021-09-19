@@ -9,8 +9,8 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\Tests\Objects\Car;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
 use Yiisoft\Definitions\ValueDefinition;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionResolverTest extends TestCase
 {
@@ -34,7 +34,7 @@ final class DefinitionResolverTest extends TestCase
         $definition = DefinitionResolver::ensureResolvable(42);
 
         $this->assertInstanceOf(ValueDefinition::class, $definition);
-        $this->assertSame(42, $definition->resolve(new SimpleDependencyResolver()));
+        $this->assertSame(42, $definition->resolve(new SimpleContainer()));
     }
 
     public function testEnsureResolvableDefinition(): void

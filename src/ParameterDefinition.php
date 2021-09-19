@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use Psr\Container\ContainerInterface;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\DependencyResolverInterface;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 
 final class ParameterDefinition implements DefinitionInterface
@@ -35,7 +35,7 @@ final class ParameterDefinition implements DefinitionInterface
         return $this->parameter->isDefaultValueAvailable() || $this->parameter->allowsNull();
     }
 
-    public function resolve(DependencyResolverInterface $dependencyResolver)
+    public function resolve(ContainerInterface $container)
     {
         if ($this->parameter->isDefaultValueAvailable()) {
             return $this->parameter->getDefaultValue();

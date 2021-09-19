@@ -11,7 +11,7 @@ use Yiisoft\Definitions\Tests\Objects\Car;
 use Yiisoft\Definitions\Tests\Objects\CarFactory;
 use Yiisoft\Definitions\Tests\Objects\ColorInterface;
 use Yiisoft\Definitions\Tests\Objects\ColorPink;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class CallableDefinitionTest extends TestCase
 {
@@ -19,7 +19,7 @@ final class CallableDefinitionTest extends TestCase
     {
         $definition = new CallableDefinition([CarFactory::class, 'createWithColor']);
 
-        $dependencyResolver = new SimpleDependencyResolver(
+        $container = new SimpleContainer(
             [
                 CarFactory::class => new CarFactory(),
                 ColorInterface::class => new ColorPink(),
@@ -27,7 +27,7 @@ final class CallableDefinitionTest extends TestCase
         );
 
         /** @var Car $car */
-        $car = $definition->resolve($dependencyResolver);
+        $car = $definition->resolve($container);
 
         $this->assertInstanceOf(Car::class, $car);
         $this->assertInstanceOf(ColorPink::class, $car->getColor());
@@ -39,6 +39,6 @@ final class CallableDefinitionTest extends TestCase
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage('Can not instantiate callable definition. Got array');
-        $definition->resolve(new SimpleDependencyResolver());
+        $definition->resolve(new SimpleContainer());
     }
 }

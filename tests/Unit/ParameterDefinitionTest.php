@@ -13,7 +13,7 @@ use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Objects\Car;
 use Yiisoft\Definitions\Tests\Objects\EngineInterface;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
 {
@@ -120,9 +120,9 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolve($expected, ReflectionParameter $parameter): void
     {
         $definition = new ParameterDefinition($parameter);
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
-        $this->assertSame($expected, $definition->resolve($dependencyResolver));
+        $this->assertSame($expected, $definition->resolve($container));
     }
 
     public function testNotInstantiable(): void
@@ -130,7 +130,7 @@ final class ParameterDefinitionTest extends TestCase
         $definition = new ParameterDefinition(
             (new ReflectionClass(Car::class))->getConstructor()->getParameters()[0]
         );
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
@@ -140,7 +140,7 @@ final class ParameterDefinitionTest extends TestCase
             Car::class . '::__construct()"' .
             '. Please specify argument explicitly.'
         );
-        $definition->resolve($dependencyResolver);
+        $definition->resolve($container);
     }
 
     public function testNotInstantiablePhpInternal(): void
@@ -152,14 +152,14 @@ final class ParameterDefinitionTest extends TestCase
         $definition = new ParameterDefinition(
             $this->getParameters('trim')[1]
         );
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
             'Can not determine default value of parameter "character_mask" when instantiating "trim()" ' .
             'because it is PHP internal. Please specify argument explicitly.'
         );
-        $definition->resolve($dependencyResolver);
+        $definition->resolve($container);
     }
 
     /**

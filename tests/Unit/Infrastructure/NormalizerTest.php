@@ -12,8 +12,8 @@ use Yiisoft\Definitions\Infrastructure\Normalizer;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\Tests\Objects\ColorPink;
 use Yiisoft\Definitions\Tests\Objects\GearBox;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
 use Yiisoft\Definitions\ValueDefinition;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class NormalizerTest extends TestCase
 {
@@ -53,7 +53,7 @@ final class NormalizerTest extends TestCase
 
     public function testReadyObject(): void
     {
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $object = new stdClass();
 
@@ -61,7 +61,7 @@ final class NormalizerTest extends TestCase
         $definition = Normalizer::normalize($object);
 
         $this->assertInstanceOf(ValueDefinition::class, $definition);
-        $this->assertSame($object, $definition->resolve($dependencyResolver));
+        $this->assertSame($object, $definition->resolve($container));
     }
 
     public function testInteger(): void

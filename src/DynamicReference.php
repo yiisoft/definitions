@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\DependencyResolverInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Infrastructure\Normalizer;
@@ -58,8 +58,8 @@ final class DynamicReference implements ReferenceInterface
         return new self($id);
     }
 
-    public function resolve(DependencyResolverInterface $dependencyResolver)
+    public function resolve(ContainerInterface $container)
     {
-        return $this->definition->resolve($dependencyResolver);
+        return $this->definition->resolve($container);
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
-use Yiisoft\Definitions\Contract\DependencyResolverInterface;
+use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
@@ -47,8 +47,8 @@ final class Reference implements ReferenceInterface
         return new self($id);
     }
 
-    public function resolve(DependencyResolverInterface $dependencyResolver)
+    public function resolve(ContainerInterface $container)
     {
-        return $dependencyResolver->resolveReference($this->id);
+        return $container->get($this->id);
     }
 }

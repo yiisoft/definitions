@@ -6,8 +6,8 @@ namespace Yiisoft\Definitions\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
-use Yiisoft\Definitions\Tests\Support\SimpleDependencyResolver;
 use Yiisoft\Definitions\ValueDefinition;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ValueDefinitionTest extends TestCase
 {
@@ -20,12 +20,12 @@ final class ValueDefinitionTest extends TestCase
 
     public function testDoNotCloneObjectFromContainer(): void
     {
-        $dependencyResolver = new SimpleDependencyResolver();
+        $container = new SimpleContainer();
 
         $object = new stdClass();
 
         $definition = new ValueDefinition($object, 'object');
-        $value = $definition->resolve($dependencyResolver);
+        $value = $definition->resolve($container);
 
         $this->assertSame($object, $value);
     }
