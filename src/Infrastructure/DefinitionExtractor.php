@@ -27,6 +27,11 @@ final class DefinitionExtractor
 {
     private static ?self $instance = null;
 
+    /**
+     * @psalm-var array<string, array<string, DefinitionInterface>>
+     */
+    private static array $dependencies = [];
+
     private function __construct()
     {
     }
@@ -51,6 +56,10 @@ final class DefinitionExtractor
      */
     public function fromClassName(string $class): array
     {
+        if (isset(self::$dependencies[$class])) {
+            return self::$dependencies[$class];
+        }
+
         try {
             $reflectionClass = new ReflectionClass($class);
         } catch (ReflectionException $e) {
@@ -62,7 +71,10 @@ final class DefinitionExtractor
         }
 
         $constructor = $reflectionClass->getConstructor();
-        return $constructor === null ? [] : $this->fromFunction($constructor);
+        $dependencies = $constructor === null ? [] : $this->fromFunction($constructor);
+        self::$dependencies[$class] = $dependencies;
+
+        return $dependencies;
     }
 
     /**

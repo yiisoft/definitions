@@ -23,11 +23,6 @@ final class ArrayDefinitionBuilder
 {
     private static ?self $instance = null;
 
-    /**
-     * @psalm-var array<string, array<string, DefinitionInterface>>
-     */
-    private static array $dependencies = [];
-
     private function __construct()
     {
     }
@@ -49,7 +44,7 @@ final class ArrayDefinitionBuilder
     public function build(ContainerInterface $container, ?ContainerInterface $referenceContainer, ArrayDefinition $definition): object
     {
         $class = $definition->getClass();
-        $dependencies = $this->getDependencies($class);
+        $dependencies = DefinitionExtractor::getInstance()->fromClassName($class);
         $constructorArguments = $definition->getConstructorArguments();
 
         $this->injectArguments($dependencies, $constructorArguments);
@@ -142,26 +137,5 @@ final class ArrayDefinitionBuilder
         }
 
         return $hasIntegerIndex;
-    }
-
-    /**
-     * Returns the dependencies of the specified class.
-     *
-     * @param class-string $class Class name or interface name.
-     *
-     * @throws NotInstantiableException
-     * @throws NotFoundException
-     * @throws NotInstantiableException
-     *
-     * @return DefinitionInterface[] The dependencies of the specified class.
-     * @psalm-return array<string, DefinitionInterface>
-     */
-    private function getDependencies(string $class): array
-    {
-        if (!isset(self::$dependencies[$class])) {
-            self::$dependencies[$class] = DefinitionExtractor::getInstance()->fromClassName($class);
-        }
-
-        return self::$dependencies[$class];
     }
 }
