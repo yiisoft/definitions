@@ -84,9 +84,51 @@ In the above:
 
 #### `CallableDefinition`
 
+Callable definition builds an object by executing a callable injecting
+dependencies based on types used in its signature:
+
+```php
+use \Yiisoft\Definitions\CallableDefinition;
+
+$defintion = new CallableDefinition(
+    fn (SomeFactory $factory) => $factory->create('args')
+);
+$object = $definition->resolve($container);
+
+// or 
+
+$defintion = new CallableDefinition(
+    fn () => MyFactory::create('args')
+);
+$object = $definition->resolve($container);
+
+// or
+
+$defintion = new CallableDefinition(
+    [MyFactory::class, 'create']
+);
+$object = $definition->resolve($container);
+```
+
+In the above we use a closure, a static call and a static
+method passed as array-callable. In each case we determine
+and pass dependencies based on the types of arguments in
+the callable signature.
+
 #### `ParameterDefinition`
 
+Parameter definition resolves an object based on `ReflectionParameter` instance.
+
 #### `ValueDefinition`
+
+Value definition resolves value passed as is:
+
+```php
+use \Yiisoft\Definitions\ValueDefinition;
+
+$defintion = new ValueDefinition(42, 'int');
+$value = $definition->resolve($container); // 42
+```
 
 ### References
 
