@@ -21,7 +21,8 @@ but could be used in other [PSR-11](https://www.php-fig.org/psr/psr-11/) compati
 The following are provided:
 
 - Definitions describing services or objects to create. This includes syntax, its validation and resolving it to objects.
-- References and dynamic references to point to other definitions. These include additional utility to refer to multiple definitions at once.
+- References and dynamic references to point to other definitions. These include additional utility to refer to multiple 
+  definitions at once.
 
 ## Requirements
 
@@ -50,13 +51,14 @@ at the moment of obtaining a service instance or creating an object.
 Class definition points to a class or interface name. Union type could be used as well.
 
 ```php
-use \Yiisoft\Definitions\ClassDefintion;
+use \Yiisoft\Definitions\ClassDefinition;
 
-$defintion = new ClassDefintion(MyServiceInterface::class, false);
+$definition = new ClassDefinition(MyServiceInterface::class, false);
 $object = $definition->resolve($container);
 ```
 
-The second argument above is an "optional" flag. Set it to true if null should be returned instead of throwing an exception when resolving the defintion.
+The second argument above is an "optional" flag. Set it to true if null should be returned instead of throwing
+an exception when resolving the definition.
 
 #### `ArrayDefinition`
 
@@ -65,7 +67,7 @@ Array definition allows describing a service or an object declaratively:
 ```php
 use \Yiisoft\Definitions\ArrayDefinition;
 
-$defintion = ArrayDefinition::fromConfig([
+$definition = ArrayDefinition::fromConfig([
     'class' => MyServiceInterface::class,
     '__construct()' => [42], 
     '$propertyName' => 'value',
@@ -90,21 +92,21 @@ dependencies based on types used in its signature:
 ```php
 use \Yiisoft\Definitions\CallableDefinition;
 
-$defintion = new CallableDefinition(
+$definition = new CallableDefinition(
     fn (SomeFactory $factory) => $factory->create('args')
 );
 $object = $definition->resolve($container);
 
 // or 
 
-$defintion = new CallableDefinition(
+$definition = new CallableDefinition(
     fn () => MyFactory::create('args')
 );
 $object = $definition->resolve($container);
 
 // or
 
-$defintion = new CallableDefinition(
+$definition = new CallableDefinition(
     [MyFactory::class, 'create']
 );
 $object = $definition->resolve($container);
@@ -122,7 +124,7 @@ Parameter definition resolves an object based on information from `ReflectionPar
 ```php
 use \Yiisoft\Definitions\ParameterDefinition;
 
-$defintion = new ParameterDefinition($reflectionParameter);
+$definition = new ParameterDefinition($reflectionParameter);
 $object = $definition->resolve($container);
 ```
 
@@ -135,7 +137,7 @@ Value definition resolves value passed as is:
 ```php
 use \Yiisoft\Definitions\ValueDefinition;
 
-$defintion = new ValueDefinition(42, 'int');
+$definition = new ValueDefinition(42, 'int');
 $value = $definition->resolve($container); // 42
 ```
 
