@@ -117,7 +117,16 @@ the callable signature.
 
 #### `ParameterDefinition`
 
-Parameter definition resolves an object based on `ReflectionParameter` instance.
+Parameter definition resolves an object based on information from `ReflectionParameter` instance:
+
+```php
+use \Yiisoft\Definitions\ParameterDefinition;
+
+$defintion = new ParameterDefinition($reflectionParameter);
+$object = $definition->resolve($container);
+```
+
+It is mostly used internally when working with callables.
 
 #### `ValueDefinition`
 
@@ -132,8 +141,35 @@ $value = $definition->resolve($container); // 42
 
 ### References
 
-References and dynamic references point to other definitions so when defining a
-definition you can use other definitions as its dependencies.
+References point to other definitions so when defining a definition you can use other definitions as its
+dependencies:
+
+```php
+[
+    InterfaceA::class => ConcreteA::class,
+    'alternativeForA' => ConcreteB::class,
+    MyService::class => [
+        '__construct()' => [
+            Reference::to('alternativeForA'),
+        ],
+    ],
+]
+```
+
+The `DynamicReference` defines a dependency to a service not defined in the container:
+
+```php
+[
+   MyService::class => [
+       '__construct()' => [
+           DynamicReference::to([
+               'class' => SomeClass::class,
+               '$someProp' => 15
+           ])
+       ]
+   ]
+]
+```
 
 ## Testing
 
