@@ -39,9 +39,9 @@ composer require yiisoft/definitions --prefer-dist
 
 ### Definitions
 
-Definition is describing a way to create and configure a service or an object.
-It must implement `Yiisoft\Definitions\Contract\DefinitionInterface` that
-has a single method `resolve(ContainerInterface $container)`. References are
+Definition is describing a way to create and configure a service, an object
+or return any other value. It must implement `Yiisoft\Definitions\Contract\DefinitionInterface`
+that has a single method `resolve(ContainerInterface $container)`. References are
 typically stored in the container or a factory and are resolved into object
 at the moment of obtaining a service instance or creating an object.
 
