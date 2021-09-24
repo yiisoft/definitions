@@ -15,7 +15,14 @@
 [![static analysis](https://github.com/yiisoft/definitions/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/definitions/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/definitions/coverage.svg)](https://shepherd.dev/github/yiisoft/definitions)
 
-The package ...
+The package provides syntax constructs describing a way to create and configure a service or an object. It is used by [yiisoft/di](https://github.com/yiisoft/di) and [yiisoft/factory](https://github.com/yiisoft/factory)
+but could be used in other [PSR-11](https://www.php-fig.org/psr/psr-11/) compatible packages as well.
+
+The following are provided:
+
+- Definitions describing services or objects to create. This includes syntax, its validation and resolving it to objects.
+- References and dynamic references to point to other definitions. These include additional utility to refer to multiple 
+  definitions at once.
 
 ## Requirements
 
@@ -30,6 +37,141 @@ composer require yiisoft/definitions --prefer-dist
 ```
 
 ## General usage
+
+### Definitions
+
+Definition is describing a way to create and configure a service, an object
+or return any other value. It must implement `Yiisoft\Definitions\Contract\DefinitionInterface`
+that has a single method `resolve(ContainerInterface $container)`. References are
+typically stored in the container or a factory and are resolved into object
+at the moment of obtaining a service instance or creating an object.
+
+#### `ClassDefinition`
+
+Class definition points to a class or interface name. Union type could be used as well.
+
+```php
+use \Yiisoft\Definitions\ClassDefinition;
+
+$definition = new ClassDefinition(MyServiceInterface::class, false);
+$object = $definition->resolve($container);
+```
+
+The second argument above is an "optional" flag. Set it to true if null should be returned instead of throwing
+an exception when resolving the definition.
+
+#### `ArrayDefinition`
+
+Array definition allows describing a service or an object declaratively:
+
+```php
+use \Yiisoft\Definitions\ArrayDefinition;
+
+$definition = ArrayDefinition::fromConfig([
+    'class' => MyServiceInterface::class,
+    '__construct()' => [42], 
+    '$propertyName' => 'value',
+    'setName()' => ['Alex'],
+]);
+$object = $definition->resolve($container);
+```
+
+In the above:
+
+- `class` contains the name of the class to be instantiated.
+- `__construct()` holds an array of constructor arguments.
+- The rest of the config are property values (prefixed with `$`)
+  and method calls, postfixed with `()`. They are set/called
+  in the order they appear in the array.
+
+#### `CallableDefinition`
+
+Callable definition builds an object by executing a callable injecting
+dependencies based on types used in its signature:
+
+```php
+use \Yiisoft\Definitions\CallableDefinition;
+
+$definition = new CallableDefinition(
+    fn (SomeFactory $factory) => $factory->create('args')
+);
+$object = $definition->resolve($container);
+
+// or 
+
+$definition = new CallableDefinition(
+    fn () => MyFactory::create('args')
+);
+$object = $definition->resolve($container);
+
+// or
+
+$definition = new CallableDefinition(
+    [MyFactory::class, 'create']
+);
+$object = $definition->resolve($container);
+```
+
+In the above we use a closure, a static call and a static
+method passed as array-callable. In each case we determine
+and pass dependencies based on the types of arguments in
+the callable signature.
+
+#### `ParameterDefinition`
+
+Parameter definition resolves an object based on information from `ReflectionParameter` instance:
+
+```php
+use \Yiisoft\Definitions\ParameterDefinition;
+
+$definition = new ParameterDefinition($reflectionParameter);
+$object = $definition->resolve($container);
+```
+
+It is mostly used internally when working with callables.
+
+#### `ValueDefinition`
+
+Value definition resolves value passed as is:
+
+```php
+use \Yiisoft\Definitions\ValueDefinition;
+
+$definition = new ValueDefinition(42, 'int');
+$value = $definition->resolve($container); // 42
+```
+
+### References
+
+References point to other definitions so when defining a definition you can use other definitions as its
+dependencies:
+
+```php
+[
+    InterfaceA::class => ConcreteA::class,
+    'alternativeForA' => ConcreteB::class,
+    MyService::class => [
+        '__construct()' => [
+            Reference::to('alternativeForA'),
+        ],
+    ],
+]
+```
+
+The `DynamicReference` defines a dependency to a service not defined in the container:
+
+```php
+[
+   MyService::class => [
+       '__construct()' => [
+           DynamicReference::to([
+               'class' => SomeClass::class,
+               '$someProp' => 15
+           ])
+       ]
+   ]
+]
+```
 
 ## Testing
 

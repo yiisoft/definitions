@@ -14,7 +14,8 @@ use function gettype;
 use function is_object;
 
 /**
- * Reference points to a class name in the container
+ * Points to a class or interface name.
+ * Union type could be used as well.
  */
 final class ClassDefinition implements DefinitionInterface
 {
@@ -22,10 +23,8 @@ final class ClassDefinition implements DefinitionInterface
     private bool $optional;
 
     /**
-     * Constructor.
-     *
-     * @param string $class the class name
-     * @param bool $optional if null should be returned instead of throwing an exception
+     * @param string $class A class or interface name. Union type could be used as well.
+     * @param bool $optional If null should be returned instead of throwing an exception.
      */
     public function __construct(string $class, bool $optional)
     {
@@ -33,14 +32,16 @@ final class ClassDefinition implements DefinitionInterface
         $this->optional = $optional;
     }
 
+    /**
+     * Get type of the object to be created.
+     *
+     * @return string An interface or a class name.
+     */
     public function getType(): string
     {
         return $this->class;
     }
 
-    /**
-     * @throws InvalidConfigException
-     */
     public function resolve(ContainerInterface $container)
     {
         if ($this->isUnionType()) {
@@ -67,9 +68,13 @@ final class ClassDefinition implements DefinitionInterface
     }
 
     /**
+     * Resolve union type string provided as a class name.
+     *
+     * @throws InvalidConfigException If an object of incorrect type was created.
      * @throws Throwable
      *
-     * @return mixed
+     * @return mixed|null Ready to use object or null if definition can
+     * not be resolved and is marked as optional.
      */
     private function resolveUnionType(ContainerInterface $container)
     {
@@ -104,7 +109,9 @@ final class ClassDefinition implements DefinitionInterface
     }
 
     /**
-     * @param mixed $value
+     * Get type of the value provided.
+     *
+     * @param mixed $value Value to get type for.
      */
     private function getValueType($value): string
     {

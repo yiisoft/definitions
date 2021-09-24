@@ -7,6 +7,9 @@ namespace Yiisoft\Definitions;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 
+/**
+ * Value definition resolves value passed as is.
+ */
 final class ValueDefinition implements DefinitionInterface
 {
     /**
@@ -17,7 +20,8 @@ final class ValueDefinition implements DefinitionInterface
     private ?string $type;
 
     /**
-     * @param mixed $value
+     * @param mixed $value Value to be returned on resolving.
+     * @param ?string $type Value type.
      */
     public function __construct($value, string $type = null)
     {
@@ -25,6 +29,11 @@ final class ValueDefinition implements DefinitionInterface
         $this->type = $type;
     }
 
+    /**
+     * Get type of the value.
+     *
+     * @return string|null Value type.
+     */
     public function getType(): ?string
     {
         return $this->type;

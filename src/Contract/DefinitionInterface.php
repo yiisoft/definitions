@@ -11,19 +11,22 @@ use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 
 /**
- * Interface DefinitionInterface
+ * Definition is describing a way to create and configure a service or an object.
  */
 interface DefinitionInterface
 {
     /**
-     * @param DependencyResolverInterface $dependencyResolver
+     * Resolve this definition.
      *
-     * @throws CircularReferenceException
-     * @throws NotFoundException
-     * @throws NotInstantiableException
-     * @throws InvalidConfigException
+     * @throws InvalidConfigException If an object of incorrect type was created.
+     * @throws CircularReferenceException If there is a circular reference detected
+     * when resolving the definition.
+     * @throws NotFoundException If container does not know how to resolve
+     * the definition.
+     * @throws NotInstantiableException If an object can not be instantiated.
      *
-     * @return mixed|object
+     * @return mixed|null Ready to use object or null if definition can
+     * not be resolved and is marked as optional.
      */
     public function resolve(ContainerInterface $container);
 }

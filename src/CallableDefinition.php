@@ -17,6 +17,10 @@ use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
 use function is_array;
 use function is_object;
 
+/**
+ * Builds an object by executing a callable injecting
+ * dependencies based on types used in its signature.
+ */
 final class CallableDefinition implements DefinitionInterface
 {
     /**
@@ -26,7 +30,9 @@ final class CallableDefinition implements DefinitionInterface
     private $callable;
 
     /**
-     * @param array|callable $callable
+     * @param array|callable $callable Callable to be used for building
+     * an object. Dependencies are determined and passed based
+     * on the types of arguments in the callable signature.
      *
      * @psalm-param callable|array{0:class-string,1:string} $callable
      */

@@ -11,6 +11,9 @@ use ReflectionUnionType;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 
+/**
+ * Parameter definition resolves an object based on information from `ReflectionParameter` instance.
+ */
 final class ParameterDefinition implements DefinitionInterface
 {
     private ReflectionParameter $parameter;
