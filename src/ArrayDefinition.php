@@ -136,6 +136,7 @@ final class ArrayDefinition implements DefinitionInterface
      * Create a new definition that is merged from this definition and another definition.
      *
      * @param ArrayDefinition $other Definition to merge with.
+     *
      * @return self New definition that is merged from this definition and another definition.
      */
     public function merge(self $other): self
