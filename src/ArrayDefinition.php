@@ -6,9 +6,6 @@ namespace Yiisoft\Definitions;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Exception\NotFoundException;
-use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\ArrayDefinitionBuilder;
 
 use function count;
@@ -53,12 +50,17 @@ final class ArrayDefinition implements DefinitionInterface
         $this->methodsAndProperties = $methodsAndProperties;
     }
 
+    /**
+     * @param ContainerInterface|null $referenceContainer Container to resolve references with.
+     */
     public function setReferenceContainer(?ContainerInterface $referenceContainer): void
     {
         $this->referenceContainer = $referenceContainer;
     }
 
     /**
+     * Create ArrayDefinition from array config.
+     *
      * @psalm-param ArrayDefinitionConfig $config
      */
     public static function fromConfig(array $config): self
@@ -125,16 +127,17 @@ final class ArrayDefinition implements DefinitionInterface
         return $this->methodsAndProperties;
     }
 
-    /**
-     * @throws NotFoundException
-     * @throws NotInstantiableException
-     * @throws InvalidConfigException
-     */
     public function resolve(ContainerInterface $container): object
     {
         return ArrayDefinitionBuilder::getInstance()->build($container, $this->referenceContainer, $this);
     }
 
+    /**
+     * Create a new definition that is merged from this definition and another definition.
+     *
+     * @param ArrayDefinition $other Definition to merge with.
+     * @return self New definition that is merged from this definition and another definition.
+     */
     public function merge(self $other): self
     {
         $new = clone $this;

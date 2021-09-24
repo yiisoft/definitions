@@ -8,8 +8,7 @@ use Exception;
 use Psr\Container\ContainerExceptionInterface;
 
 /**
- * InvalidConfigException is thrown when configuration passed to
- * container is not valid.
+ * InvalidConfigException is thrown when definition configuration is not valid.
  */
 final class InvalidConfigException extends Exception implements ContainerExceptionInterface
 {

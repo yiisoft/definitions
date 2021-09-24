@@ -36,6 +36,11 @@ final class DefinitionExtractor
     {
     }
 
+    /**
+     * Get an instance of this class or create it.
+     *
+     * @return static An instance of this class.
+     */
     public static function getInstance(): self
     {
         if (self::$instance === null) {

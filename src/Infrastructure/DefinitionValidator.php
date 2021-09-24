@@ -16,12 +16,17 @@ use function is_callable;
 use function is_object;
 use function is_string;
 
+/**
+ * Definition validator checks if definition is valid.
+ */
 final class DefinitionValidator
 {
     /**
-     * @param mixed $definition
+     * Validates that definition is valid. Throws exception otherwise.
      *
-     * @throws InvalidConfigException
+     * @param mixed $definition Definition to validate.
+     *
+     * @throws InvalidConfigException If definition is not valid.
      */
     public static function validate($definition, ?string $id = null): void
     {

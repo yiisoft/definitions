@@ -27,6 +27,11 @@ final class ArrayDefinitionBuilder
     {
     }
 
+    /**
+     * Get an instance of this class or create it.
+     *
+     * @return static An instance of this class.
+     */
     public static function getInstance(): self
     {
         if (self::$instance === null) {
@@ -37,9 +42,15 @@ final class ArrayDefinitionBuilder
     }
 
     /**
-     * @throws NotFoundException
-     * @throws NotInstantiableException
-     * @throws InvalidConfigException
+     * Builds an object as described by array definition.
+     *
+     * @param ContainerInterface $container Container to resolve dependencies with.
+     * @param ContainerInterface|null $referenceContainer Container to resolve references with.
+     * @param ArrayDefinition $definition Definition to resolve.
+     *
+     * @throws NotFoundException When no definition or class was found in the container for a given ID.
+     * @throws NotInstantiableException When a class can not be instantiated.
+     * @throws InvalidConfigException When definition configuration is not valid.
      */
     public function build(ContainerInterface $container, ?ContainerInterface $referenceContainer, ArrayDefinition $definition): object
     {

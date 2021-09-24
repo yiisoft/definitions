@@ -7,8 +7,8 @@ namespace Yiisoft\Definitions\Contract;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
 /**
- * Reference points to another named defintion. Usually it is another service in the container
- * or another object defintion in the factory.
+ * Reference points to another named definition. Usually it is another service in the container
+ * or another object definition in the factory.
  */
 interface ReferenceInterface extends DefinitionInterface
 {
@@ -17,7 +17,7 @@ interface ReferenceInterface extends DefinitionInterface
      *
      * @param mixed $id ID of the service or object to point to.
      *
-     * @throws InvalidConfigException
+     * @throws InvalidConfigException When definition configuration is not valid.
      */
     public static function to($id): self;
 }
