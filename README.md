@@ -173,6 +173,30 @@ The `DynamicReference` defines a dependency to a service not defined in the cont
 ]
 ```
 
+In order to pass an array of IDs as references to a property or an argument, `Yiisoft\Definitions\ReferencesArray` or
+`Yiisoft\Definitions\DynamicReferencesArray` could be used:
+
+```php
+//params.php
+return [
+   'yiisoft/data-response' => [
+       'contentFormatters' => [
+           'text/html' => HtmlDataResponseFormatter::class,
+           'application/xml' => XmlDataResponseFormatter::class,
+           'application/json' => JsonDataResponseFormatter::class,
+       ],
+   ],
+];
+
+//web.php
+
+ContentNegotiator::class => [
+    '__construct()' => [
+        'contentFormatters' => ReferencesArray::from($params['yiisoft/data-response']['contentFormatters']),
+    ],
+],
+```
+
 ## Testing
 
 ### Unit testing

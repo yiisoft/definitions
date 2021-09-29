@@ -34,7 +34,7 @@ final class ReferencesArray
      *     ],
      * ],
      * ```
-     * That is not very convenient so we can define formatters in a separate config and without explicitly using
+     * That is not very convenient, so we can define formatters in a separate config and without explicitly using
      * `Reference::to()` for each formatter:
      *
      * ```php
