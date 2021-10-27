@@ -135,6 +135,10 @@ final class DefinitionExtractor
         // Our parameter has a class type hint
         if (!$type->isBuiltin()) {
             $typeName = $type->getName();
+            /**
+             * @psalm-suppress TypeDoesNotContainType
+             * @link https://github.com/vimeo/psalm/issues/6756
+             */
             if ($typeName === 'self') {
                 // If type name is "self", it means that called class and
                 // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
