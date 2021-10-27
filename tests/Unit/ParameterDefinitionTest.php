@@ -13,6 +13,7 @@ use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Objects\Car;
 use Yiisoft\Definitions\Tests\Objects\EngineInterface;
+use Yiisoft\Definitions\Tests\Objects\NullableConcreteDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
@@ -80,7 +81,7 @@ final class ParameterDefinitionTest extends TestCase
 
         return [
             [false, $parameters[0]],
-            [true, $parameters[1]],
+            [false, $parameters[1]],
             [true, $parameters[2]],
             [true, $parameters[3]],
         ];
@@ -96,6 +97,24 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertSame($expected, $definition->hasValue());
     }
 
+    public function testNullableParameterNotInstantiable(): void
+    {
+        $definition = new ParameterDefinition(
+            (new ReflectionClass(NullableConcreteDependency::class))->getConstructor()->getParameters()[0]
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "car" parameter of type "' .
+            Car::class .
+            '" when instantiating "' .
+            NullableConcreteDependency::class . '::__construct()"' .
+            '. Please specify argument explicitly.'
+        );
+        $definition->resolve($container);
+    }
+
     public function dataResolve(): array
     {
         return [
@@ -107,9 +126,9 @@ final class ParameterDefinitionTest extends TestCase
                 null,
                 $this->getFirstParameter(static fn (int $n = null) => true),
             ],
-            'nullableType' => [
+            'nullableAndDefaultNull' => [
                 null,
-                $this->getFirstParameter(static fn (?int $n) => true),
+                $this->getFirstParameter(static fn (?int $n = null) => true),
             ],
         ];
     }

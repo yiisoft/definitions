@@ -35,17 +35,13 @@ final class ParameterDefinition implements DefinitionInterface
 
     public function hasValue(): bool
     {
-        return $this->parameter->isDefaultValueAvailable() || $this->parameter->allowsNull();
+        return $this->parameter->isDefaultValueAvailable();
     }
 
     public function resolve(ContainerInterface $container)
     {
         if ($this->parameter->isDefaultValueAvailable()) {
             return $this->parameter->getDefaultValue();
-        }
-
-        if ($this->parameter->allowsNull()) {
-            return null;
         }
 
         if ($this->isOptional()) {

@@ -20,6 +20,8 @@ use Yiisoft\Definitions\Tests\Objects\NullableConcreteDependency;
 use Yiisoft\Definitions\Tests\Objects\NullableInterfaceDependency;
 use Yiisoft\Definitions\Tests\Objects\OptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Objects\OptionalInterfaceDependency;
+use Yiisoft\Definitions\Tests\Objects\NullableOptionalConcreteDependency;
+use Yiisoft\Definitions\Tests\Objects\NullableOptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Objects\SelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
@@ -57,7 +59,7 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
 
-        $this->expectException('Yiisoft\Test\Support\Container\Exception\NotFoundException');
+        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
         $dependencies['engine']->resolve($container);
     }
 
@@ -88,7 +90,8 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['engine']->resolve($container));
+        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $dependencies['engine']->resolve($container);
     }
 
     public function testOptionalConcreteDependency(): void
@@ -108,8 +111,30 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
+        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $dependencies['car']->resolve($container);
+    }
+
+    public function testNullableOptionalConcreteDependency(): void
+    {
+        $resolver = DefinitionExtractor::getInstance();
+        $container = new SimpleContainer();
+        /** @var DefinitionInterface[] $dependencies */
+        $dependencies = $resolver->fromClassName(NullableOptionalConcreteDependency::class);
+        $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
+
+    public function testNullableOptionalInterfaceDependency(): void
+    {
+        $resolver = DefinitionExtractor::getInstance();
+        $container = new SimpleContainer();
+        /** @var DefinitionInterface[] $dependencies */
+        $dependencies = $resolver->fromClassName(NullableOptionalInterfaceDependency::class);
+        $this->assertCount(1, $dependencies);
+        $this->assertEquals(null, $dependencies['engine']->resolve($container));
+    }
+
 
     public function testFromNonExistingClass(): void
     {
