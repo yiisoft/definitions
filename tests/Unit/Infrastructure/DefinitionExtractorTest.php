@@ -57,7 +57,7 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
 
-        $this->expectException('Yiisoft\Test\Support\Container\Exception\NotFoundException');
+        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
         $dependencies['engine']->resolve($container);
     }
 
@@ -88,7 +88,8 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['engine']->resolve($container));
+        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $dependencies['engine']->resolve($container);
     }
 
     public function testOptionalConcreteDependency(): void
@@ -108,7 +109,8 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['car']->resolve($container));
+        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $dependencies['car']->resolve($container);
     }
 
     public function testFromNonExistingClass(): void

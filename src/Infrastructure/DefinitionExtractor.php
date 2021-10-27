@@ -127,7 +127,7 @@ final class DefinitionExtractor
             }
 
             /** @psalm-suppress MixedArgument */
-            return new ClassDefinition(implode('|', $types), $type->allowsNull());
+            return new ClassDefinition(implode('|', $types), $parameter->isOptional());
         }
 
         /** @var ReflectionNamedType $type */
@@ -142,7 +142,7 @@ final class DefinitionExtractor
                 $typeName = $parameter->getDeclaringClass()->getName();
             }
 
-            return new ClassDefinition($typeName, $type->allowsNull());
+            return new ClassDefinition($typeName, $parameter->isOptional());
         }
 
         // Our parameter does have a built-in type hint
