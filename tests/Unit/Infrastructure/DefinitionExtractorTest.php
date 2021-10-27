@@ -135,7 +135,6 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertEquals(null, $dependencies['engine']->resolve($container));
     }
 
-
     public function testFromNonExistingClass(): void
     {
         $extractor = DefinitionExtractor::getInstance();
