@@ -126,6 +126,10 @@ final class ParameterDefinitionTest extends TestCase
                 null,
                 $this->getFirstParameter(static fn (int $n = null) => true),
             ],
+            'nullableAndDefaultNull' => [
+                null,
+                $this->getFirstParameter(static fn (?int $n = null) => true),
+            ],
         ];
     }
 
