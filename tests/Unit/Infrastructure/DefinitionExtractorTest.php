@@ -56,7 +56,7 @@ final class DefinitionExtractorTest extends TestCase
         $dependencies = $resolver->fromClassName(Car::class);
 
         $this->assertCount(2, $dependencies);
-        $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
+        $this->assertInstanceOf(ParameterDefinition::class, $dependencies['engine']);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
 
         $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
@@ -155,10 +155,10 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testFromClassWithSelfDependency(): void
     {
-        /** @var ClassDefinition $definition */
+        /** @var ParameterDefinition $definition */
         $definition = DefinitionExtractor::getInstance()->fromClassName(SelfDependency::class)['a'];
 
-        $this->assertInstanceOf(ClassDefinition::class, $definition);
-        $this->assertSame(SelfDependency::class, $definition->getType());
+        $this->assertInstanceOf(ParameterDefinition::class, $definition);
+        $this->assertSame('self', $definition->getReflection()->getType()->getName());
     }
 }

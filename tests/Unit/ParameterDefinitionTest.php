@@ -9,11 +9,14 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionParameter;
+use stdClass;
+use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Objects\Car;
 use Yiisoft\Definitions\Tests\Objects\EngineInterface;
 use Yiisoft\Definitions\Tests\Objects\NullableConcreteDependency;
+use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
@@ -97,6 +100,19 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertSame($expected, $definition->hasValue());
     }
 
+    public function testResolveWithIncorrectTypeInContainer(): void
+    {
+        $definition = new ParameterDefinition($this->getFirstParameter(fn (stdClass $class) => true));
+
+        $container = new SimpleContainer([stdClass::class => 42]);
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Container returned incorrect type "integer" for service "' . stdClass::class . '".'
+        );
+        $definition->resolve($container);
+    }
+
     public function testNullableParameterNotInstantiable(): void
     {
         $definition = new ParameterDefinition(
@@ -104,14 +120,7 @@ final class ParameterDefinitionTest extends TestCase
         );
         $container = new SimpleContainer();
 
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage(
-            'Can not determine value of the "car" parameter of type "' .
-            Car::class .
-            '" when instantiating "' .
-            NullableConcreteDependency::class . '::__construct()"' .
-            '. Please specify argument explicitly.'
-        );
+        $this->expectException(NotFoundException::class);
         $definition->resolve($container);
     }
 
@@ -151,14 +160,7 @@ final class ParameterDefinitionTest extends TestCase
         );
         $container = new SimpleContainer();
 
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage(
-            'Can not determine value of the "engine" parameter of type "' .
-            EngineInterface::class .
-            '" when instantiating "' .
-            Car::class . '::__construct()"' .
-            '. Please specify argument explicitly.'
-        );
+        $this->expectException(NotFoundException::class);
         $definition->resolve($container);
     }
 
