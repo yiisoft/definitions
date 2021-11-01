@@ -142,6 +142,7 @@ final class ParameterDefinition implements DefinitionInterface
     {
         /**
          * @psalm-suppress UndefinedClass
+         *
          * @var ReflectionUnionType $parameterType
          */
         $parameterType = $this->parameter->getType();
