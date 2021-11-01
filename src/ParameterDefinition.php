@@ -40,7 +40,8 @@ final class ParameterDefinition implements DefinitionInterface
         return $this->parameter->isOptional();
     }
 
-    public function isBuiltin() {
+    public function isBuiltin(): bool
+    {
         return $this->parameter->getType()->isBuiltin();
     }
 
@@ -145,7 +146,6 @@ final class ParameterDefinition implements DefinitionInterface
                     $typeName = $this->parameter->getDeclaringClass()->getName();
                 }
                 try {
-
                     /** @var mixed */
                     $result = $container->get($typeName);
                     if (!$result instanceof $typeName) {

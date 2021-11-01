@@ -23,8 +23,7 @@ final class DefinitionExtractorTest extends TestCase
         $extractor = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
 
-        /** @var DefinitionInterface[] $dependencies
-         */
+        /** @var DefinitionInterface[] $dependencies */
         $dependencies = $extractor->fromClassName(DateTime::class);
 
         $this->assertCount(2, $dependencies);
