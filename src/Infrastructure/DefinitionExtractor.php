@@ -8,7 +8,6 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
-use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
@@ -25,7 +24,7 @@ final class DefinitionExtractor
     private static ?self $instance = null;
 
     /**
-     * @psalm-var array<string, array<string, DefinitionInterface>>
+     * @psalm-var array<string, array<string, ParameterDefinition>>
      */
     private static array $dependencies = [];
 
@@ -53,8 +52,8 @@ final class DefinitionExtractor
      * @throws NotFoundException
      * @throws NotInstantiableException
      *
-     * @return DefinitionInterface[]
-     * @psalm-return array<string, DefinitionInterface>
+     * @return ParameterDefinition[]
+     * @psalm-return array<string, ParameterDefinition>
      */
     public function fromClassName(string $class): array
     {
@@ -80,8 +79,8 @@ final class DefinitionExtractor
     }
 
     /**
-     * @return DefinitionInterface[]
-     * @psalm-return array<string, DefinitionInterface>
+     * @return ParameterDefinition[]
+     * @psalm-return array<string, ParameterDefinition>
      */
     public function fromFunction(ReflectionFunctionAbstract $reflectionFunction): array
     {
@@ -92,7 +91,7 @@ final class DefinitionExtractor
         return $result;
     }
 
-    private function fromParameter(ReflectionParameter $parameter): DefinitionInterface
+    private function fromParameter(ReflectionParameter $parameter): ParameterDefinition
     {
         return new ParameterDefinition($parameter);
     }
