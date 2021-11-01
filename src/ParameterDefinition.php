@@ -42,7 +42,11 @@ final class ParameterDefinition implements DefinitionInterface
 
     public function isBuiltin(): bool
     {
-        return $this->parameter->getType()->isBuiltin();
+        $type = $this->parameter->getType();
+        if ($type === null) {
+            return false;
+        }
+        return $type->isBuiltin();
     }
 
     public function hasValue(): bool
@@ -52,7 +56,6 @@ final class ParameterDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container)
     {
-
         $type = $this->parameter->getType();
 
         if ($type === null || $this->isVariadic()) {
@@ -64,7 +67,8 @@ final class ParameterDefinition implements DefinitionInterface
         }
 
         if (!$this->isBuiltin()) {
-            $typeName = $this->parameter->getType()->getName();
+            /** @var ReflectionNamedType $type */
+            $typeName = $type->getName();
             if ($typeName === 'self') {
                 // If type name is "self", it means that called class and
                 // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
@@ -85,7 +89,7 @@ final class ParameterDefinition implements DefinitionInterface
             if (!$result instanceof $typeName) {
                 $actualType = $this->getValueType($result);
                 throw new InvalidConfigException(
-                    "Container returned incorrect type \"$actualType\" for service \"{$this->parameter->getType()->getName()}\"."
+                    "Container returned incorrect type \"$actualType\" for service \"{$type->getName()}\"."
                 );
             }
             return $result;
@@ -94,6 +98,9 @@ final class ParameterDefinition implements DefinitionInterface
         return $this->resolveBuiltin();
     }
 
+    /**
+     * @return mixed
+     */
     private function resolveBuiltin()
     {
         if ($this->parameter->isDefaultValueAvailable()) {
@@ -133,11 +140,15 @@ final class ParameterDefinition implements DefinitionInterface
      */
     private function resolveUnionType(ContainerInterface $container)
     {
-        $types = $this->parameter->getType()->getTypes();
+        /** @var ReflectionUnionType $parameterType */
+        $parameterType = $this->parameter->getType();
+        /** @var \ReflectionType[] $types */
+        $types = $parameterType->getTypes();
         $class = implode('|', $types);
 
         foreach ($types as $type) {
             if (!$type->isBuiltin()) {
+                /** @var ReflectionNamedType $type */
                 $typeName = $type->getName();
                 if ($typeName === 'self') {
                     // If type name is "self", it means that called class and
