@@ -140,9 +140,15 @@ final class ParameterDefinition implements DefinitionInterface
      */
     private function resolveUnionType(ContainerInterface $container)
     {
-        /** @var ReflectionUnionType $parameterType */
+        /**
+         * @psalm-suppress UndefinedClass
+         * @var ReflectionUnionType $parameterType
+         */
         $parameterType = $this->parameter->getType();
-        /** @var \ReflectionType[] $types */
+        /**
+         * @var \ReflectionType[] $types
+         * @psalm-suppress UndefinedClass
+         */
         $types = $parameterType->getTypes();
         $class = implode('|', $types);
 
@@ -186,6 +192,7 @@ final class ParameterDefinition implements DefinitionInterface
 
     private function isUnionType(): bool
     {
+        /** @psalm-suppress UndefinedClass */
         return $this->parameter->getType() instanceof ReflectionUnionType;
     }
 
