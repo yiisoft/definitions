@@ -14,7 +14,6 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Objects\Car;
-use Yiisoft\Definitions\Tests\Objects\EngineInterface;
 use Yiisoft\Definitions\Tests\Objects\NullableConcreteDependency;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
