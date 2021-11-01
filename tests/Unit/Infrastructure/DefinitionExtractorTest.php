@@ -6,7 +6,6 @@ namespace Yiisoft\Definitions\Tests\Unit\Infrastructure;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Definitions\ClassDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
