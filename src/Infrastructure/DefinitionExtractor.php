@@ -7,10 +7,7 @@ namespace Yiisoft\Definitions\Infrastructure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunctionAbstract;
-use ReflectionNamedType;
 use ReflectionParameter;
-use ReflectionUnionType;
-use Yiisoft\Definitions\ClassDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
@@ -97,60 +94,6 @@ final class DefinitionExtractor
 
     private function fromParameter(ReflectionParameter $parameter): DefinitionInterface
     {
-        $type = $parameter->getType();
-
-        if ($type === null || $parameter->isVariadic()) {
-            return new ParameterDefinition($parameter);
-        }
-
-        // PHP 8 union type is used as type hint
-        /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
-        if ($type instanceof ReflectionUnionType) {
-            $types = [];
-            /** @var ReflectionNamedType $unionType */
-            foreach ($type->getTypes() as $unionType) {
-                if (!$unionType->isBuiltin()) {
-                    $typeName = $unionType->getName();
-                    if ($typeName === 'self') {
-                        // If type name is "self", it means that called class and
-                        // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
-                        /** @psalm-suppress PossiblyNullReference */
-                        $typeName = $parameter->getDeclaringClass()->getName();
-                    }
-
-                    $types[] = $typeName;
-                }
-            }
-
-            if ($types === []) {
-                return new ParameterDefinition($parameter);
-            }
-
-            /** @psalm-suppress MixedArgument */
-            return new ClassDefinition(implode('|', $types), $parameter->isOptional());
-        }
-
-        /** @var ReflectionNamedType $type */
-
-        // Our parameter has a class type hint
-        if (!$type->isBuiltin()) {
-            $typeName = $type->getName();
-            /**
-             * @psalm-suppress TypeDoesNotContainType
-             *
-             * @link https://github.com/vimeo/psalm/issues/6756
-             */
-            if ($typeName === 'self') {
-                // If type name is "self", it means that called class and
-                // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
-                /** @psalm-suppress PossiblyNullReference */
-                $typeName = $parameter->getDeclaringClass()->getName();
-            }
-
-            return new ClassDefinition($typeName, $parameter->isOptional());
-        }
-
-        // Our parameter does have a built-in type hint
         return new ParameterDefinition($parameter);
     }
 }
