@@ -70,7 +70,7 @@ final class DynamicReferencesArray
      * @return DynamicReference[]
      * @psalm-suppress DocblockTypeContradiction
      */
-    public static function from(array $ids)
+    public static function from(array $ids): array
     {
         $references = [];
 

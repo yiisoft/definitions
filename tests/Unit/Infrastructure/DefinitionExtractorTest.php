@@ -38,7 +38,7 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(DateTime::class);
 
-        // Since reflection for built in classes does not get default values.
+        // Since reflection for built-in classes does not get default values.
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
             'Can not determine default value of parameter "time" when instantiating' .

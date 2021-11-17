@@ -13,7 +13,7 @@ use Yiisoft\Definitions\ReferencesArray;
 
 final class ReferencesArrayTest extends TestCase
 {
-    public function testReferencesArray()
+    public function testReferencesArray(): void
     {
         $ids = ['key1' => 'first', 'key2' => 'second'];
 
@@ -23,7 +23,7 @@ final class ReferencesArrayTest extends TestCase
         $this->assertInstanceOf(Reference::class, $references['key2']);
     }
 
-    public function testReferencesArrayFail()
+    public function testReferencesArrayFail(): void
     {
         $ids = ['first', 22];
 
@@ -31,7 +31,7 @@ final class ReferencesArrayTest extends TestCase
         $references = ReferencesArray::from($ids);
     }
 
-    public function testDynamicReferencesArray()
+    public function testDynamicReferencesArray(): void
     {
         $ids = ['key1' => 'first', 'key2' => 'second'];
 
@@ -41,7 +41,7 @@ final class ReferencesArrayTest extends TestCase
         $this->assertInstanceOf(DynamicReference::class, $references['key2']);
     }
 
-    public function testDynamicReferencesArrayFail()
+    public function testDynamicReferencesArrayFail(): void
     {
         $ids = ['first', 22];
 

@@ -59,7 +59,6 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testFromClassWithUnionSelfDependency(): void
     {
-        /** @var ClassDefinition $definition */
         $definition = DefinitionExtractor::getInstance()->fromClassName(UnionSelfDependency::class)['a'];
 
         $actualType = implode('|', $definition->getReflection()->getType()->getTypes());

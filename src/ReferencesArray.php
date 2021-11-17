@@ -69,7 +69,7 @@ final class ReferencesArray
      * @return Reference[]
      * @psalm-suppress DocblockTypeContradiction
      */
-    public static function from(array $ids)
+    public static function from(array $ids): array
     {
         $references = [];
 

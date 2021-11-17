@@ -96,7 +96,7 @@ final class ArrayDefinition implements DefinitionInterface
                 continue;
             }
 
-            if (count($methodArray = explode('()', $key)) === 2) {
+            if (count($methodArray = explode('()', $key, 2)) === 2) {
                 $methodsAndProperties[$key] = [self::TYPE_METHOD, $methodArray[0], $value];
             } elseif (count($propertyArray = explode('$', $key)) === 2) {
                 $methodsAndProperties[$key] = [self::TYPE_PROPERTY, $propertyArray[1], $value];

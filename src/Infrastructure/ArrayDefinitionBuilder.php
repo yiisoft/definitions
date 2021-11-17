@@ -65,8 +65,7 @@ final class ArrayDefinitionBuilder
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
 
-        $methodsAndProperties = $definition->getMethodsAndProperties();
-        foreach ($methodsAndProperties as $item) {
+        foreach ($definition->getMethodsAndProperties() as $item) {
             /** @var mixed $value */
             [$type, $name, $value] = $item;
             /** @var mixed */

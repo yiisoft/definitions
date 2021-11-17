@@ -12,6 +12,9 @@ use Throwable;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
+use function get_class;
+use function gettype;
+use function is_object;
 
 /**
  * Parameter definition resolves an object based on information from `ReflectionParameter` instance.

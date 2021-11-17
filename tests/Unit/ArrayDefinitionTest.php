@@ -163,14 +163,11 @@ final class ArrayDefinitionTest extends TestCase
 
         $author = 'Sergei';
         $country = 'Russia';
-        $definition = ArrayDefinition::fromConfig(
-            array_merge([
-                ArrayDefinition::CLASS_NAME => Phone::class,
-            ], [
-                'withAuthor()' => [$author],
-                'withCountry()' => [$country],
-            ])
-        );
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            'withAuthor()' => [$author],
+            'withCountry()' => [$country]
+        ]);
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
