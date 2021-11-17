@@ -183,6 +183,28 @@ ContentNegotiator::class => [
 ],
 ```
 
+### Definition storage
+
+Definition storage could be used to hold and obtain definitions and check if a certain definition could be instantiated.
+Usually it is used by an implementation using the definitions:
+
+```php
+use Yiisoft\Definitions\Infrastructure\DefinitionStorage;
+
+$storage = new DefinitionStorage([
+    MyInterface::class => MyClass::class,
+]);
+$storage->setDelegateContainer($fallbackContainer);
+
+if (!$storage->has(MyInterface::class)) {
+    $buildStack = $storage->getBuildStack();
+    // ...
+}
+```
+
+In the above `$buildStack` will contain a stack with definition IDs as keys and 1 as values in the order the latest
+dependency obtained would be built.
+
 ## Testing
 
 ### Unit testing

@@ -8,12 +8,11 @@ use Psr\Container\ContainerInterface;
 use ReflectionNamedType;
 use ReflectionUnionType;
 use RuntimeException;
+use Throwable;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 
 /**
  * Stores service definitions and checks if a definition could be instantiated.
- *
- * @internal
  */
 final class DefinitionStorage
 {
@@ -27,6 +26,9 @@ final class DefinitionStorage
         $this->definitions = $definitions;
     }
 
+    /**
+     * @param ContainerInterface $delegateContainer Container to fall back to when dependency is not found.
+     */
     public function setDelegateContainer(ContainerInterface $delegateContainer): void
     {
         $this->delegateContainer = $delegateContainer;
@@ -45,6 +47,12 @@ final class DefinitionStorage
         return $this->isResolvable($id, []);
     }
 
+    /**
+     * Returns a stack with definition IDs as keys and 1 as values in the order the latest dependency obtained would
+     * be built.
+     *
+     * @return array Build stack.
+     */
     public function getBuildStack(): array
     {
         return $this->buildStack;
@@ -95,7 +103,7 @@ final class DefinitionStorage
 
         try {
             $dependencies = DefinitionExtractor::getInstance()->fromClassName($id);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->buildStack += $building + [$id => 1];
             return false;
         }
@@ -122,7 +130,7 @@ final class DefinitionStorage
                  * @psalm-suppress RedundantConditionGivenDocblockType
                  * @psalm-suppress UndefinedClass
                  */
-                if ($type === null || !$type instanceof ReflectionUnionType && $type->isBuiltin()) {
+                if ($type === null || (!$type instanceof ReflectionUnionType && $type->isBuiltin())) {
                     $isResolvable = false;
                     break;
                 }
