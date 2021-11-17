@@ -166,7 +166,7 @@ final class ArrayDefinitionTest extends TestCase
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
             'withAuthor()' => [$author],
-            'withCountry()' => [$country]
+            'withCountry()' => [$country],
         ]);
 
         /** @var Phone $phone */
