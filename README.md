@@ -46,20 +46,6 @@ that has a single method `resolve(ContainerInterface $container)`. References ar
 typically stored in the container or a factory and are resolved into object
 at the moment of obtaining a service instance or creating an object.
 
-#### `ClassDefinition`
-
-Class definition points to a class or interface name. Union type could be used as well.
-
-```php
-use \Yiisoft\Definitions\ClassDefinition;
-
-$definition = new ClassDefinition(MyServiceInterface::class, false);
-$object = $definition->resolve($container);
-```
-
-The second argument above is an "optional" flag. Set it to true if null should be returned instead of throwing
-an exception when resolving the definition.
-
 #### `ArrayDefinition`
 
 Array definition allows describing a service or an object declaratively:
