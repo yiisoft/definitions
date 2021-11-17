@@ -9,7 +9,6 @@ use ReflectionNamedType;
 use ReflectionUnionType;
 use RuntimeException;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
-use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
 
 /**
  * Stores service definitions and checks if a definition could be instantiated.
