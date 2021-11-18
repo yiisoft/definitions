@@ -23,17 +23,17 @@ final class DefinitionResolver
      *
      * @param array $dependencies The dependencies.
      *
-     * @psalm-param array<string,mixed> $dependencies
+     * @psalm-param array<string,mixed> $definitions Definitions to resolve.
      *
      * @return array The resolved dependencies.
      *
      * @psalm-return array<string,mixed>
      */
-    public static function resolveArray(ContainerInterface $container, ?ContainerInterface $referenceContainer, array $dependencies): array
+    public static function resolveArray(ContainerInterface $container, ?ContainerInterface $referenceContainer, array $definitions): array
     {
         $result = [];
         /** @var mixed $definition */
-        foreach ($dependencies as $key => $definition) {
+        foreach ($definitions as $key => $definition) {
             if (
                 $definition instanceof ParameterDefinition &&
                 (
@@ -54,7 +54,7 @@ final class DefinitionResolver
     /**
      * This function resolves a definition recursively, checking for loops.
      *
-     * @param mixed $definition
+     * @param mixed $definition Definition to resolve.
      *
      * @return mixed
      */
