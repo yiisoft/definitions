@@ -14,8 +14,8 @@ use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 
 /**
- * This class resolves dependencies by using class type hints.
- * Note that service names need not match the parameter names, parameter names are ignored
+ * This class extracts dependency definitions from type hints of a function or a class constructor parameters.
+ * Note that service names need not match the parameter names, parameter names are ignored.
  *
  * @internal
  */
@@ -47,6 +47,8 @@ final class DefinitionExtractor
     }
 
     /**
+     * Extract dependency definitions from type hints of a class constructor parameters.
+     *
      * @psalm-param class-string $class
      *
      * @throws NotFoundException
@@ -79,6 +81,8 @@ final class DefinitionExtractor
     }
 
     /**
+     * Extract dependency definitions from type hints of a function.
+     *
      * @return ParameterDefinition[]
      * @psalm-return array<string, ParameterDefinition>
      */
