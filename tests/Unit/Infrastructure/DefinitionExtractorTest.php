@@ -6,8 +6,8 @@ namespace Yiisoft\Definitions\Tests\Unit\Infrastructure;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
@@ -58,7 +58,7 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['engine']);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
 
-        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['engine']->resolve($container);
     }
 
@@ -89,7 +89,7 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['engine']->resolve($container);
     }
 
@@ -110,7 +110,7 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['car']->resolve($container);
     }
 
@@ -138,8 +138,8 @@ final class DefinitionExtractorTest extends TestCase
     {
         $extractor = DefinitionExtractor::getInstance();
 
-        $this->expectException(NotFoundException::class);
-        $this->expectExceptionMessage('No definition or class found or resolvable for NonExistingClass.');
+        $this->expectException(NotInstantiableClassException::class);
+        $this->expectExceptionMessage('Can not instantiate NonExistingClass.');
         $extractor->fromClassName('NonExistingClass');
     }
 

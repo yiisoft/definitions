@@ -6,6 +6,7 @@ namespace Yiisoft\Definitions\Tests\Php8;
 
 use PHPUnit\Framework\TestCase;
 use Closure;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionParameter;
@@ -14,7 +15,6 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Objects\GearBox;
 use Yiisoft\Definitions\Tests\Objects\UnionCar;
-use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
@@ -26,7 +26,7 @@ final class ParameterDefinitionTest extends TestCase
         );
         $container = new SimpleContainer();
 
-        $this->expectException(NotFoundException::class);
+        $this->expectException(NotFoundExceptionInterface::class);
         $definition->resolve($container);
     }
 

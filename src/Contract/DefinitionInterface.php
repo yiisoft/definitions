@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Contract;
 
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 
 /**
@@ -21,7 +21,7 @@ interface DefinitionInterface
      * @throws InvalidConfigException If an object of incorrect type was created.
      * @throws CircularReferenceException If there is a circular reference detected
      * when resolving the definition.
-     * @throws NotFoundException If container does not know how to resolve
+     * @throws NotFoundExceptionInterface If container does not know how to resolve
      * the definition.
      * @throws NotInstantiableException If an object can not be instantiated.
      *
