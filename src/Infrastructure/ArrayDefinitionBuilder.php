@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Infrastructure;
 
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 
@@ -48,7 +48,7 @@ final class ArrayDefinitionBuilder
      * @param ContainerInterface|null $referenceContainer Container to resolve references with.
      * @param ArrayDefinition $definition Definition to resolve.
      *
-     * @throws NotFoundException When no definition or class was found in the container for a given ID.
+     * @throws NotFoundExceptionInterface When no definition or class was found in the container for a given ID.
      * @throws NotInstantiableException When a class can not be instantiated.
      * @throws InvalidConfigException When definition configuration is not valid.
      */

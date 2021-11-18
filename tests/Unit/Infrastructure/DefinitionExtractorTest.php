@@ -6,6 +6,7 @@ namespace Yiisoft\Definitions\Tests\Unit\Infrastructure;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
@@ -57,7 +58,7 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['engine']);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
 
-        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['engine']->resolve($container);
     }
 
@@ -88,7 +89,7 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['engine']->resolve($container);
     }
 
@@ -109,7 +110,7 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->expectException(\Yiisoft\Test\Support\Container\Exception\NotFoundException::class);
+        $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['car']->resolve($container);
     }
 
