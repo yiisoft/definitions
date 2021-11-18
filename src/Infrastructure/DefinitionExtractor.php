@@ -8,7 +8,6 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
-use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
@@ -51,7 +50,6 @@ final class DefinitionExtractor
      *
      * @psalm-param class-string $class
      *
-     * @throws NotFoundException
      * @throws NotInstantiableException
      *
      * @return ParameterDefinition[]
@@ -66,7 +64,7 @@ final class DefinitionExtractor
         try {
             $reflectionClass = new ReflectionClass($class);
         } catch (ReflectionException $e) {
-            throw new NotFoundException($class);
+            throw new NotInstantiableClassException($class);
         }
 
         if (!$reflectionClass->isInstantiable()) {

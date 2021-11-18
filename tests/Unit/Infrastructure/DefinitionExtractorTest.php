@@ -7,7 +7,6 @@ namespace Yiisoft\Definitions\Tests\Unit\Infrastructure;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
@@ -138,8 +137,8 @@ final class DefinitionExtractorTest extends TestCase
     {
         $extractor = DefinitionExtractor::getInstance();
 
-        $this->expectException(NotFoundException::class);
-        $this->expectExceptionMessage('No definition or class found or resolvable for NonExistingClass.');
+        $this->expectException(NotInstantiableClassException::class);
+        $this->expectExceptionMessage('Can not instantiate NonExistingClass.');
         $extractor->fromClassName('NonExistingClass');
     }
 
