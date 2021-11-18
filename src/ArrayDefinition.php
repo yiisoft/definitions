@@ -7,9 +7,6 @@ namespace Yiisoft\Definitions;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Exception\NotFoundException;
-use Yiisoft\Definitions\Exception\NotInstantiableException;
-use Yiisoft\Definitions\Infrastructure\ArrayDefinitionBuilder;
 
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
 use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
@@ -150,14 +147,14 @@ final class ArrayDefinition implements DefinitionInterface
             [$type, $name, $value] = $item;
             /** @var mixed */
             $value = DefinitionResolver::resolve($container, $this->referenceContainer, $value);
-            if ($type === ArrayDefinition::TYPE_METHOD) {
+            if ($type === self::TYPE_METHOD) {
                 /** @var mixed */
                 $setter = call_user_func_array([$object, $name], $value);
                 if ($setter instanceof $object) {
                     /** @var object */
                     $object = $setter;
                 }
-            } elseif ($type === ArrayDefinition::TYPE_PROPERTY) {
+            } elseif ($type === self::TYPE_PROPERTY) {
                 $object->$name = $value;
             }
         }
