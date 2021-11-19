@@ -10,7 +10,7 @@ use ReflectionUnionType;
 use RuntimeException;
 use Throwable;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
-use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
+use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 
 /**
  * Stores service definitions and checks if a definition could be instantiated.

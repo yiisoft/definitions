@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Tests\Unit\Infrastructure;
+namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +10,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
-use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
+use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\EngineInterface;

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Tests\Unit\Infrastructure;
+namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Infrastructure\DefinitionValidator;
+use Yiisoft\Definitions\Helpers\DefinitionValidator;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\CarFactory;

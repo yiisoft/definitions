@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Dfinitions\Infrastructure\Tests\Unit;
+namespace Yiisoft\Dfinitions\Helpers\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\DefinitionStorage;

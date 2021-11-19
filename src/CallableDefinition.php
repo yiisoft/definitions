@@ -11,8 +11,8 @@ use ReflectionFunction;
 use ReflectionMethod;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
-use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
-use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
+use Yiisoft\Definitions\Helpers\DefinitionExtractor;
+use Yiisoft\Definitions\Helpers\DefinitionResolver;
 
 use function is_array;
 use function is_object;

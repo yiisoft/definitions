@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Tests\Unit\Infrastructure;
+namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
+use Yiisoft\Definitions\Helpers\DefinitionResolver;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\ValueDefinition;

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Tests\Php8\Infrastructure;
+namespace Yiisoft\Definitions\Tests\Php8\Helpers;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
+use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\Tests\Support\ColorInterface;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\UnionCar;

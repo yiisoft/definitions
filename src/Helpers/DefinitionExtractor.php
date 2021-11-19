@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Infrastructure;
+namespace Yiisoft\Definitions\Helpers;
 
 use ReflectionClass;
 use ReflectionException;
