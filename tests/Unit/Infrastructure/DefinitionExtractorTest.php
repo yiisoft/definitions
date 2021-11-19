@@ -32,11 +32,10 @@ final class DefinitionExtractorTest extends TestCase
             $this->markTestSkipped('Can not determine default value of PHP internal parameters in PHP < 8.0.');
         }
 
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
 
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(DateTime::class);
+        $dependencies = DefinitionExtractor::fromClassName(DateTime::class);
 
         // Since reflection for built-in classes does not get default values.
         $this->expectException(NotInstantiableException::class);
@@ -49,10 +48,9 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testResolveCarConstructor(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(Car::class);
+        $dependencies = DefinitionExtractor::fromClassName(Car::class);
 
         $this->assertCount(2, $dependencies);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['engine']);
@@ -64,30 +62,27 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testResolveGearBoxConstructor(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(GearBox::class);
+        $dependencies = DefinitionExtractor::fromClassName(GearBox::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(5, $dependencies['maxGear']->resolve($container));
     }
 
     public function testOptionalInterfaceDependency(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(OptionalInterfaceDependency::class);
+        $dependencies = DefinitionExtractor::fromClassName(OptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['engine']->resolve($container));
     }
 
     public function testNullableInterfaceDependency(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
+        $dependencies = DefinitionExtractor::fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
         $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['engine']->resolve($container);
@@ -95,20 +90,18 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testOptionalConcreteDependency(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(OptionalConcreteDependency::class);
+        $dependencies = DefinitionExtractor::fromClassName(OptionalConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
 
     public function testNullableConcreteDependency(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
+        $dependencies = DefinitionExtractor::fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['car']->resolve($container);
@@ -116,46 +109,40 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testNullableOptionalConcreteDependency(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(NullableOptionalConcreteDependency::class);
+        $dependencies = DefinitionExtractor::fromClassName(NullableOptionalConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
 
     public function testNullableOptionalInterfaceDependency(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(NullableOptionalInterfaceDependency::class);
+        $dependencies = DefinitionExtractor::fromClassName(NullableOptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['engine']->resolve($container));
     }
 
     public function testFromNonExistingClass(): void
     {
-        $extractor = DefinitionExtractor::getInstance();
-
         $this->expectException(NotInstantiableClassException::class);
         $this->expectExceptionMessage('Can not instantiate NonExistingClass.');
-        $extractor->fromClassName('NonExistingClass');
+        DefinitionExtractor::fromClassName('NonExistingClass');
     }
 
     public function testFromNotInstantiableClass(): void
     {
-        $extractor = DefinitionExtractor::getInstance();
-
         $this->expectException(NotInstantiableClassException::class);
         $this->expectExceptionMessage('Can not instantiate ' . EngineInterface::class . '.');
-        $extractor->fromClassName(EngineInterface::class);
+        DefinitionExtractor::fromClassName(EngineInterface::class);
     }
 
     public function testFromClassWithSelfDependency(): void
     {
         /** @var ParameterDefinition $definition */
-        $definition = DefinitionExtractor::getInstance()->fromClassName(SelfDependency::class)['a'];
+        $definition = DefinitionExtractor::fromClassName(SelfDependency::class)['a'];
 
         $this->assertInstanceOf(ParameterDefinition::class, $definition);
         $this->assertSame('self', $definition->getReflection()->getType()->getName());

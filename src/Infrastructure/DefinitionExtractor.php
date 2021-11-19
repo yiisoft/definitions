@@ -7,7 +7,6 @@ namespace Yiisoft\Definitions\Infrastructure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunctionAbstract;
-use ReflectionParameter;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
@@ -20,8 +19,6 @@ use Yiisoft\Definitions\ParameterDefinition;
  */
 final class DefinitionExtractor
 {
-    private static ?self $instance = null;
-
     /**
      * @psalm-var array<string, array<string, ParameterDefinition>>
      */
@@ -29,20 +26,6 @@ final class DefinitionExtractor
 
     private function __construct()
     {
-    }
-
-    /**
-     * Get an instance of this class or create it.
-     *
-     * @return static An instance of this class.
-     */
-    public static function getInstance(): self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
     }
 
     /**
@@ -55,7 +38,7 @@ final class DefinitionExtractor
      * @return ParameterDefinition[]
      * @psalm-return array<string, ParameterDefinition>
      */
-    public function fromClassName(string $class): array
+    public static function fromClassName(string $class): array
     {
         if (isset(self::$dependencies[$class])) {
             return self::$dependencies[$class];
@@ -72,7 +55,7 @@ final class DefinitionExtractor
         }
 
         $constructor = $reflectionClass->getConstructor();
-        $dependencies = $constructor === null ? [] : $this->fromFunction($constructor);
+        $dependencies = $constructor === null ? [] : self::fromFunction($constructor);
         self::$dependencies[$class] = $dependencies;
 
         return $dependencies;
@@ -84,17 +67,12 @@ final class DefinitionExtractor
      * @return ParameterDefinition[]
      * @psalm-return array<string, ParameterDefinition>
      */
-    public function fromFunction(ReflectionFunctionAbstract $reflectionFunction): array
+    public static function fromFunction(ReflectionFunctionAbstract $reflectionFunction): array
     {
         $result = [];
         foreach ($reflectionFunction->getParameters() as $parameter) {
-            $result[$parameter->getName()] = $this->fromParameter($parameter);
+            $result[$parameter->getName()] = new ParameterDefinition($parameter);
         }
         return $result;
-    }
-
-    private function fromParameter(ReflectionParameter $parameter): ParameterDefinition
-    {
-        return new ParameterDefinition($parameter);
     }
 }

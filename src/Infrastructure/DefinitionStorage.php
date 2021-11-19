@@ -102,7 +102,7 @@ final class DefinitionStorage
         }
 
         try {
-            $dependencies = DefinitionExtractor::getInstance()->fromClassName($id);
+            $dependencies = DefinitionExtractor::fromClassName($id);
         } catch (Throwable $e) {
             $this->buildStack += $building + [$id => 1];
             return false;

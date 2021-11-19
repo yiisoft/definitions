@@ -132,7 +132,7 @@ final class ArrayDefinition implements DefinitionInterface
     public function resolve(ContainerInterface $container): object
     {
         $class = $this->getClass();
-        $dependencies = DefinitionExtractor::getInstance()->fromClassName($class);
+        $dependencies = DefinitionExtractor::fromClassName($class);
         $constructorArguments = $this->getConstructorArguments();
 
         $this->injectArguments($dependencies, $constructorArguments);

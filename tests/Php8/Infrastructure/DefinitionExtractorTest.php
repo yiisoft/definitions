@@ -20,11 +20,10 @@ final class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {
-        $extractor = DefinitionExtractor::getInstance();
         $container = new SimpleContainer();
 
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $extractor->fromClassName(DateTime::class);
+        $dependencies = DefinitionExtractor::fromClassName(DateTime::class);
 
         $this->assertCount(2, $dependencies);
         $this->assertEquals('now', $dependencies['datetime']->resolve($container));
@@ -33,12 +32,11 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testResolveCarConstructor(): void
     {
-        $extractor = DefinitionExtractor::getInstance();
         $container = new SimpleContainer([
             EngineMarkOne::class => new EngineMarkOne(),
         ]);
 
-        $dependencies = $extractor->fromClassName(UnionCar::class);
+        $dependencies = DefinitionExtractor::fromClassName(UnionCar::class);
 
         $this->assertCount(1, $dependencies);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['engine']);
@@ -48,9 +46,7 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testUnionScalarTypes(): void
     {
-        $extractor = DefinitionExtractor::getInstance();
-
-        $definition = $extractor->fromFunction(
+        $definition = DefinitionExtractor::fromFunction(
             new ReflectionFunction(static fn (string|int $a): bool => true),
         )['a'];
 
@@ -59,7 +55,7 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testFromClassWithUnionSelfDependency(): void
     {
-        $definition = DefinitionExtractor::getInstance()->fromClassName(UnionSelfDependency::class)['a'];
+        $definition = DefinitionExtractor::fromClassName(UnionSelfDependency::class)['a'];
 
         $actualType = implode('|', $definition->getReflection()->getType()->getTypes());
         $this->assertInstanceOf(ParameterDefinition::class, $definition);
