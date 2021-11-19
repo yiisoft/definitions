@@ -8,7 +8,7 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Infrastructure\Normalizer;
+use Yiisoft\Definitions\Helpers\Normalizer;
 
 use function is_callable;
 use function is_object;

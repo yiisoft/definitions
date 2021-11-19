@@ -8,8 +8,8 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
-use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
-use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
+use Yiisoft\Definitions\Helpers\DefinitionExtractor;
+use Yiisoft\Definitions\Helpers\DefinitionResolver;
 use function count;
 
 /**

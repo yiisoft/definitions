@@ -14,8 +14,8 @@ use stdClass;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
-use Yiisoft\Definitions\Tests\Objects\Car;
-use Yiisoft\Definitions\Tests\Objects\NullableConcreteDependency;
+use Yiisoft\Definitions\Tests\Support\Car;
+use Yiisoft\Definitions\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase

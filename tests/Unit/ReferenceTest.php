@@ -7,7 +7,7 @@ namespace Yiisoft\Definitions\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Reference;
-use Yiisoft\Definitions\Tests\Objects\EngineInterface;
+use Yiisoft\Definitions\Tests\Support\EngineInterface;
 
 final class ReferenceTest extends TestCase
 {
