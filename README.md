@@ -189,7 +189,7 @@ Definition storage could be used to hold and obtain definitions and check if a c
 Usually it is used by an implementation using the definitions:
 
 ```php
-use Yiisoft\Definitions\Infrastructure\DefinitionStorage;
+use Yiisoft\Definitions\DefinitionStorage;
 
 $storage = new DefinitionStorage([
     MyInterface::class => MyClass::class,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Infrastructure;
+namespace Yiisoft\Definitions;
 
 use Psr\Container\ContainerInterface;
 use ReflectionNamedType;
@@ -10,6 +10,7 @@ use ReflectionUnionType;
 use RuntimeException;
 use Throwable;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
+use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
 
 /**
  * Stores service definitions and checks if a definition could be instantiated.

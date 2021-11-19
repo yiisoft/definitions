@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Dfinitions\Infrastructure\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Definitions\Infrastructure\DefinitionStorage;
+use Yiisoft\Definitions\DefinitionStorage;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithBuiltinTypeWithoutDefault;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingSubDependency;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingDependency;
