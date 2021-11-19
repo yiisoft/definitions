@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Infrastructure\DefinitionResolver;
 use Yiisoft\Definitions\Reference;
-use Yiisoft\Definitions\Tests\Objects\Car;
+use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\ValueDefinition;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 

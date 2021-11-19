@@ -10,8 +10,8 @@ use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Infrastructure\Normalizer;
 use Yiisoft\Definitions\Reference;
-use Yiisoft\Definitions\Tests\Objects\ColorPink;
-use Yiisoft\Definitions\Tests\Objects\GearBox;
+use Yiisoft\Definitions\Tests\Support\ColorPink;
+use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\ValueDefinition;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 

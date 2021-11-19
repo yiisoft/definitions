@@ -6,12 +6,12 @@ namespace Yiisoft\Dfinitions\Infrastructure\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\Infrastructure\DefinitionStorage;
-use Yiisoft\Definitions\Tests\Objects\DefinitionStorage\ServiceWithBuiltinTypeWithoutDefault;
-use Yiisoft\Definitions\Tests\Objects\DefinitionStorage\ServiceWithNonExistingSubDependency;
-use Yiisoft\Definitions\Tests\Objects\DefinitionStorage\ServiceWithNonExistingDependency;
-use Yiisoft\Definitions\Tests\Objects\DefinitionStorage\ServiceWithNonResolvableUnionTypes;
-use Yiisoft\Definitions\Tests\Objects\DefinitionStorage\ServiceWithPrivateConstructor;
-use Yiisoft\Definitions\Tests\Objects\DefinitionStorage\ServiceWithPrivateConstructorSubDependency;
+use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithBuiltinTypeWithoutDefault;
+use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingSubDependency;
+use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingDependency;
+use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonResolvableUnionTypes;
+use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructor;
+use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructorSubDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionStorageTest extends TestCase

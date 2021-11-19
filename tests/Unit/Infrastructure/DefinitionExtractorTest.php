@@ -12,16 +12,16 @@ use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
 use Yiisoft\Definitions\ParameterDefinition;
-use Yiisoft\Definitions\Tests\Objects\Car;
-use Yiisoft\Definitions\Tests\Objects\EngineInterface;
-use Yiisoft\Definitions\Tests\Objects\GearBox;
-use Yiisoft\Definitions\Tests\Objects\NullableConcreteDependency;
-use Yiisoft\Definitions\Tests\Objects\NullableInterfaceDependency;
-use Yiisoft\Definitions\Tests\Objects\OptionalConcreteDependency;
-use Yiisoft\Definitions\Tests\Objects\OptionalInterfaceDependency;
-use Yiisoft\Definitions\Tests\Objects\NullableOptionalConcreteDependency;
-use Yiisoft\Definitions\Tests\Objects\NullableOptionalInterfaceDependency;
-use Yiisoft\Definitions\Tests\Objects\SelfDependency;
+use Yiisoft\Definitions\Tests\Support\Car;
+use Yiisoft\Definitions\Tests\Support\EngineInterface;
+use Yiisoft\Definitions\Tests\Support\GearBox;
+use Yiisoft\Definitions\Tests\Support\NullableConcreteDependency;
+use Yiisoft\Definitions\Tests\Support\NullableInterfaceDependency;
+use Yiisoft\Definitions\Tests\Support\OptionalConcreteDependency;
+use Yiisoft\Definitions\Tests\Support\OptionalInterfaceDependency;
+use Yiisoft\Definitions\Tests\Support\NullableOptionalConcreteDependency;
+use Yiisoft\Definitions\Tests\Support\NullableOptionalInterfaceDependency;
+use Yiisoft\Definitions\Tests\Support\SelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionExtractorTest extends TestCase

@@ -10,11 +10,11 @@ use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Infrastructure\DefinitionValidator;
 use Yiisoft\Definitions\Reference;
-use Yiisoft\Definitions\Tests\Objects\Car;
-use Yiisoft\Definitions\Tests\Objects\CarFactory;
-use Yiisoft\Definitions\Tests\Objects\ColorPink;
-use Yiisoft\Definitions\Tests\Objects\GearBox;
-use Yiisoft\Definitions\Tests\Objects\Phone;
+use Yiisoft\Definitions\Tests\Support\Car;
+use Yiisoft\Definitions\Tests\Support\CarFactory;
+use Yiisoft\Definitions\Tests\Support\ColorPink;
+use Yiisoft\Definitions\Tests\Support\GearBox;
+use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Definitions\ValueDefinition;
 
 final class DefinitionValidatorTest extends TestCase

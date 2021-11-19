@@ -13,8 +13,8 @@ use ReflectionParameter;
 use stdClass;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\ParameterDefinition;
-use Yiisoft\Definitions\Tests\Objects\GearBox;
-use Yiisoft\Definitions\Tests\Objects\UnionCar;
+use Yiisoft\Definitions\Tests\Support\GearBox;
+use Yiisoft\Definitions\Tests\Support\UnionCar;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase

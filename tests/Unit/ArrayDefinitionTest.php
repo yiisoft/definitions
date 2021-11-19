@@ -7,7 +7,7 @@ namespace Yiisoft\Definitions\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Tests\Objects\Phone;
+use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ArrayDefinitionTest extends TestCase

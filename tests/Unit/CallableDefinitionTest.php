@@ -7,10 +7,10 @@ namespace Yiisoft\Definitions\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\CallableDefinition;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
-use Yiisoft\Definitions\Tests\Objects\Car;
-use Yiisoft\Definitions\Tests\Objects\CarFactory;
-use Yiisoft\Definitions\Tests\Objects\ColorInterface;
-use Yiisoft\Definitions\Tests\Objects\ColorPink;
+use Yiisoft\Definitions\Tests\Support\Car;
+use Yiisoft\Definitions\Tests\Support\CarFactory;
+use Yiisoft\Definitions\Tests\Support\ColorInterface;
+use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class CallableDefinitionTest extends TestCase

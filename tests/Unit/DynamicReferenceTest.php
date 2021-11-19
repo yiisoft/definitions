@@ -9,8 +9,8 @@ use Psr\Container\ContainerInterface;
 use stdClass;
 use Yiisoft\Definitions\DynamicReference;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-use Yiisoft\Definitions\Tests\Objects\EngineInterface;
-use Yiisoft\Definitions\Tests\Objects\EngineMarkOne;
+use Yiisoft\Definitions\Tests\Support\EngineInterface;
+use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DynamicReferenceTest extends TestCase

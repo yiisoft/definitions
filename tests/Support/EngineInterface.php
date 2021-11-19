@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Tests\Objects;
+namespace Yiisoft\Definitions\Tests\Support;
 
 /**
  * EngineInterface defines car engine interface

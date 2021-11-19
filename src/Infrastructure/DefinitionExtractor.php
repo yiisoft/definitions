@@ -24,10 +24,6 @@ final class DefinitionExtractor
      */
     private static array $dependencies = [];
 
-    private function __construct()
-    {
-    }
-
     /**
      * Extract dependency definitions from type hints of a class constructor parameters.
      *

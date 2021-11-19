@@ -2,18 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Tests\Objects;
+namespace Yiisoft\Definitions\Tests\Support;
 
-final class EngineMarkOne implements EngineInterface
+final class EngineMarkTwo implements EngineInterface
 {
-    public const NAME = 'Mark One';
+    public const NAME = 'Mark Two';
 
     private int $number;
-
-    public function __construct(int $number = 0)
-    {
-        $this->number = $number;
-    }
 
     public function getName(): string
     {

@@ -10,10 +10,10 @@ use ReflectionFunction;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Infrastructure\DefinitionExtractor;
-use Yiisoft\Definitions\Tests\Objects\ColorInterface;
-use Yiisoft\Definitions\Tests\Objects\EngineMarkOne;
-use Yiisoft\Definitions\Tests\Objects\UnionCar;
-use Yiisoft\Definitions\Tests\Objects\UnionSelfDependency;
+use Yiisoft\Definitions\Tests\Support\ColorInterface;
+use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
+use Yiisoft\Definitions\Tests\Support\UnionCar;
+use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionExtractorTest extends TestCase
