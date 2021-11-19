@@ -53,7 +53,7 @@ final class CallableDefinition implements DefinitionInterface
             );
         }
 
-        $dependencies = DefinitionExtractor::getInstance()->fromFunction($reflection);
+        $dependencies = DefinitionExtractor::fromFunction($reflection);
         $arguments = DefinitionResolver::resolveArray($container, null, $dependencies);
 
         return $reflection->invokeArgs($arguments);
