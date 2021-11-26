@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Dfinitions\Helpers\Tests\Unit;
+namespace Yiisoft\Dfinitions\Tests\Unit;
 
+use NonExisitng;
+use NonExisting;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Yiisoft\Definitions\DefinitionStorage;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithBuiltinTypeWithoutDefault;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingSubDependency;
@@ -12,6 +15,7 @@ use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingDe
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonResolvableUnionTypes;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructor;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructorSubDependency;
+use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionStorageTest extends TestCase
@@ -26,8 +30,8 @@ final class DefinitionStorageTest extends TestCase
     public function testNonExistingService(): void
     {
         $storage = new DefinitionStorage([]);
-        $this->assertFalse($storage->has(\NonExisitng::class));
-        $this->assertSame([\NonExisitng::class => 1], $storage->getBuildStack());
+        $this->assertFalse($storage->has(NonExisitng::class));
+        $this->assertSame([NonExisitng::class => 1], $storage->getBuildStack());
     }
 
     public function testServiceWithNonExistingDependency(): void
@@ -37,7 +41,7 @@ final class DefinitionStorageTest extends TestCase
         $this->assertSame(
             [
                 ServiceWithNonExistingDependency::class => 1,
-                \NonExisting::class => 1,
+                NonExisting::class => 1,
             ],
             $storage->getBuildStack()
         );
@@ -51,7 +55,7 @@ final class DefinitionStorageTest extends TestCase
             [
                 ServiceWithNonExistingSubDependency::class => 1,
                 ServiceWithNonExistingDependency::class => 1,
-                \NonExisting::class => 1,
+                NonExisting::class => 1,
             ],
             $storage->getBuildStack()
         );
@@ -89,8 +93,8 @@ final class DefinitionStorageTest extends TestCase
         $container = new SimpleContainer([]);
         $storage = new DefinitionStorage([]);
         $storage->setDelegateContainer($container);
-        $this->assertFalse($storage->has(\NonExisitng::class));
-        $this->assertSame([\NonExisitng::class => 1], $storage->getBuildStack());
+        $this->assertFalse($storage->has(NonExisitng::class));
+        $this->assertSame([NonExisitng::class => 1], $storage->getBuildStack());
     }
 
     public function testServiceWithNonExistingUnionTypes(): void
@@ -105,10 +109,27 @@ final class DefinitionStorageTest extends TestCase
             [
                 ServiceWithNonResolvableUnionTypes::class => 1,
                 ServiceWithNonExistingDependency::class => 1,
-                \NonExisting::class => 1,
+                NonExisting::class => 1,
                 ServiceWithPrivateConstructor::class => 1,
             ],
             $storage->getBuildStack()
         );
+    }
+
+    public function testStrictModeDisabled(): void
+    {
+        $storage = new DefinitionStorage([], false);
+        $this->assertTrue($storage->has(EngineMarkOne::class));
+        $this->assertSame(EngineMarkOne::class, $storage->get(EngineMarkOne::class));
+    }
+
+
+    public function testStrictModeEnabled(): void
+    {
+        $storage = new DefinitionStorage([], true);
+        $this->assertFalse($storage->has(EngineMarkOne::class));
+
+        $this->expectException(RuntimeException::class);
+        $storage->get(EngineMarkOne::class);
     }
 }

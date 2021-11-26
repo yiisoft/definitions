@@ -21,10 +21,12 @@ final class DefinitionStorage
     private array $buildStack = [];
     /** @psalm-suppress  PropertyNotSetInConstructor */
     private ?ContainerInterface $delegateContainer = null;
+    private bool $useStrictMode;
 
-    public function __construct(array $definitions = [])
+    public function __construct(array $definitions = [], bool $useStrictMode = false)
     {
         $this->definitions = $definitions;
+        $this->useStrictMode = $useStrictMode;
     }
 
     /**
@@ -87,6 +89,10 @@ final class DefinitionStorage
     {
         if (isset($this->definitions[$id])) {
             return true;
+        }
+
+        if ($this->useStrictMode) {
+            return false;
         }
 
         if (!class_exists($id)) {
