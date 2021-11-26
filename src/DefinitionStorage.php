@@ -23,6 +23,10 @@ final class DefinitionStorage
     private ?ContainerInterface $delegateContainer = null;
     private bool $useStrictMode;
 
+    /**
+     * @param array $definitions Definitions to store.
+     * @param bool $useStrictMode If every dependency should be defined explicitly including classes.
+     */
     public function __construct(array $definitions = [], bool $useStrictMode = false)
     {
         $this->definitions = $definitions;
