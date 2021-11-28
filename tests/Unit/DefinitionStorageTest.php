@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Dfinitions\Tests\Unit;
 
 use NonExisitng;
-use NonExisting;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Yiisoft\Definitions\DefinitionStorage;
@@ -129,6 +128,7 @@ final class DefinitionStorageTest extends TestCase
         $this->assertFalse($storage->has(EngineMarkOne::class));
 
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Service ' . EngineMarkOne::class . ' doesn\'t exist in DefinitionStorage.');
         $storage->get(EngineMarkOne::class);
     }
 }
