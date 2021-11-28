@@ -118,14 +118,19 @@ final class DefinitionStorageTest extends TestCase
     {
         $storage = new DefinitionStorage([], false);
         $this->assertTrue($storage->has(EngineMarkOne::class));
+
+        $storage = new DefinitionStorage([], false);
         $this->assertSame(EngineMarkOne::class, $storage->get(EngineMarkOne::class));
     }
+
+
 
     public function testStrictModeEnabled(): void
     {
         $storage = new DefinitionStorage([], true);
         $this->assertFalse($storage->has(EngineMarkOne::class));
 
+        $storage = new DefinitionStorage([], true);
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Service ' . EngineMarkOne::class . ' doesn\'t exist in DefinitionStorage.');
         $storage->get(EngineMarkOne::class);
