@@ -95,11 +95,7 @@ final class DefinitionStorage
             return true;
         }
 
-        if ($this->useStrictMode) {
-            return false;
-        }
-
-        if (!class_exists($id)) {
+        if ($this->useStrictMode || !class_exists($id)) {
             $this->buildStack += $building + [$id => 1];
             return false;
         }
