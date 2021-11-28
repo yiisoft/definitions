@@ -123,8 +123,6 @@ final class DefinitionStorageTest extends TestCase
         $this->assertSame(EngineMarkOne::class, $storage->get(EngineMarkOne::class));
     }
 
-
-
     public function testStrictModeEnabled(): void
     {
         $storage = new DefinitionStorage([], true);
