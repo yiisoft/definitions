@@ -72,7 +72,7 @@ final class DefinitionStorage
      */
     public function get(string $id)
     {
-        if (!isset($this->definitions[$id])) {
+        if (!$this->has($id)) {
             throw new RuntimeException("Service $id doesn't exist in DefinitionStorage.");
         }
         return $this->definitions[$id];
