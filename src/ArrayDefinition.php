@@ -140,6 +140,7 @@ final class ArrayDefinition implements DefinitionInterface
 
         $this->injectArguments($dependencies, $constructorArguments);
 
+        /** @psalm-suppress MixedArgumentTypeCoercion */
         $resolved = DefinitionResolver::resolveArray($container, $this->referenceContainer, $dependencies);
 
         /** @psalm-suppress MixedMethodCall */
@@ -166,7 +167,8 @@ final class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array<string, DefinitionInterface> $dependencies
+     * @psalm-param array<string, ParameterDefinition> $dependencies
+     * @psalm-param-out array<array-key, Yiisoft\Definitions\ParameterDefinition|mixed> $dependencies
      *
      * @throws InvalidConfigException
      */
@@ -175,10 +177,10 @@ final class ArrayDefinition implements DefinitionInterface
         $isIntegerIndexed = $this->isIntegerIndexed($arguments);
         $dependencyIndex = 0;
         $usedArguments = [];
-        $isVariadic = false;
+        $variadicKey = null;
         foreach ($dependencies as $key => &$value) {
-            if ($value instanceof ParameterDefinition && $value->isVariadic()) {
-                $isVariadic = true;
+            if ($value->isVariadic()) {
+                $variadicKey = $key;
             }
             $index = $isIntegerIndexed ? $dependencyIndex : $key;
             if (array_key_exists($index, $arguments)) {
@@ -188,7 +190,13 @@ final class ArrayDefinition implements DefinitionInterface
             $dependencyIndex++;
         }
         unset($value);
-        if ($isVariadic) {
+        if ($variadicKey !== null) {
+            if (!$isIntegerIndexed && isset($arguments[$variadicKey]) && is_array($arguments[$variadicKey])) {
+                unset($dependencies[$variadicKey]);
+                $dependencies += $arguments[$variadicKey];
+                return;
+            }
+
             /** @var mixed $value */
             foreach ($arguments as $index => $value) {
                 if (!isset($usedArguments[$index])) {
@@ -196,7 +204,6 @@ final class ArrayDefinition implements DefinitionInterface
                 }
             }
         }
-        /** @psalm-var array<string, DefinitionInterface> $dependencies */
     }
 
     /**

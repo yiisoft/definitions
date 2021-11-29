@@ -17,7 +17,7 @@ final class Phone
     public bool $dev = false;
     public ?string $codeName = null;
 
-    public function __construct(?string $name = null, ?string $version = null, string ...$colors)
+    public function __construct(?string $name = null, ?string $version = null, ...$colors)
     {
         $this->name = $name;
         $this->version = $version;

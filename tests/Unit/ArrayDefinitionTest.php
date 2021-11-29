@@ -84,6 +84,47 @@ final class ArrayDefinitionTest extends TestCase
         self::assertSame($colors, $phone->getColors());
     }
 
+    public function testConstructorWithVariadicArrayAndIntKeys(): void
+    {
+        $container = new SimpleContainer();
+
+        $colors = ['red', 'green', 'blue'];
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            ArrayDefinition::CONSTRUCTOR => [
+                null,
+                null,
+                $colors,
+            ],
+        ]);
+
+        /** @var Phone $phone */
+        $phone = $definition->resolve($container);
+
+
+        self::assertSame([$colors], $phone->getColors());
+    }
+
+    public function testConstructorWithVariadicAndNamedKeys(): void
+    {
+        $container = new SimpleContainer();
+
+        $colors = ['red', 'green', 'blue'];
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            ArrayDefinition::CONSTRUCTOR => [
+                'name' => null,
+                'version' => null,
+                'colors' => $colors,
+            ],
+        ]);
+
+        /** @var Phone $phone */
+        $phone = $definition->resolve($container);
+
+        self::assertSame($colors, $phone->getColors());
+    }
+
     public function dataSetProperties(): array
     {
         return [

@@ -21,13 +21,11 @@ final class DefinitionResolver
     /**
      * Resolves dependencies by replacing them with the actual object instances.
      *
-     * @param array $dependencies The dependencies.
-     *
+     * @param ContainerInterface $container Container to get dependencies from.
+     * @param ContainerInterface|null $referenceContainer Container to get references from.
      * @psalm-param array<string,mixed> $definitions Definitions to resolve.
      *
      * @return array The resolved dependencies.
-     *
-     * @psalm-return array<string,mixed>
      */
     public static function resolveArray(ContainerInterface $container, ?ContainerInterface $referenceContainer, array $definitions): array
     {
