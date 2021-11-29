@@ -62,7 +62,7 @@ final class ParameterDefinition implements DefinitionInterface
         $type = $this->parameter->getType();
 
         if ($type === null || $this->isVariadic()) {
-            return $this->resolveBuiltin();
+            return $this->resolveVariadicOrBuiltinOrNonTyped();
         }
 
         if ($this->isUnionType()) {
@@ -98,13 +98,13 @@ final class ParameterDefinition implements DefinitionInterface
             return $result;
         }
 
-        return $this->resolveBuiltin();
+        return $this->resolveVariadicOrBuiltinOrNonTyped();
     }
 
     /**
      * @return mixed
      */
-    private function resolveBuiltin()
+    private function resolveVariadicOrBuiltinOrNonTyped()
     {
         if ($this->parameter->isDefaultValueAvailable()) {
             return $this->parameter->getDefaultValue();
@@ -122,6 +122,7 @@ final class ParameterDefinition implements DefinitionInterface
         }
 
         $type = $this->getType();
+
         if ($type === null) {
             throw new NotInstantiableException(
                 sprintf(
@@ -138,7 +139,7 @@ final class ParameterDefinition implements DefinitionInterface
                 'Can not determine value of the "%s" parameter of type "%s" when instantiating "%s". ' .
                 'Please specify argument explicitly.',
                 $this->parameter->getName(),
-                $this->getType(),
+                $type,
                 $this->getCallable(),
             )
         );
@@ -200,7 +201,7 @@ final class ParameterDefinition implements DefinitionInterface
         }
 
         if (!isset($error)) {
-            return $this->resolveBuiltin();
+            return $this->resolveVariadicOrBuiltinOrNonTyped();
         }
 
         throw $error;
