@@ -16,6 +16,8 @@ use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\NullableConcreteDependency;
+use Yiisoft\Definitions\Tests\Support\SelfDependency;
+use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
@@ -152,6 +154,49 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertSame($expected, $definition->resolve($container));
     }
 
+    public function testResolveNonTypedParameter(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(
+                static fn ($x) => true,
+            )
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "x" parameter without type when instantiating'
+        );
+        $definition->resolve($container);
+    }
+
+    public function testResolveBuiltinParameter(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(
+                static fn (int $n) => true,
+            )
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "n" parameter of type "int" when instantiating'
+        );
+        $definition->resolve($container);
+    }
+
+    public function testResolveSelf(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstConstructorParameter(SelfDependency::class)
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotFoundException::class);
+        $definition->resolve($container);
+    }
+
     public function testNotInstantiable(): void
     {
         $definition = new ParameterDefinition(
@@ -182,6 +227,34 @@ final class ParameterDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
+    public function dataIsBuiltin(): array
+    {
+        return [
+            [
+                true,
+                $this->getFirstParameter(static fn (int $n) => 42),
+            ],
+            [
+                false,
+                $this->getFirstParameter(static fn (Car $car) => 42),
+            ],
+            [
+                false,
+                $this->getFirstParameter(static fn ($x) => 42),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataIsBuiltin
+     */
+    public function testIsBuiltin(bool $expected, ReflectionParameter $parameter): void
+    {
+        $definition = new ParameterDefinition($parameter);
+
+        $this->assertSame($expected, $definition->isBuiltin());
+    }
+
     /**
      * @return ReflectionParameter[]
      */
@@ -194,5 +267,12 @@ final class ParameterDefinitionTest extends TestCase
     private function getFirstParameter(Closure $closure): ReflectionParameter
     {
         return $this->getParameters($closure)[0];
+    }
+
+    private function getFirstConstructorParameter(string $class): ReflectionParameter
+    {
+        return (new ReflectionClass($class))
+            ->getConstructor()
+            ->getParameters()[0];
     }
 }
