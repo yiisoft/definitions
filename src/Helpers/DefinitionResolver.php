@@ -59,7 +59,9 @@ final class DefinitionResolver
     public static function resolve(ContainerInterface $container, ?ContainerInterface $referenceContainer, $definition)
     {
         if ($definition instanceof DefinitionInterface) {
-            $container = $referenceContainer !== null && $definition instanceof ReferenceInterface ? $referenceContainer : $container;
+            $container = $referenceContainer !== null && $definition instanceof ReferenceInterface
+                ? $referenceContainer
+                : $container;
             /** @var mixed $definition */
             $definition = $definition->resolve($container);
         } elseif (is_array($definition)) {

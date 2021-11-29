@@ -7,6 +7,13 @@ namespace Yiisoft\Definitions\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
+use Yiisoft\Definitions\Reference;
+use Yiisoft\Definitions\Tests\Support\Car;
+use Yiisoft\Definitions\Tests\Support\ColorInterface;
+use Yiisoft\Definitions\Tests\Support\ColorPink;
+use Yiisoft\Definitions\Tests\Support\EngineInterface;
+use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
+use Yiisoft\Definitions\Tests\Support\EngineMarkTwo;
 use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
@@ -270,5 +277,28 @@ final class ArrayDefinitionTest extends TestCase
             'Arguments indexed both by name and by position are not allowed in the same array.'
         );
         $definition->resolve($container);
+    }
+
+    public function testReferenceContainer(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+        ]);
+        $referenceContainer = new SimpleContainer([
+            ColorInterface::class => new ColorPink(),
+            EngineInterface::class => new EngineMarkTwo(),
+        ]);
+
+        $definition = ArrayDefinition::fromConfig([
+            'class' => Car::class,
+            'setColor()' => [Reference::to(ColorInterface::class)],
+        ]);
+        $definition->setReferenceContainer($referenceContainer);
+
+        /** @var Car $object */
+        $object = $definition->resolve($container);
+
+        $this->assertInstanceOf(Car::class, $object);
+        $this->assertInstanceOf(EngineMarkOne::class, $object->getEngine());
     }
 }

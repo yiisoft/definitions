@@ -7,10 +7,13 @@ namespace Yiisoft\Definitions;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\Helpers\DefinitionResolver;
+
+use function array_key_exists;
+use function call_user_func_array;
 use function count;
+use function is_string;
 
 /**
  * Builds an object by array config.
