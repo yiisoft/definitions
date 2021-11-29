@@ -12,9 +12,14 @@ use ReflectionFunction;
 use ReflectionParameter;
 use stdClass;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Support\GearBox;
+use Yiisoft\Definitions\Tests\Support\UnionBuiltinDependency;
 use Yiisoft\Definitions\Tests\Support\UnionCar;
+use Yiisoft\Definitions\Tests\Support\UnionOptionalDependency;
+use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
+use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
@@ -67,6 +72,41 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testResolveOpionalUnionType(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstConstructorParameter(UnionOptionalDependency::class)
+        );
+        $container = new SimpleContainer();
+
+        $this->assertNull($definition->resolve($container));
+    }
+
+    public function testResolveUnionBuiltin(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstConstructorParameter(UnionBuiltinDependency::class)
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "value" parameter of type "string|int" when instantiating '
+        );
+        $definition->resolve($container);
+    }
+
+    public function testResolveUnionSelf(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstConstructorParameter(UnionSelfDependency::class)
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotFoundException::class);
+        $definition->resolve($container);
+    }
+
     /**
      * @return ReflectionParameter[]
      */
@@ -79,5 +119,12 @@ final class ParameterDefinitionTest extends TestCase
     private function getFirstParameter(Closure $closure): ReflectionParameter
     {
         return $this->getParameters($closure)[0];
+    }
+
+    private function getFirstConstructorParameter(string $class): ReflectionParameter
+    {
+        return (new ReflectionClass($class))
+            ->getConstructor()
+            ->getParameters()[0];
     }
 }

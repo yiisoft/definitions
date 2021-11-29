@@ -16,6 +16,8 @@ use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\NullableConcreteDependency;
+use Yiisoft\Definitions\Tests\Support\SelfDependency;
+use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
@@ -184,6 +186,17 @@ final class ParameterDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
+    public function testResolveSelf(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstConstructorParameter(SelfDependency::class)
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotFoundException::class);
+        $definition->resolve($container);
+    }
+
     public function testNotInstantiable(): void
     {
         $definition = new ParameterDefinition(
@@ -254,5 +267,12 @@ final class ParameterDefinitionTest extends TestCase
     private function getFirstParameter(Closure $closure): ReflectionParameter
     {
         return $this->getParameters($closure)[0];
+    }
+
+    private function getFirstConstructorParameter(string $class): ReflectionParameter
+    {
+        return (new ReflectionClass($class))
+            ->getConstructor()
+            ->getParameters()[0];
     }
 }
