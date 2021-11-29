@@ -72,7 +72,7 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testResolveOpionalUnionType(): void
+    public function testResolveOptionalUnionType(): void
     {
         $definition = new ParameterDefinition(
             $this->getFirstConstructorParameter(UnionOptionalDependency::class)
