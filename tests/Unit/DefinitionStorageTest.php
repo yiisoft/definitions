@@ -7,6 +7,9 @@ namespace Yiisoft\Dfinitions\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Yiisoft\Definitions\DefinitionStorage;
+use Yiisoft\Definitions\Exception\CircularReferenceException;
+use Yiisoft\Definitions\Tests\Support\Circular\Chicken;
+use Yiisoft\Definitions\Tests\Support\Circular\Egg;
 use Yiisoft\Definitions\Tests\Support\ColorInterface;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithBuiltinTypeWithoutDefault;
@@ -16,6 +19,7 @@ use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonResolvable
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructor;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructorSubDependency;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
+use Yiisoft\Definitions\Tests\Support\SelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionStorageTest extends TestCase
@@ -144,5 +148,37 @@ final class DefinitionStorageTest extends TestCase
         $definition = $storage->get(ColorInterface::class);
 
         $this->assertSame(ColorPink::class, $definition);
+    }
+
+    public function testCircular(): void
+    {
+        $storage = new DefinitionStorage();
+
+        $this->expectException(CircularReferenceException::class);
+        $this->expectExceptionMessage(
+            'Circular reference to "' . Chicken::class . '" detected while building: ' .
+            Chicken::class . ', ' . Egg::class
+        );
+        $storage->get(Chicken::class);
+    }
+
+    public function testSelfCircular(): void
+    {
+        $storage = new DefinitionStorage();
+
+        $this->expectException(CircularReferenceException::class);
+        $this->expectExceptionMessage(
+            'Circular reference to "' . SelfDependency::class . '" detected while building: ' . SelfDependency::class
+        );
+        $storage->get(SelfDependency::class);
+    }
+
+    public function testWithoutDependencies(): void
+    {
+        $storage = new DefinitionStorage();
+
+        $object = $storage->get(ColorPink::class);
+
+        $this->assertSame(ColorPink::class, $object);
     }
 }
