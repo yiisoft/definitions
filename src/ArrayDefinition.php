@@ -140,6 +140,7 @@ final class ArrayDefinition implements DefinitionInterface
 
         $this->injectArguments($dependencies, $constructorArguments);
 
+        /** @psalm-suppress MixedArgumentTypeCoercion */
         $resolved = DefinitionResolver::resolveArray($container, $this->referenceContainer, $dependencies);
 
         /** @psalm-suppress MixedMethodCall */
@@ -166,7 +167,8 @@ final class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array<string, DefinitionInterface> $dependencies
+     * @psalm-param array<string, ParameterDefinition> $dependencies
+     * @psalm-param-out array<array-key, Yiisoft\Definitions\ParameterDefinition|mixed> $dependencies
      *
      * @throws InvalidConfigException
      */
@@ -177,7 +179,7 @@ final class ArrayDefinition implements DefinitionInterface
         $usedArguments = [];
         $variadicKey = null;
         foreach ($dependencies as $key => &$value) {
-            if ($value instanceof ParameterDefinition && $value->isVariadic()) {
+            if ($value->isVariadic()) {
                 $variadicKey = $key;
             }
             $index = $isIntegerIndexed ? $dependencyIndex : $key;
@@ -189,20 +191,19 @@ final class ArrayDefinition implements DefinitionInterface
         }
         unset($value);
         if ($variadicKey !== null) {
+            if (!$isIntegerIndexed && isset($arguments[$variadicKey]) && is_array($arguments[$variadicKey])) {
+                unset($dependencies[$variadicKey]);
+                $dependencies += $arguments[$variadicKey];
+                return;
+            }
+
             /** @var mixed $value */
             foreach ($arguments as $index => $value) {
-                if (!$isIntegerIndexed && $index === $variadicKey && is_array($value)) {
-                    unset($dependencies[$index]);
-                    $dependencies += $value;
-                    return;
-                }
-
                 if (!isset($usedArguments[$index])) {
                     $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
                 }
             }
         }
-        /** @psalm-var array<string, DefinitionInterface> $dependencies */
     }
 
     /**
