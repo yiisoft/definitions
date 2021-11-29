@@ -85,8 +85,8 @@ final class ArrayDefinitionTest extends TestCase
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => [
-                null,
-                null,
+                'name' => null,
+                'version' => null,
                 'colors' => $colors,
             ],
         ]);
