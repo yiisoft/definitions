@@ -121,6 +121,18 @@ final class ParameterDefinition implements DefinitionInterface
             );
         }
 
+        $type = $this->getType();
+        if ($type === null) {
+            throw new NotInstantiableException(
+                sprintf(
+                    'Can not determine value of the "%s" parameter without type when instantiating "%s". ' .
+                    'Please specify argument explicitly.',
+                    $this->parameter->getName(),
+                    $this->getCallable(),
+                )
+            );
+        }
+
         throw new NotInstantiableException(
             sprintf(
                 'Can not determine value of the "%s" parameter of type "%s" when instantiating "%s". ' .
@@ -200,14 +212,8 @@ final class ParameterDefinition implements DefinitionInterface
         return $this->parameter->getType() instanceof ReflectionUnionType;
     }
 
-    private function getType(): string
+    private function getType(): ?string
     {
-        /**
-         * @psalm-suppress UndefinedDocblockClass
-         *
-         * @var ReflectionNamedType|ReflectionUnionType $type Could not be `null`
-         * because in self::resolve() checked `$this->parameter->allowsNull()`.
-         */
         $type = $this->parameter->getType();
 
         /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
@@ -221,9 +227,11 @@ final class ParameterDefinition implements DefinitionInterface
             return implode('|', $names);
         }
 
-        /** @var ReflectionNamedType $type */
+        if ($type instanceof ReflectionNamedType) {
+            return $type->getName();
+        }
 
-        return $type->getName();
+        return null;
     }
 
     private function getCallable(): string

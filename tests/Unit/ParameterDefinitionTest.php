@@ -152,6 +152,38 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertSame($expected, $definition->resolve($container));
     }
 
+    public function testResolveNonTypedParameter(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(
+                static fn ($x) => true,
+            )
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "x" parameter without type when instantiating'
+        );
+        $definition->resolve($container);
+    }
+
+    public function testResolveBuiltinParameter(): void
+    {
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(
+                static fn (int $n) => true,
+            )
+        );
+        $container = new SimpleContainer();
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "n" parameter of type "int" when instantiating'
+        );
+        $definition->resolve($container);
+    }
+
     public function testNotInstantiable(): void
     {
         $definition = new ParameterDefinition(
