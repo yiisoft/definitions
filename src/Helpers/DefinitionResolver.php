@@ -26,7 +26,6 @@ final class DefinitionResolver
      * @psalm-param array<string,mixed> $definitions Definitions to resolve.
      *
      * @return array The resolved dependencies.
-     *
      */
     public static function resolveArray(ContainerInterface $container, ?ContainerInterface $referenceContainer, array $definitions): array
     {
