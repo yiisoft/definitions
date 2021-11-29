@@ -87,8 +87,8 @@ final class ArrayDefinitionTest extends TestCase
             ArrayDefinition::CONSTRUCTOR => [
                 null,
                 null,
-                'colors' => $colors
-            ]
+                'colors' => $colors,
+            ],
         ]);
 
         /** @var Phone $phone */
