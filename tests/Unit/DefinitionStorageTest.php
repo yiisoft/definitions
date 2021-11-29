@@ -7,6 +7,8 @@ namespace Yiisoft\Dfinitions\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Yiisoft\Definitions\DefinitionStorage;
+use Yiisoft\Definitions\Tests\Support\ColorInterface;
+use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithBuiltinTypeWithoutDefault;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingSubDependency;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingDependency;
@@ -132,5 +134,15 @@ final class DefinitionStorageTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Service ' . EngineMarkOne::class . ' doesn\'t exist in DefinitionStorage.');
         $storage->get(EngineMarkOne::class);
+    }
+
+    public function testSet(): void
+    {
+        $storage = new DefinitionStorage();
+        $storage->set(ColorInterface::class, ColorPink::class);
+
+        $definition = $storage->get(ColorInterface::class);
+
+        $this->assertSame(ColorPink::class, $definition);
     }
 }
