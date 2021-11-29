@@ -21,10 +21,16 @@ final class DefinitionStorage
     private array $buildStack = [];
     /** @psalm-suppress  PropertyNotSetInConstructor */
     private ?ContainerInterface $delegateContainer = null;
+    private bool $useStrictMode;
 
-    public function __construct(array $definitions = [])
+    /**
+     * @param array $definitions Definitions to store.
+     * @param bool $useStrictMode If every dependency should be defined explicitly including classes.
+     */
+    public function __construct(array $definitions = [], bool $useStrictMode = false)
     {
         $this->definitions = $definitions;
+        $this->useStrictMode = $useStrictMode;
     }
 
     /**
@@ -66,7 +72,7 @@ final class DefinitionStorage
      */
     public function get(string $id)
     {
-        if (!isset($this->definitions[$id])) {
+        if (!$this->has($id)) {
             throw new RuntimeException("Service $id doesn't exist in DefinitionStorage.");
         }
         return $this->definitions[$id];
@@ -89,7 +95,7 @@ final class DefinitionStorage
             return true;
         }
 
-        if (!class_exists($id)) {
+        if ($this->useStrictMode || !class_exists($id)) {
             $this->buildStack += $building + [$id => 1];
             return false;
         }
