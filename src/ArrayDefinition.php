@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
@@ -191,10 +192,14 @@ final class ArrayDefinition implements DefinitionInterface
         }
         unset($value);
         if ($variadicKey !== null) {
-            if (!$isIntegerIndexed && isset($arguments[$variadicKey]) && is_array($arguments[$variadicKey])) {
-                unset($dependencies[$variadicKey]);
-                $dependencies += $arguments[$variadicKey];
-                return;
+            if (!$isIntegerIndexed && isset($arguments[$variadicKey])) {
+                if (is_array($arguments[$variadicKey])) {
+                    unset($dependencies[$variadicKey]);
+                    $dependencies += $arguments[$variadicKey];
+                    return;
+                }
+
+                throw new InvalidArgumentException(sprintf('Named argument for a variadic parameter should be an array, "%s" given.', gettype($arguments[$variadicKey])));
             }
 
             /** @var mixed $value */

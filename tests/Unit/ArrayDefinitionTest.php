@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Tests\Unit;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
@@ -123,6 +124,26 @@ final class ArrayDefinitionTest extends TestCase
         $phone = $definition->resolve($container);
 
         self::assertSame($colors, $phone->getColors());
+    }
+
+    public function testConstructorWithWrongVariadicArgument(): void
+    {
+        $container = new SimpleContainer();
+
+        $colors = 'red';
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            ArrayDefinition::CONSTRUCTOR => [
+                'name' => null,
+                'version' => null,
+                'colors' => $colors,
+            ],
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Named argument for a variadic parameter should be an array, "string" given.');
+
+        $definition->resolve($container);
     }
 
     public function dataSetProperties(): array
