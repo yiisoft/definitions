@@ -177,8 +177,8 @@ final class ArrayDefinition implements DefinitionInterface
     {
         $isIntegerIndexed = $this->isIntegerIndexed($arguments);
         $dependencyIndex = 0;
-        $usedArguments = [];
         $variadicKey = null;
+
         foreach ($dependencies as $key => &$value) {
             if ($value->isVariadic()) {
                 $variadicKey = $key;
@@ -186,9 +186,11 @@ final class ArrayDefinition implements DefinitionInterface
             $index = $isIntegerIndexed ? $dependencyIndex : $key;
             if (array_key_exists($index, $arguments)) {
                 $value = DefinitionResolver::ensureResolvable($arguments[$index]);
-                $usedArguments[$index] = 1;
             }
             $dependencyIndex++;
+            if ($variadicKey !== null) {
+                break;
+            }
         }
         unset($value);
         if ($variadicKey !== null) {
@@ -203,10 +205,8 @@ final class ArrayDefinition implements DefinitionInterface
             }
 
             /** @var mixed $value */
-            foreach ($arguments as $index => $value) {
-                if (!isset($usedArguments[$index])) {
-                    $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
-                }
+            foreach (array_slice($arguments, $dependencyIndex) as $index => $value) {
+                $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
             }
         }
     }
