@@ -23,6 +23,7 @@ final class DefinitionExtractorTest extends TestCase
 
         $this->assertInstanceOf(Chair::class, $definitions['chair']->resolve($container));
     }
+
     public function testUnresolvableDependencyWithDefaultObject(): void
     {
         $container = new SimpleContainer();
