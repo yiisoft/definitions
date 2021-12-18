@@ -84,7 +84,7 @@ final class ParameterDefinition implements DefinitionInterface
                 $result = $container->get($typeName);
             } catch (Throwable $t) {
                 if ($this->parameter->isOptional()) {
-                    return null;
+                    return $this->parameter->getDefaultValue();
                 }
                 throw $t;
             }
