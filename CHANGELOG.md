@@ -2,7 +2,7 @@
 
 ## 1.0.1 under development
 
-- no changes in this release.
+- Bug #31: Add support for objects as default parameter values (vjik)
 
 ## 1.0.0 November 30, 2021
 
