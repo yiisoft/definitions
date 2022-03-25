@@ -7,7 +7,7 @@ namespace Yiisoft\Definitions\Exception;
 use Exception;
 
 /**
- * NotInstantiableClassException is thrown when a class can not be instantiated for whatever reason.
+ * `NotInstantiableClassException` is thrown when a class can not be instantiated for whatever reason.
  */
 final class NotInstantiableClassException extends NotInstantiableException
 {
