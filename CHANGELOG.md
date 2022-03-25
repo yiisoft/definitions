@@ -2,7 +2,8 @@
 
 ## 1.0.2 under development
 
-- no changes in this release.
+- Bug #32: On throw exception in process getting from container optional dependency use default value only if container
+  don't have dependency or thrown not `CircularReferenceException` (vjik) 
 
 ## 1.0.1 December 19, 2021
 
