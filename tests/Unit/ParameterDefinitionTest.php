@@ -10,10 +10,13 @@ use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionParameter;
+use RuntimeException;
 use stdClass;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
+use Yiisoft\Definitions\Tests\Support\CircularReferenceExceptionDependency;
+use Yiisoft\Definitions\Tests\Support\RuntimeExceptionDependency;
 use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\SelfDependency;
@@ -253,6 +256,52 @@ final class ParameterDefinitionTest extends TestCase
         $definition = new ParameterDefinition($parameter);
 
         $this->assertSame($expected, $definition->isBuiltin());
+    }
+
+    public function testOptionalBrokenDependency(): void
+    {
+        $container = new SimpleContainer(
+            [],
+            static function (string $id) {
+                if ($id === RuntimeExceptionDependency::class) {
+                    return new RuntimeExceptionDependency();
+                }
+                throw new NotFoundException($id);
+            },
+            static function (string $id): bool {
+                return $id === RuntimeExceptionDependency::class;
+            }
+        );
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(static fn (?RuntimeExceptionDependency $d = null) => 42),
+        );
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Broken.');
+        $definition->resolve($container);
+    }
+
+    public function testOptionalCircularDependency(): void
+    {
+        $container = new SimpleContainer(
+            [],
+            static function (string $id) {
+                if ($id === CircularReferenceExceptionDependency::class) {
+                    return new CircularReferenceExceptionDependency();
+                }
+                throw new NotFoundException($id);
+            },
+            static function (string $id): bool {
+                return $id === CircularReferenceExceptionDependency::class;
+            }
+        );
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(static fn (?CircularReferenceExceptionDependency $d = null) => 42),
+        );
+
+        $result = $definition->resolve($container);
+
+        $this->assertNull($result);
     }
 
     /**
