@@ -10,8 +10,10 @@ use ReflectionParameter;
 use ReflectionUnionType;
 use Throwable;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
+use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
+
 use function get_class;
 use function gettype;
 use function is_object;
@@ -83,7 +85,13 @@ final class ParameterDefinition implements DefinitionInterface
                 /** @var mixed */
                 $result = $container->get($typeName);
             } catch (Throwable $t) {
-                if ($this->parameter->isOptional()) {
+                if (
+                    $this->parameter->isOptional()
+                    && (
+                        $t instanceof CircularReferenceException
+                        || !$container->has($typeName)
+                    )
+                ) {
                     return $this->parameter->getDefaultValue();
                 }
                 throw $t;
