@@ -34,7 +34,7 @@ final class ParameterDefinitionTest extends TestCase
         ]);
 
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(fn(GearBox|stdClass $class) => true)
+            $this->getFirstParameter(fn (GearBox|stdClass $class) => true)
         );
         $result = $definition->resolve($container);
 
@@ -57,7 +57,7 @@ final class ParameterDefinitionTest extends TestCase
         $class = GearBox::class . '|' . stdClass::class;
 
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(fn(GearBox|stdClass $class) => true)
+            $this->getFirstParameter(fn (GearBox|stdClass $class) => true)
         );
 
         $container = new SimpleContainer([
@@ -141,7 +141,7 @@ final class ParameterDefinitionTest extends TestCase
             }
         );
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(static fn(RuntimeExceptionDependency|string|null $d = null) => 42),
+            $this->getFirstParameter(static fn (RuntimeExceptionDependency|string|null $d = null) => 42),
         );
 
         $this->expectException(RuntimeException::class);
@@ -164,7 +164,7 @@ final class ParameterDefinitionTest extends TestCase
             }
         );
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(static fn(CircularReferenceExceptionDependency|string|null $d = null) => 42),
+            $this->getFirstParameter(static fn (CircularReferenceExceptionDependency|string|null $d = null) => 42),
         );
 
         $result = $definition->resolve($container);
