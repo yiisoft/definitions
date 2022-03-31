@@ -198,6 +198,7 @@ final class ParameterDefinition implements DefinitionInterface
                 }
 
                 if ($resolved) {
+                    /** @var mixed $result Exist, because $resolved is true */
                     if (!$result instanceof $typeName) {
                         $actualType = $this->getValueType($result);
                         throw new InvalidConfigException(
@@ -207,6 +208,7 @@ final class ParameterDefinition implements DefinitionInterface
                     return $result;
                 }
 
+                /** @var Throwable $error Exist, because $resolved is false */
                 if (
                     !$error instanceof CircularReferenceException
                     && $container->has($typeName)
