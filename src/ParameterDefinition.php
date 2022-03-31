@@ -187,19 +187,33 @@ final class ParameterDefinition implements DefinitionInterface
                     /** @psalm-suppress PossiblyNullReference */
                     $typeName = $this->parameter->getDeclaringClass()->getName();
                 }
+
                 try {
                     /** @var mixed */
                     $result = $container->get($typeName);
+                    $resolved = true;
+                } catch (Throwable $t) {
+                    $error = $t;
+                    $resolved = false;
+                }
+
+                if ($resolved) {
+                    /** @var mixed $result Exist, because $resolved is true */
                     if (!$result instanceof $typeName) {
                         $actualType = $this->getValueType($result);
                         throw new InvalidConfigException(
                             "Container returned incorrect type \"$actualType\" for service \"$class\"."
                         );
                     }
-
                     return $result;
-                } catch (Throwable $t) {
-                    $error = $t;
+                }
+
+                /** @var Throwable $error Exist, because $resolved is false */
+                if (
+                    !$error instanceof CircularReferenceException
+                    && $container->has($typeName)
+                ) {
+                    throw $error;
                 }
             }
         }

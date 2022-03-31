@@ -10,11 +10,14 @@ use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionParameter;
+use RuntimeException;
 use stdClass;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
+use Yiisoft\Definitions\Tests\Support\CircularReferenceExceptionDependency;
 use Yiisoft\Definitions\Tests\Support\GearBox;
+use Yiisoft\Definitions\Tests\Support\RuntimeExceptionDependency;
 use Yiisoft\Definitions\Tests\Support\UnionBuiltinDependency;
 use Yiisoft\Definitions\Tests\Support\UnionCar;
 use Yiisoft\Definitions\Tests\Support\UnionOptionalDependency;
@@ -24,6 +27,20 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
 {
+    public function testResolveUnionType(): void
+    {
+        $container = new SimpleContainer([
+            stdClass::class => new stdClass(),
+        ]);
+
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(fn (GearBox|stdClass $class) => true)
+        );
+        $result = $definition->resolve($container);
+
+        $this->assertInstanceOf(stdClass::class, $result);
+    }
+
     public function testNotInstantiable(): void
     {
         $definition = new ParameterDefinition(
@@ -37,13 +54,15 @@ final class ParameterDefinitionTest extends TestCase
 
     public function testResolveRequiredUnionTypeWithIncorrectTypeInContainer(): void
     {
-        $class = stdClass::class . '|' . GearBox::class;
+        $class = GearBox::class . '|' . stdClass::class;
 
-        $definition = new ParameterDefinition($this->getFirstParameter(fn (stdClass|GearBox $class) => true));
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(fn (GearBox|stdClass $class) => true)
+        );
 
         $container = new SimpleContainer([
-            stdClass::class => 42,
             GearBox::class => 7,
+            stdClass::class => new stdClass(),
         ]);
 
         $this->expectException(InvalidConfigException::class);
@@ -105,6 +124,52 @@ final class ParameterDefinitionTest extends TestCase
 
         $this->expectException(NotFoundException::class);
         $definition->resolve($container);
+    }
+
+    public function testResolveOptionalBrokenDependencyWithUnionTypes(): void
+    {
+        $container = new SimpleContainer(
+            [],
+            static function (string $id) {
+                if ($id === RuntimeExceptionDependency::class) {
+                    return new RuntimeExceptionDependency();
+                }
+                throw new NotFoundException($id);
+            },
+            static function (string $id): bool {
+                return $id === RuntimeExceptionDependency::class;
+            }
+        );
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(static fn (RuntimeExceptionDependency|string|null $d = null) => 42),
+        );
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Broken.');
+        $definition->resolve($container);
+    }
+
+    public function testResolveOptionalCircularDependencyWithUnionTypes(): void
+    {
+        $container = new SimpleContainer(
+            [],
+            static function (string $id) {
+                if ($id === CircularReferenceExceptionDependency::class) {
+                    return new CircularReferenceExceptionDependency();
+                }
+                throw new NotFoundException($id);
+            },
+            static function (string $id): bool {
+                return $id === CircularReferenceExceptionDependency::class;
+            }
+        );
+        $definition = new ParameterDefinition(
+            $this->getFirstParameter(static fn (CircularReferenceExceptionDependency|string|null $d = null) => 42),
+        );
+
+        $result = $definition->resolve($container);
+
+        $this->assertNull($result);
     }
 
     /**

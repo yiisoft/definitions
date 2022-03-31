@@ -2,7 +2,9 @@
 
 ## 1.0.2 under development
 
-- Bug #32: Throw exception instead of returning default value if optional dependency exists but there is an exception when getting it (vjik) 
+- Bug #32: Throw exception instead of returning default value if optional dependency exists but there is an exception
+  when getting it (vjik)
+- Bug #34: In one of edge cases don't throw exception if container returned result of incorrect type (vjik)
 
 ## 1.0.1 December 19, 2021
 
