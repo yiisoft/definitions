@@ -1,6 +1,6 @@
 # Yii Definitions Change Log
 
-## 1.0.2 under development
+## 1.0.2 April 01, 2022
 
 - Bug #32: Throw exception instead of returning default value if optional dependency exists but there is an exception
   when getting it (vjik)
