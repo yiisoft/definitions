@@ -78,7 +78,9 @@ final class ParameterDefinition implements DefinitionInterface
                 // If type name is "self", it means that called class and
                 // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
                 /** @psalm-suppress PossiblyNullReference */
-                $typeName = $this->parameter->getDeclaringClass()->getName();
+                $typeName = $this->parameter
+                    ->getDeclaringClass()
+                    ->getName();
             }
 
             try {
@@ -185,7 +187,9 @@ final class ParameterDefinition implements DefinitionInterface
                     // If type name is "self", it means that called class and
                     // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
                     /** @psalm-suppress PossiblyNullReference */
-                    $typeName = $this->parameter->getDeclaringClass()->getName();
+                    $typeName = $this->parameter
+                        ->getDeclaringClass()
+                        ->getName();
                 }
 
                 try {
@@ -265,7 +269,10 @@ final class ParameterDefinition implements DefinitionInterface
         if ($class !== null) {
             $callable[] = $class->getName();
         }
-        $callable[] = $this->parameter->getDeclaringFunction()->getName() . '()';
+        $callable[] = $this->parameter
+                ->getDeclaringFunction()
+                ->getName() .
+            '()';
 
         return implode('::', $callable);
     }

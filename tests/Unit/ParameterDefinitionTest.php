@@ -120,7 +120,9 @@ final class ParameterDefinitionTest extends TestCase
     public function testNullableParameterNotInstantiable(): void
     {
         $definition = new ParameterDefinition(
-            (new ReflectionClass(NullableConcreteDependency::class))->getConstructor()->getParameters()[0]
+            (new ReflectionClass(NullableConcreteDependency::class))
+                ->getConstructor()
+                ->getParameters()[0]
         );
         $container = new SimpleContainer();
 
@@ -203,7 +205,9 @@ final class ParameterDefinitionTest extends TestCase
     public function testNotInstantiable(): void
     {
         $definition = new ParameterDefinition(
-            (new ReflectionClass(Car::class))->getConstructor()->getParameters()[0]
+            (new ReflectionClass(Car::class))
+                ->getConstructor()
+                ->getParameters()[0]
         );
         $container = new SimpleContainer();
 

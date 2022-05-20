@@ -44,7 +44,9 @@ final class ParameterDefinitionTest extends TestCase
     public function testNotInstantiable(): void
     {
         $definition = new ParameterDefinition(
-            (new ReflectionClass(UnionCar::class))->getConstructor()->getParameters()[0]
+            (new ReflectionClass(UnionCar::class))
+                ->getConstructor()
+                ->getParameters()[0]
         );
         $container = new SimpleContainer();
 

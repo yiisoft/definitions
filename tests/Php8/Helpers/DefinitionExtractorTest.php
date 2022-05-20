@@ -57,7 +57,10 @@ final class DefinitionExtractorTest extends TestCase
     {
         $definition = DefinitionExtractor::fromClassName(UnionSelfDependency::class)['a'];
 
-        $actualType = implode('|', $definition->getReflection()->getType()->getTypes());
+        $actualType = implode('|', $definition
+            ->getReflection()
+            ->getType()
+            ->getTypes());
         $this->assertInstanceOf(ParameterDefinition::class, $definition);
         $this->assertSame('self|' . ColorInterface::class, $actualType);
     }
