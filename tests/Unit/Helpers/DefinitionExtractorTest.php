@@ -145,6 +145,12 @@ final class DefinitionExtractorTest extends TestCase
         $definition = DefinitionExtractor::fromClassName(SelfDependency::class)['a'];
 
         $this->assertInstanceOf(ParameterDefinition::class, $definition);
-        $this->assertSame('self', $definition->getReflection()->getType()->getName());
+        $this->assertSame(
+            'self',
+            $definition
+                ->getReflection()
+                ->getType()
+                ->getName(),
+        );
     }
 }
