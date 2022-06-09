@@ -162,6 +162,8 @@ final class ParameterDefinition implements DefinitionInterface
     private function resolveUnionType(ContainerInterface $container)
     {
         /**
+         * @psalm-suppress UndefinedDocblockClass This annotation is needed in PHP 7.4
+         *
          * @var ReflectionUnionType $parameterType
          */
         $parameterType = $this->parameter->getType();
