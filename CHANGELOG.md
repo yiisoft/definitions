@@ -2,7 +2,7 @@
 
 ## 1.0.3 under development
 
-- no changes in this release.
+- New #37: Make method `DefinitionValidator::validateArrayDefinition()` public (vjik)
 
 ## 1.0.2 April 01, 2022
 
