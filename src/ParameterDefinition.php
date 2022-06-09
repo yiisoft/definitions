@@ -45,15 +45,6 @@ final class ParameterDefinition implements DefinitionInterface
         return $this->parameter->isOptional();
     }
 
-    public function isBuiltin(): bool
-    {
-        $type = $this->parameter->getType();
-        if ($type === null) {
-            return false;
-        }
-        return $type->isBuiltin();
-    }
-
     public function hasValue(): bool
     {
         return $this->parameter->isDefaultValueAvailable();
@@ -71,7 +62,11 @@ final class ParameterDefinition implements DefinitionInterface
             return $this->resolveUnionType($container);
         }
 
-        if (!$this->isBuiltin()) {
+        /** @var ReflectionNamedType|null $type */
+        $type = $this->parameter->getType();
+        $isBuiltin = $type !== null && $type->isBuiltin();
+
+        if (!$isBuiltin) {
             /** @var ReflectionNamedType $type */
             $typeName = $type->getName();
             if ($typeName === 'self') {
@@ -167,22 +162,23 @@ final class ParameterDefinition implements DefinitionInterface
     private function resolveUnionType(ContainerInterface $container)
     {
         /**
-         * @psalm-suppress UndefinedClass
-         *
          * @var ReflectionUnionType $parameterType
          */
         $parameterType = $this->parameter->getType();
+
         /**
-         * @var \ReflectionType[] $types
-         * @psalm-suppress UndefinedClass
+         * @var ReflectionNamedType[] $types
          */
         $types = $parameterType->getTypes();
         $class = implode('|', $types);
 
         foreach ($types as $type) {
             if (!$type->isBuiltin()) {
-                /** @var ReflectionNamedType $type */
                 $typeName = $type->getName();
+                /**
+                 * @psalm-suppress TypeDoesNotContainType
+                 * @link https://github.com/vimeo/psalm/issues/6756
+                 */
                 if ($typeName === 'self') {
                     // If type name is "self", it means that called class and
                     // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.

@@ -3,6 +3,7 @@
 ## 1.1.0 under development
 
 - New #37: Make method `DefinitionValidator::validateArrayDefinition()` public (vjik)
+- Chg #37: Remove method `ParameterDefinition::isBuiltin()` (vjik)
 
 ## 1.0.2 April 01, 2022
 

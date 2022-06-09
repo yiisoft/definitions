@@ -234,34 +234,6 @@ final class ParameterDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
-    public function dataIsBuiltin(): array
-    {
-        return [
-            [
-                true,
-                $this->getFirstParameter(static fn (int $n) => 42),
-            ],
-            [
-                false,
-                $this->getFirstParameter(static fn (Car $car) => 42),
-            ],
-            [
-                false,
-                $this->getFirstParameter(static fn ($x) => 42),
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider dataIsBuiltin
-     */
-    public function testIsBuiltin(bool $expected, ReflectionParameter $parameter): void
-    {
-        $definition = new ParameterDefinition($parameter);
-
-        $this->assertSame($expected, $definition->isBuiltin());
-    }
-
     public function testOptionalBrokenDependency(): void
     {
         $container = new SimpleContainer(
