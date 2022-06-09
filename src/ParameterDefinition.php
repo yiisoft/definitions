@@ -169,6 +169,8 @@ final class ParameterDefinition implements DefinitionInterface
         $parameterType = $this->parameter->getType();
 
         /**
+         * @psalm-suppress UndefinedDocblockClass This annotation is needed in PHP 7.4
+         *
          * @var ReflectionNamedType[] $types
          */
         $types = $parameterType->getTypes();
