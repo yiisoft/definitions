@@ -1,6 +1,6 @@
 # Yii Definitions Change Log
 
-## 1.0.3 under development
+## 1.1.0 under development
 
 - New #37: Make method `DefinitionValidator::validateArrayDefinition()` public (vjik)
 
