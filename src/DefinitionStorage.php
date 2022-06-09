@@ -149,6 +149,7 @@ final class DefinitionStorage
                     $unionTypes = [];
                     /**
                      * @psalm-suppress UnnecessaryVarAnnotation Annotation below is needed in PHP 7.4
+                     *
                      * @var ReflectionNamedType $unionType
                      */
                     foreach ($type->getTypes() as $unionType) {
