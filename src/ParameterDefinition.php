@@ -179,6 +179,7 @@ final class ParameterDefinition implements DefinitionInterface
                 $typeName = $type->getName();
                 /**
                  * @psalm-suppress TypeDoesNotContainType
+                 *
                  * @link https://github.com/vimeo/psalm/issues/6756
                  */
                 if ($typeName === 'self') {
