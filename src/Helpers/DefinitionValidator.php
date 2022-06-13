@@ -55,9 +55,13 @@ final class DefinitionValidator
     }
 
     /**
-     * @throws InvalidConfigException
+     * Validates that array definition is valid. Throws exception otherwise.
+     *
+     * @param array $definition Array definition to validate.
+     *
+     * @throws InvalidConfigException If definition is not valid.
      */
-    private static function validateArrayDefinition(array $definition, ?string $id): void
+    public static function validateArrayDefinition(array $definition, ?string $id = null): void
     {
         foreach ($definition as $key => $value) {
             if (!is_string($key)) {

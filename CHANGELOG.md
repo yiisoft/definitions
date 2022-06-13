@@ -1,8 +1,9 @@
 # Yii Definitions Change Log
 
-## 1.0.3 under development
+## 2.0.0 under development
 
-- no changes in this release.
+- New #37: Make method `DefinitionValidator::validateArrayDefinition()` public (vjik)
+- Chg #37: Remove method `ParameterDefinition::isBuiltin()` (vjik)
 
 ## 1.0.2 April 01, 2022
 

@@ -147,7 +147,11 @@ final class DefinitionStorage
                 if ($type instanceof ReflectionUnionType) {
                     $isUnionTypeResolvable = false;
                     $unionTypes = [];
-                    /** @var ReflectionNamedType $unionType */
+                    /**
+                     * @psalm-suppress UnnecessaryVarAnnotation Annotation below is needed in PHP 7.4
+                     *
+                     * @var ReflectionNamedType $unionType
+                     */
                     foreach ($type->getTypes() as $unionType) {
                         if (!$unionType->isBuiltin()) {
                             $typeName = $unionType->getName();
