@@ -314,11 +314,12 @@ final class ArrayDefinitionTest extends TestCase
             'class' => Car::class,
             'setColor()' => [Reference::to(ColorInterface::class)],
         ]);
-        $definition->setReferenceContainer($referenceContainer);
+        $newDefinition = $definition->withReferenceContainer($referenceContainer);
 
         /** @var Car $object */
-        $object = $definition->resolve($container);
+        $object = $newDefinition->resolve($container);
 
+        $this->assertNotSame($definition, $newDefinition);
         $this->assertInstanceOf(Car::class, $object);
         $this->assertInstanceOf(EngineMarkOne::class, $object->getEngine());
     }

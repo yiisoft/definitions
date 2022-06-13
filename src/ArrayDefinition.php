@@ -59,9 +59,11 @@ final class ArrayDefinition implements DefinitionInterface
     /**
      * @param ContainerInterface|null $referenceContainer Container to resolve references with.
      */
-    public function setReferenceContainer(?ContainerInterface $referenceContainer): void
+    public function withReferenceContainer(?ContainerInterface $referenceContainer): self
     {
-        $this->referenceContainer = $referenceContainer;
+        $new = clone $this;
+        $new->referenceContainer = $referenceContainer;
+        return $new;
     }
 
     /**
