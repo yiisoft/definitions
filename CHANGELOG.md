@@ -1,11 +1,11 @@
 # Yii Definitions Change Log
 
-## 2.0.0 under development
+## 2.0.0 June 17, 2022
 
 - New #37: Make method `DefinitionValidator::validateArrayDefinition()` public (vjik)
-- Chg #37: Remove method `ParameterDefinition::isBuiltin()` (vjik)
 - Chg #30: Rename method `ArrayDefinition::setReferenceContainer()` to `withReferenceContainer()` and make it
   immutable (vjik)
+- Chg #37: Remove method `ParameterDefinition::isBuiltin()` (vjik)
 
 ## 1.0.2 April 01, 2022
 
