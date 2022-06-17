@@ -4,7 +4,7 @@
 
 - New #37: Make method `DefinitionValidator::validateArrayDefinition()` public (vjik)
 - Chg #37: Remove method `ParameterDefinition::isBuiltin()` (vjik)
-- Chg #30: Rename method `ArrayDefinition::setReferenceContainer()` to `withReferenceContainer()` and make him
+- Chg #30: Rename method `ArrayDefinition::setReferenceContainer()` to `withReferenceContainer()` and make it
   immutable (vjik)
 
 ## 1.0.2 April 01, 2022
