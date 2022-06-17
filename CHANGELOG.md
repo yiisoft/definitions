@@ -1,5 +1,9 @@
 # Yii Definitions Change Log
 
+## 2.0.1 under development
+
+- no changes in this release.
+
 ## 2.0.0 June 17, 2022
 
 - New #37: Make method `DefinitionValidator::validateArrayDefinition()` public (vjik)
