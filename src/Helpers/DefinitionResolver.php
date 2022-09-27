@@ -56,7 +56,7 @@ final class DefinitionResolver
      *
      * @return mixed
      */
-    public static function resolve(ContainerInterface $container, ?ContainerInterface $referenceContainer, $definition)
+    public static function resolve(ContainerInterface $container, ?ContainerInterface $referenceContainer, mixed $definition)
     {
         if ($definition instanceof DefinitionInterface) {
             $container = $referenceContainer !== null && $definition instanceof ReferenceInterface
@@ -73,13 +73,11 @@ final class DefinitionResolver
     }
 
     /**
-     * @param mixed $value
      *
      * @throws InvalidConfigException
      *
-     * @return array|ReferenceInterface|ValueDefinition
      */
-    public static function ensureResolvable($value)
+    public static function ensureResolvable(mixed $value): array|\Yiisoft\Definitions\Contract\ReferenceInterface|\Yiisoft\Definitions\ValueDefinition
     {
         if ($value instanceof ReferenceInterface || is_array($value)) {
             return $value;

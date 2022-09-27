@@ -28,11 +28,8 @@ use function is_string;
  */
 final class Reference implements ReferenceInterface
 {
-    private string $id;
-
-    private function __construct(string $id)
+    private function __construct(private string $id)
     {
-        $this->id = $id;
     }
 
     /**

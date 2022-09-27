@@ -23,11 +23,8 @@ use function is_object;
  */
 final class ParameterDefinition implements DefinitionInterface
 {
-    private ReflectionParameter $parameter;
-
-    public function __construct(ReflectionParameter $parameter)
+    public function __construct(private ReflectionParameter $parameter)
     {
-        $this->parameter = $parameter;
     }
 
     public function getReflection(): ReflectionParameter
@@ -283,8 +280,8 @@ final class ParameterDefinition implements DefinitionInterface
      *
      * @param mixed $value Value to get type for.
      */
-    private function getValueType($value): string
+    private function getValueType(mixed $value): string
     {
-        return is_object($value) ? get_class($value) : gettype($value);
+        return get_debug_type($value);
     }
 }

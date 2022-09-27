@@ -35,11 +35,9 @@ final class DynamicReference implements ReferenceInterface
     private DefinitionInterface $definition;
 
     /**
-     * @param mixed $definition
-     *
      * @throws InvalidConfigException
      */
-    private function __construct($definition)
+    private function __construct(mixed $definition)
     {
         if (is_object($definition) && !is_callable($definition)) {
             throw new InvalidConfigException('DynamicReference don\'t support object as definition.');

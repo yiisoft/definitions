@@ -6,11 +6,8 @@ namespace Yiisoft\Definitions\Tests\Support;
 
 final class UnionOptionalDependency
 {
-    private $value;
-
-    public function __construct(string|ColorInterface $value = null)
+    public function __construct(private $value = null)
     {
-        $this->value = $value;
     }
 
     public function getValue()

@@ -7,8 +7,6 @@ namespace Yiisoft\Definitions\Tests\Support;
 final class Phone
 {
     private ?string $id = null;
-    private ?string $name;
-    private ?string $version;
     private array $colors;
     private array $apps = [];
     private ?string $author = null;
@@ -17,10 +15,8 @@ final class Phone
     public bool $dev = false;
     public ?string $codeName = null;
 
-    public function __construct(?string $name = null, ?string $version = null, ...$colors)
+    public function __construct(private ?string $name = null, private ?string $version = null, ...$colors)
     {
-        $this->name = $name;
-        $this->version = $version;
         $this->colors = $colors;
     }
 

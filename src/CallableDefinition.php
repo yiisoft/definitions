@@ -47,7 +47,7 @@ final class CallableDefinition implements DefinitionInterface
             $reflection = new ReflectionFunction(
                 $this->prepareClosure($this->callable, $container)
             );
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             throw new NotInstantiableException(
                 'Can not instantiate callable definition. Got ' . var_export($this->callable, true)
             );
@@ -64,7 +64,7 @@ final class CallableDefinition implements DefinitionInterface
      *
      * @psalm-param callable|array{0:class-string,1:string} $callable
      */
-    private function prepareClosure($callable, ContainerInterface $container): Closure
+    private function prepareClosure(array|callable $callable, ContainerInterface $container): Closure
     {
         if (is_array($callable) && !is_object($callable[0])) {
             $reflection = new ReflectionMethod($callable[0], $callable[1]);

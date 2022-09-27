@@ -17,20 +17,16 @@ use Yiisoft\Definitions\Helpers\DefinitionExtractor;
  */
 final class DefinitionStorage
 {
-    private array $definitions;
     private array $buildStack = [];
     /** @psalm-suppress  PropertyNotSetInConstructor */
     private ?ContainerInterface $delegateContainer = null;
-    private bool $useStrictMode;
 
     /**
      * @param array $definitions Definitions to store.
      * @param bool $useStrictMode If every dependency should be defined explicitly including classes.
      */
-    public function __construct(array $definitions = [], bool $useStrictMode = false)
+    public function __construct(private array $definitions = [], private bool $useStrictMode = false)
     {
-        $this->definitions = $definitions;
-        $this->useStrictMode = $useStrictMode;
     }
 
     /**
@@ -110,7 +106,7 @@ final class DefinitionStorage
 
         try {
             $dependencies = DefinitionExtractor::fromClassName($id);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $this->buildStack += $building + [$id => 1];
             return false;
         }

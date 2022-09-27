@@ -28,7 +28,7 @@ final class DefinitionValidator
      *
      * @throws InvalidConfigException If definition is not valid.
      */
-    public static function validate($definition, ?string $id = null): void
+    public static function validate(mixed $definition, ?string $id = null): void
     {
         // Reference or ready object
         if (is_object($definition) && self::isValidObject($definition)) {
@@ -112,7 +112,7 @@ final class DefinitionValidator
             }
 
             // Methods and properties
-            if (substr($key, -2) === '()') {
+            if (str_ends_with($key, '()')) {
                 if (!is_array($value)) {
                     throw new InvalidConfigException(
                         sprintf(
@@ -123,7 +123,7 @@ final class DefinitionValidator
                 }
                 continue;
             }
-            if (strncmp($key, '$', 1) === 0) {
+            if (str_starts_with($key, '$')) {
                 continue;
             }
 
@@ -169,11 +169,8 @@ final class DefinitionValidator
         return !($value instanceof DefinitionInterface) || $value instanceof ReferenceInterface;
     }
 
-    /**
-     * @param mixed $value
-     */
-    private static function getType($value): string
+    private static function getType(mixed $value): string
     {
-        return is_object($value) ? get_class($value) : gettype($value);
+        return get_debug_type($value);
     }
 }
