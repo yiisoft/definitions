@@ -60,8 +60,6 @@ final class CallableDefinition implements DefinitionInterface
     }
 
     /**
-     * @param array|callable $callable
-     *
      * @psalm-param callable|array{0:class-string,1:string} $callable
      */
     private function prepareClosure(array|callable $callable, ContainerInterface $container): Closure
