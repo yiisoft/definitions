@@ -14,20 +14,13 @@ use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
-use function get_class;
-use function gettype;
-use function is_object;
-
 /**
  * Parameter definition resolves an object based on information from `ReflectionParameter` instance.
  */
 final class ParameterDefinition implements DefinitionInterface
 {
-    private ReflectionParameter $parameter;
-
-    public function __construct(ReflectionParameter $parameter)
+    public function __construct(private ReflectionParameter $parameter)
     {
-        $this->parameter = $parameter;
     }
 
     public function getReflection(): ReflectionParameter
@@ -283,8 +276,8 @@ final class ParameterDefinition implements DefinitionInterface
      *
      * @param mixed $value Value to get type for.
      */
-    private function getValueType($value): string
+    private function getValueType(mixed $value): string
     {
-        return is_object($value) ? get_class($value) : gettype($value);
+        return get_debug_type($value);
     }
 }

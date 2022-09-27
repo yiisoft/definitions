@@ -19,5 +19,5 @@ interface ReferenceInterface extends DefinitionInterface
      *
      * @throws InvalidConfigException When definition configuration is not valid.
      */
-    public static function to($id): self;
+    public static function to(mixed $id): self;
 }

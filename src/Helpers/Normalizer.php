@@ -48,7 +48,7 @@ final class Normalizer
      *
      * @return DefinitionInterface Normalized definition as an object.
      */
-    public static function normalize($definition, string $class = null): DefinitionInterface
+    public static function normalize(mixed $definition, string $class = null): DefinitionInterface
     {
         // Reference
         if ($definition instanceof ReferenceInterface) {
