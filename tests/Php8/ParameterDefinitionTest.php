@@ -138,7 +138,7 @@ final class ParameterDefinitionTest extends TestCase
                 }
                 throw new NotFoundException($id);
             },
-            static fn(string $id): bool => $id === RuntimeExceptionDependency::class
+            static fn (string $id): bool => $id === RuntimeExceptionDependency::class
         );
         $definition = new ParameterDefinition(
             $this->getFirstParameter(static fn (RuntimeExceptionDependency|string|null $d = null) => 42),
@@ -159,7 +159,7 @@ final class ParameterDefinitionTest extends TestCase
                 }
                 throw new NotFoundException($id);
             },
-            static fn(string $id): bool => $id === CircularReferenceExceptionDependency::class
+            static fn (string $id): bool => $id === CircularReferenceExceptionDependency::class
         );
         $definition = new ParameterDefinition(
             $this->getFirstParameter(static fn (CircularReferenceExceptionDependency|string|null $d = null) => 42),

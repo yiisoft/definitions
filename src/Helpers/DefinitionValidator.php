@@ -9,8 +9,6 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
-use function get_class;
-use function gettype;
 use function is_array;
 use function is_callable;
 use function is_object;

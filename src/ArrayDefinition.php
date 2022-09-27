@@ -48,8 +48,7 @@ final class ArrayDefinition implements DefinitionInterface
          * @psalm-var array<string, MethodOrPropertyItem>
          */
         private array $methodsAndProperties
-    )
-    {
+    ) {
     }
 
     /**

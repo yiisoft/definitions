@@ -73,11 +73,9 @@ final class DefinitionResolver
     }
 
     /**
-     *
      * @throws InvalidConfigException
-     *
      */
-    public static function ensureResolvable(mixed $value): array|\Yiisoft\Definitions\Contract\ReferenceInterface|\Yiisoft\Definitions\ValueDefinition
+    public static function ensureResolvable(mixed $value): array|ReferenceInterface|ValueDefinition
     {
         if ($value instanceof ReferenceInterface || is_array($value)) {
             return $value;
