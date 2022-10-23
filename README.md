@@ -144,6 +144,20 @@ dependencies:
 ]
 ```
 
+Optional references (when second parameter is `true`) returns `null` when container don't have entry:
+
+```php
+[
+    MyService::class => [
+        '__construct()' => [
+            // If container don't have implementation of `EventDispatcherInterface` then reference returns `null`
+            // when resolve dependencies 
+            Reference::to(EventDispatcherInterface::class, true), 
+        ],
+    ],
+]
+```
+
 The `DynamicReference` defines a dependency to a service not defined in the container:
 
 ```php
