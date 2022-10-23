@@ -55,6 +55,8 @@ final class Reference implements ReferenceInterface
     }
 
     /**
+     * @param mixed $id ID of the service or object to point to.
+     *
      * @throws InvalidConfigException If ID is not string.
      */
     public static function optional($id): self
