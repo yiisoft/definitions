@@ -144,7 +144,7 @@ dependencies:
 ]
 ```
 
-Optional references (when second parameter is `true`) returns `null` when container don't have entry:
+Optional references returns `null` when container don't have entry:
 
 ```php
 [
@@ -152,7 +152,7 @@ Optional references (when second parameter is `true`) returns `null` when contai
         '__construct()' => [
             // If container don't have implementation of `EventDispatcherInterface` then reference returns `null`
             // when resolve dependencies 
-            Reference::to(EventDispatcherInterface::class, true), 
+            Reference::optional(EventDispatcherInterface::class), 
         ],
     ],
 ]

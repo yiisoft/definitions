@@ -31,8 +31,17 @@ final class Reference implements ReferenceInterface
     private string $id;
     private bool $optional;
 
-    private function __construct(string $id, bool $optional)
+    /**
+     * @param mixed $id
+     *
+     * @throws InvalidConfigException
+     */
+    private function __construct($id, bool $optional)
     {
+        if (!is_string($id)) {
+            throw new InvalidConfigException('Reference ID must be string.');
+        }
+
         $this->id = $id;
         $this->optional = $optional;
     }
@@ -40,13 +49,17 @@ final class Reference implements ReferenceInterface
     /**
      * @throws InvalidConfigException If ID is not string.
      */
-    public static function to($id, bool $optional = false): self
+    public static function to($id): self
     {
-        if (!is_string($id)) {
-            throw new InvalidConfigException('Reference ID must be string.');
-        }
+        return new self($id, false);
+    }
 
-        return new self($id, $optional);
+    /**
+     * @throws InvalidConfigException If ID is not string.
+     */
+    public static function optional($id): self
+    {
+        return new self($id, true);
     }
 
     public function resolve(ContainerInterface $container)

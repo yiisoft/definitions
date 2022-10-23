@@ -23,7 +23,7 @@ final class ReferenceTest extends TestCase
     {
         $container = new SimpleContainer();
 
-        $reference = Reference::to(Car::class, true);
+        $reference = Reference::optional(Car::class);
 
         $this->assertNull($reference->resolve($container));
     }
