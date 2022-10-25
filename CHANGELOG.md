@@ -1,5 +1,9 @@
 # Yii Definitions Change Log
 
+## 2.1.1 under development
+
+- no changes in this release.
+
 ## 2.1.0 October 25, 2022
 
 - Enh #43: Add `Reference::optional()` method that returns `null` when there is no dependency defined
