@@ -29,10 +29,21 @@ use function is_string;
 final class Reference implements ReferenceInterface
 {
     private string $id;
+    private bool $optional;
 
-    private function __construct(string $id)
+    /**
+     * @param mixed $id
+     *
+     * @throws InvalidConfigException
+     */
+    private function __construct($id, bool $optional)
     {
+        if (!is_string($id)) {
+            throw new InvalidConfigException('Reference ID must be string.');
+        }
+
         $this->id = $id;
+        $this->optional = $optional;
     }
 
     /**
@@ -40,15 +51,23 @@ final class Reference implements ReferenceInterface
      */
     public static function to($id): self
     {
-        if (!is_string($id)) {
-            throw new InvalidConfigException('Reference ID must be string.');
-        }
+        return new self($id, false);
+    }
 
-        return new self($id);
+    /**
+     * Optional reference returns `null` when there is no corresponding definition in container.
+     *
+     * @param mixed $id ID of the service or object to point to.
+     *
+     * @throws InvalidConfigException If ID is not string.
+     */
+    public static function optional($id): self
+    {
+        return new self($id, true);
     }
 
     public function resolve(ContainerInterface $container)
     {
-        return $container->get($this->id);
+        return (!$this->optional || $container->has($this->id)) ? $container->get($this->id) : null;
     }
 }
