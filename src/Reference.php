@@ -55,6 +55,8 @@ final class Reference implements ReferenceInterface
     }
 
     /**
+     * Optional reference returns `null` when there is no corresponding definition in container.
+     *
      * @param mixed $id ID of the service or object to point to.
      *
      * @throws InvalidConfigException If ID is not string.

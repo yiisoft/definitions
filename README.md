@@ -144,14 +144,14 @@ dependencies:
 ]
 ```
 
-Optional references returns `null` when container don't have entry:
+Optional reference returns `null` when there's no corresponding definition in container:
 
 ```php
 [
     MyService::class => [
         '__construct()' => [
-            // If container don't have implementation of `EventDispatcherInterface` then reference returns `null`
-            // when resolve dependencies 
+            // If container doesn't have definition for `EventDispatcherInterface` reference returns `null`
+            // when resolving dependencies
             Reference::optional(EventDispatcherInterface::class), 
         ],
     ],

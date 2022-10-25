@@ -2,8 +2,8 @@
 
 ## 2.0.1 under development
 
-- Enh #43: Add `Reference::optional()` method that returns `null` on resolve dependencies when container don't have
-  entry. (@vjik)
+- Enh #43: Add `Reference::optional()` method that returns `null` when there is no dependency defined
+  in container (@vjik)
 
 ## 2.0.0 June 17, 2022
 
