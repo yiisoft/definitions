@@ -138,14 +138,16 @@ final class ArrayDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container): object
     {
+        $class = $this->class;
+
         $resolvedConstructorArguments = $this->resolveFunctionArguments(
             $container,
-            DefinitionExtractor::fromClassName($this->class),
+            DefinitionExtractor::fromClassName($class),
             $this->getConstructorArguments()
         );
 
         /** @psalm-suppress MixedMethodCall */
-        $object = new ($this->class)(...$resolvedConstructorArguments);
+        $object = new $class(...$resolvedConstructorArguments);
 
         foreach ($this->getMethodsAndProperties() as $item) {
             /** @var mixed $value */
