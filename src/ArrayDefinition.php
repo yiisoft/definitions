@@ -6,6 +6,7 @@ namespace Yiisoft\Definitions;
 
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use ReflectionMethod;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
@@ -137,36 +138,52 @@ final class ArrayDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container): object
     {
-        $class = $this->getClass();
-        $dependencies = DefinitionExtractor::fromClassName($class);
-        $constructorArguments = $this->getConstructorArguments();
-
-        $this->injectArguments($dependencies, $constructorArguments);
-
-        /** @psalm-suppress MixedArgumentTypeCoercion */
-        $resolved = DefinitionResolver::resolveArray($container, $this->referenceContainer, $dependencies);
+        $resolvedConstructorArguments = $this->resolveFunctionArguments(
+            $container,
+            DefinitionExtractor::fromClassName($this->class),
+            $this->getConstructorArguments()
+        );
 
         /** @psalm-suppress MixedMethodCall */
-        $object = new $class(...array_values($resolved));
+        $object = new ($this->class)(...$resolvedConstructorArguments);
 
         foreach ($this->getMethodsAndProperties() as $item) {
             /** @var mixed $value */
             [$type, $name, $value] = $item;
-            /** @var mixed */
-            $value = DefinitionResolver::resolve($container, $this->referenceContainer, $value);
             if ($type === self::TYPE_METHOD) {
-                /** @var mixed */
-                $setter = call_user_func_array([$object, $name], $value);
+                /** @var array $value */
+                $resolvedMethodArguments = $this->resolveFunctionArguments(
+                    $container,
+                    DefinitionExtractor::fromFunction(new ReflectionMethod($object, $name)),
+                    $value,
+                );
+                /** @var mixed $setter */
+                $setter = call_user_func_array([$object, $name], $resolvedMethodArguments);
                 if ($setter instanceof $object) {
-                    /** @var object */
+                    /** @var object $object */
                     $object = $setter;
                 }
             } elseif ($type === self::TYPE_PROPERTY) {
-                $object->$name = $value;
+                $object->$name = DefinitionResolver::resolve($container, $this->referenceContainer, $value);
             }
         }
 
         return $object;
+    }
+
+    /**
+     * @param array<string,ParameterDefinition> $dependencies
+     *
+     * @psalm-return list<mixed>
+     */
+    private function resolveFunctionArguments(
+        ContainerInterface $container,
+        array $dependencies,
+        array $arguments
+    ): array {
+        $this->injectArguments($dependencies, $arguments);
+        $resolvedArguments = DefinitionResolver::resolveArray($container, $this->referenceContainer, $dependencies);
+        return array_values($resolvedArguments);
     }
 
     /**

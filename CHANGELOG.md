@@ -2,7 +2,7 @@
 
 ## 2.1.1 under development
 
-- no changes in this release.
+- Enh #44: In methods of array definitions add autowiring and improve variadic arguments support (@vjik) 
 
 ## 2.1.0 October 25, 2022
 
