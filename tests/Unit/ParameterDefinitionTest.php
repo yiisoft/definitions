@@ -116,8 +116,8 @@ final class ParameterDefinitionTest extends TestCase
         $container = new SimpleContainer([stdClass::class => 42]);
 
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage(
-            'Container returned incorrect type "integer" for service "' . stdClass::class . '".'
+        $this->expectExceptionMessageMatches(
+            '/^Container returned incorrect type "(integer|int)" for service "' . stdClass::class . '"\.$/'
         );
         $definition->resolve($container);
     }
@@ -322,8 +322,8 @@ final class ParameterDefinitionTest extends TestCase
         ]);
 
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage(
-            'Container returned incorrect type "integer" for service "' . $class . '".'
+        $this->expectExceptionMessageMatches(
+            '/^Container returned incorrect type "(integer|int)" for service "' . preg_quote($class, '/') . '"\.$/'
         );
         $definition->resolve($container);
     }
