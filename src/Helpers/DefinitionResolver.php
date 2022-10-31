@@ -27,8 +27,11 @@ final class DefinitionResolver
      *
      * @return array The resolved dependencies.
      */
-    public static function resolveArray(ContainerInterface $container, ?ContainerInterface $referenceContainer, array $definitions): array
-    {
+    public static function resolveArray(
+        ContainerInterface $container,
+        ?ContainerInterface $referenceContainer,
+        array $definitions
+    ): array {
         $result = [];
         /** @var mixed $definition */
         foreach ($definitions as $key => $definition) {
@@ -53,11 +56,12 @@ final class DefinitionResolver
      * This function resolves a definition recursively, checking for loops.
      *
      * @param mixed $definition Definition to resolve.
-     *
-     * @return mixed
      */
-    public static function resolve(ContainerInterface $container, ?ContainerInterface $referenceContainer, mixed $definition)
-    {
+    public static function resolve(
+        ContainerInterface $container,
+        ?ContainerInterface $referenceContainer,
+        mixed $definition
+    ): mixed {
         if ($definition instanceof DefinitionInterface) {
             $container = $referenceContainer !== null && $definition instanceof ReferenceInterface
                 ? $referenceContainer

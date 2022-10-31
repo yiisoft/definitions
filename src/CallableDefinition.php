@@ -36,7 +36,7 @@ final class CallableDefinition implements DefinitionInterface
      *
      * @psalm-param callable|array{0:class-string,1:string} $callable
      */
-    public function __construct($callable)
+    public function __construct(array|callable $callable)
     {
         $this->callable = $callable;
     }

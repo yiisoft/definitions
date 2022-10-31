@@ -71,7 +71,7 @@ final class DefinitionStorage
      *
      * @return mixed|object Definition with a given ID.
      */
-    public function get(string $id)
+    public function get(string $id): mixed
     {
         if (!$this->has($id)) {
             throw new RuntimeException("Service $id doesn't exist in DefinitionStorage.");
@@ -83,13 +83,16 @@ final class DefinitionStorage
      * Set a definition.
      *
      * @param string $id ID to set definition for.
-     * @param mixed|object $definition Definition to set.
+     * @param mixed $definition Definition to set.
      */
-    public function set(string $id, $definition): void
+    public function set(string $id, mixed $definition): void
     {
         $this->definitions[$id] = $definition;
     }
 
+    /**
+     * @throws CircularReferenceException
+     */
     private function isResolvable(string $id, array $building): bool
     {
         if (isset($this->definitions[$id])) {
@@ -184,9 +187,8 @@ final class DefinitionStorage
                     continue;
                 }
 
-                /** @var ReflectionNamedType|null $type */
                 // Our parameter has a class type hint
-                if ($type !== null && !$type->isBuiltin()) {
+                if (!$type->isBuiltin()) {
                     $typeName = $type->getName();
                     /**
                      * @psalm-suppress TypeDoesNotContainType
@@ -194,15 +196,20 @@ final class DefinitionStorage
                      * @link https://github.com/vimeo/psalm/issues/6756
                      */
                     if ($typeName === 'self') {
-                        throw new CircularReferenceException(sprintf(
-                            'Circular reference to "%s" detected while building: %s.',
-                            $id,
-                            implode(', ', array_keys($building))
-                        ));
+                        throw new CircularReferenceException(
+                            sprintf(
+                                'Circular reference to "%s" detected while building: %s.',
+                                $id,
+                                implode(', ', array_keys($building))
+                            )
+                        );
                     }
 
                     /** @psalm-suppress RedundantPropertyInitializationCheck */
-                    if (!$this->isResolvable($typeName, $building) && ($this->delegateContainer === null || !$this->delegateContainer->has($typeName))) {
+                    if (
+                        !$this->isResolvable($typeName, $building)
+                        && ($this->delegateContainer === null || !$this->delegateContainer->has($typeName))
+                    ) {
                         $isResolvable = false;
                         break;
                     }

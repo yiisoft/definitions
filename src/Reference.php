@@ -36,7 +36,7 @@ final class Reference implements ReferenceInterface
      *
      * @throws InvalidConfigException
      */
-    private function __construct($id, bool $optional)
+    private function __construct(mixed $id, bool $optional)
     {
         if (!is_string($id)) {
             throw new InvalidConfigException('Reference ID must be string.');
@@ -49,7 +49,7 @@ final class Reference implements ReferenceInterface
     /**
      * @throws InvalidConfigException If ID is not string.
      */
-    public static function to($id): self
+    public static function to(mixed $id): self
     {
         return new self($id, false);
     }
@@ -61,7 +61,7 @@ final class Reference implements ReferenceInterface
      *
      * @throws InvalidConfigException If ID is not string.
      */
-    public static function optional($id): self
+    public static function optional(mixed $id): self
     {
         return new self($id, true);
     }

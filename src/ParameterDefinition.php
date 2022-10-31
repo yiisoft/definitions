@@ -230,7 +230,6 @@ final class ParameterDefinition implements DefinitionInterface
 
     private function isUnionType(): bool
     {
-        /** @psalm-suppress UndefinedClass */
         return $this->parameter->getType() instanceof ReflectionUnionType;
     }
 
@@ -238,9 +237,7 @@ final class ParameterDefinition implements DefinitionInterface
     {
         $type = $this->parameter->getType();
 
-        /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
         if ($type instanceof ReflectionUnionType) {
-            /** @var ReflectionNamedType[] */
             $namedTypes = $type->getTypes();
             $names = array_map(
                 static fn (ReflectionNamedType $t) => $t->getName(),

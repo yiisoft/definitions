@@ -51,7 +51,7 @@ final class DynamicReference implements ReferenceInterface
      *
      * @throws InvalidConfigException If definition is not valid.
      */
-    public static function to($id): self
+    public static function to(mixed $id): self
     {
         return new self($id);
     }
