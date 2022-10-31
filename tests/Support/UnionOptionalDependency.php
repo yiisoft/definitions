@@ -6,8 +6,9 @@ namespace Yiisoft\Definitions\Tests\Support;
 
 final class UnionOptionalDependency
 {
-    public function __construct(private $value = null)
-    {
+    public function __construct(
+        private $value = null
+    ) {
     }
 
     public function getValue()
