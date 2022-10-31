@@ -10,7 +10,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use ReflectionFunction;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
-use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Support\Car;
