@@ -19,8 +19,9 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
  */
 final class ParameterDefinition implements DefinitionInterface
 {
-    public function __construct(private ReflectionParameter $parameter)
-    {
+    public function __construct(
+        private ReflectionParameter $parameter
+    ) {
     }
 
     public function getReflection(): ReflectionParameter
@@ -88,7 +89,7 @@ final class ParameterDefinition implements DefinitionInterface
             }
 
             if (!$result instanceof $typeName) {
-                $actualType = $this->getValueType($result);
+                $actualType = get_debug_type($result);
                 throw new InvalidConfigException(
                     "Container returned incorrect type \"$actualType\" for service \"{$type->getName()}\"."
                 );
@@ -198,7 +199,7 @@ final class ParameterDefinition implements DefinitionInterface
                 if ($resolved) {
                     /** @var mixed $result Exist, because $resolved is true */
                     if (!$result instanceof $typeName) {
-                        $actualType = $this->getValueType($result);
+                        $actualType = get_debug_type($result);
                         throw new InvalidConfigException(
                             "Container returned incorrect type \"$actualType\" for service \"$class\"."
                         );
@@ -269,15 +270,5 @@ final class ParameterDefinition implements DefinitionInterface
             '()';
 
         return implode('::', $callable);
-    }
-
-    /**
-     * Get type of the value provided.
-     *
-     * @param mixed $value Value to get type for.
-     */
-    private function getValueType(mixed $value): string
-    {
-        return get_debug_type($value);
     }
 }

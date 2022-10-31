@@ -77,7 +77,7 @@ final class DefinitionValidator
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: invalid class name. Expected string, got %s.',
-                            self::getType($value),
+                            get_debug_type($value),
                         ),
                     );
                 }
@@ -93,7 +93,7 @@ final class DefinitionValidator
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
-                            self::getType($value)
+                            get_debug_type($value)
                         )
                     );
                 }
@@ -115,7 +115,7 @@ final class DefinitionValidator
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: incorrect method arguments. Expected array, got %s.',
-                            self::getType($value)
+                            get_debug_type($value)
                         )
                     );
                 }
@@ -160,15 +160,10 @@ final class DefinitionValidator
     }
 
     /**
-     * Deny DefinitionInterface, exclude ReferenceInterface
+     * Deny `DefinitionInterface`, exclude `ReferenceInterface`
      */
     private static function isValidObject(object $value): bool
     {
         return !($value instanceof DefinitionInterface) || $value instanceof ReferenceInterface;
-    }
-
-    private static function getType(mixed $value): string
-    {
-        return get_debug_type($value);
     }
 }

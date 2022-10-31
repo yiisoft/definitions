@@ -31,9 +31,10 @@ final class ArrayDefinition implements DefinitionInterface
 
     public const TYPE_PROPERTY = 'property';
     public const TYPE_METHOD = 'method';
+
     /**
-      * Container used to resolve references.
-      */
+     * Container used to resolve references.
+     */
     private ?ContainerInterface $referenceContainer = null;
 
     /**
@@ -41,14 +42,8 @@ final class ArrayDefinition implements DefinitionInterface
      * @psalm-param array<string, MethodOrPropertyItem> $methodsAndProperties
      */
     private function __construct(
-        /**
-         * @psalm-var class-string
-         */
         private string $class,
         private array $constructorArguments,
-        /**
-         * @psalm-var array<string, MethodOrPropertyItem>
-         */
         private array $methodsAndProperties
     ) {
     }

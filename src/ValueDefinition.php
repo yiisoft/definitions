@@ -14,10 +14,12 @@ final class ValueDefinition implements DefinitionInterface
 {
     /**
      * @param mixed $value Value to be returned on resolving.
-     * @param ?string $type Value type.
+     * @param string|null $type Value type.
      */
-    public function __construct(private mixed $value, private ?string $type = null)
-    {
+    public function __construct(
+        private mixed $value,
+        private ?string $type = null
+    ) {
     }
 
     /**
