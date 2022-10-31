@@ -19,9 +19,6 @@ final class DefinitionStorage
 {
     private array $buildStack = [];
 
-    /**
-     * @psalm-suppress PropertyNotSetInConstructor
-     */
     private ?ContainerInterface $delegateContainer = null;
 
     /**
@@ -136,29 +133,28 @@ final class DefinitionStorage
                     break;
                 }
 
-                /**
-                 * @var ReflectionNamedType|ReflectionUnionType|null $type
-                 * @psalm-suppress RedundantConditionGivenDocblockType
-                 * @psalm-suppress UndefinedClass
-                 */
-                if ($type === null || (!$type instanceof ReflectionUnionType && $type->isBuiltin())) {
+                if (
+                    ($type instanceof ReflectionNamedType && $type->isBuiltin())
+                    || (!$type instanceof ReflectionNamedType && !$type instanceof ReflectionUnionType)
+                ) {
                     $isResolvable = false;
                     break;
                 }
 
-                // PHP 8 union type is used as type hint
-                /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
+                /** @var ReflectionNamedType|ReflectionUnionType $type */
+
+                // Union type is used as type hint
                 if ($type instanceof ReflectionUnionType) {
                     $isUnionTypeResolvable = false;
                     $unionTypes = [];
-                    /**
-                     * @psalm-suppress UnnecessaryVarAnnotation Annotation below is needed in PHP 7.4
-                     *
-                     * @var ReflectionNamedType $unionType
-                     */
                     foreach ($type->getTypes() as $unionType) {
                         if (!$unionType->isBuiltin()) {
                             $typeName = $unionType->getName();
+                            /**
+                             * @psalm-suppress TypeDoesNotContainType
+                             *
+                             * @link https://github.com/vimeo/psalm/issues/6756
+                             */
                             if ($typeName === 'self') {
                                 continue;
                             }
@@ -169,7 +165,6 @@ final class DefinitionStorage
                             }
                         }
                     }
-
 
                     if (!$isUnionTypeResolvable) {
                         foreach ($unionTypes as $typeName) {
@@ -205,7 +200,6 @@ final class DefinitionStorage
                         );
                     }
 
-                    /** @psalm-suppress RedundantPropertyInitializationCheck */
                     if (
                         !$this->isResolvable($typeName, $building)
                         && ($this->delegateContainer === null || !$this->delegateContainer->has($typeName))

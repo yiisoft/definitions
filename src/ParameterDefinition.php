@@ -67,9 +67,7 @@ final class ParameterDefinition implements DefinitionInterface
                 // If type name is "self", it means that called class and
                 // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
                 /** @psalm-suppress PossiblyNullReference */
-                $typeName = $this->parameter
-                    ->getDeclaringClass()
-                    ->getName();
+                $typeName = $this->parameter->getDeclaringClass()->getName();
             }
 
             try {
@@ -102,6 +100,7 @@ final class ParameterDefinition implements DefinitionInterface
 
     /**
      * @return mixed
+     * @throws NotInstantiableException
      */
     private function resolveVariadicOrBuiltinOrNonTyped()
     {
@@ -156,15 +155,11 @@ final class ParameterDefinition implements DefinitionInterface
     private function resolveUnionType(ContainerInterface $container)
     {
         /**
-         * @psalm-suppress UndefinedDocblockClass This annotation is needed in PHP 7.4
-         *
          * @var ReflectionUnionType $parameterType
          */
         $parameterType = $this->parameter->getType();
 
         /**
-         * @psalm-suppress UndefinedDocblockClass This annotation is needed in PHP 7.4
-         *
          * @var ReflectionNamedType[] $types
          */
         $types = $parameterType->getTypes();
@@ -182,9 +177,7 @@ final class ParameterDefinition implements DefinitionInterface
                     // If type name is "self", it means that called class and
                     // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
                     /** @psalm-suppress PossiblyNullReference */
-                    $typeName = $this->parameter
-                        ->getDeclaringClass()
-                        ->getName();
+                    $typeName = $this->parameter->getDeclaringClass()->getName();
                 }
 
                 try {
