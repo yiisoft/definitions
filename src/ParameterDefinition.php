@@ -109,17 +109,6 @@ final class ParameterDefinition implements DefinitionInterface
             return $this->parameter->getDefaultValue();
         }
 
-        if ($this->isOptional()) {
-            throw new NotInstantiableException(
-                sprintf(
-                    'Can not determine default value of parameter "%s" when instantiating "%s" ' .
-                    'because it is PHP internal. Please specify argument explicitly.',
-                    $this->parameter->getName(),
-                    $this->getCallable(),
-                )
-            );
-        }
-
         $type = $this->getType();
 
         if ($type === null) {
