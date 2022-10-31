@@ -332,7 +332,42 @@ final class ArrayDefinitionTest extends TestCase
                 [[1, 2, 3]],
                 ['kitty', [1, 2, 3]],
             ],
+            [
+                'kitty',
+                [1, 2, 3],
+                ['name' => 'kitty', 'colors' => Reference::to('data')],
+                ['data' => [1, 2, 3]],
+            ],
+            [
+                'kitty',
+                [[1, 2, 3]],
+                ['kitty', Reference::to('data')],
+                ['data' => [1, 2, 3]],
+            ],
         ];
+    }
+
+    /**
+     * @dataProvider dataMethodVariadic
+     */
+    public function testMethodVariadic(
+        ?string $expectedName,
+        array $expectedColors,
+        array $data,
+        array $containerDefinitions = []
+    ): void {
+        $container = new SimpleContainer($containerDefinitions);
+
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndColors()' => $data,
+        ]);
+
+        /** @var Mouse $mouse */
+        $mouse = $definition->resolve($container);
+
+        self::assertSame($expectedName, $mouse->getName());
+        self::assertSame($expectedColors, $mouse->getColors());
     }
 
     public function testArgumentsIndexedBothByNameAndByPositionInMethod(): void
@@ -350,25 +385,6 @@ final class ArrayDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
-    /**
-     * @dataProvider dataMethodVariadic
-     */
-    public function testMethodVariadic(?string $expectedName, array $expectedColors, array $data): void
-    {
-        $container = new SimpleContainer();
-
-        $definition = ArrayDefinition::fromConfig([
-            ArrayDefinition::CLASS_NAME => Mouse::class,
-            'setNameAndColors()' => $data,
-        ]);
-
-        /** @var Mouse $mouse */
-        $mouse = $definition->resolve($container);
-
-        self::assertSame($expectedName, $mouse->getName());
-        self::assertSame($expectedColors, $mouse->getColors());
-    }
-
     public function testMethodWithWrongVariadicArgument(): void
     {
         $container = new SimpleContainer();
@@ -383,6 +399,25 @@ final class ArrayDefinitionTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Named argument for a variadic parameter should be an array, "string" given.');
+        $definition->resolve($container);
+    }
+
+    public function testMethodWithWrongReferenceVariadicArgument(): void
+    {
+        $container = new SimpleContainer([
+            'data' => 32
+        ]);
+
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndColors()' => [
+                'name' => 'kitty',
+                'colors' => Reference::to('data'),
+            ],
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Named argument for a variadic parameter should be an array, "integer" given.');
         $definition->resolve($container);
     }
 

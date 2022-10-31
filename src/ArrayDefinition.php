@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use ReflectionMethod;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
+use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\Helpers\DefinitionResolver;
@@ -183,23 +184,11 @@ final class ArrayDefinition implements DefinitionInterface
         array $dependencies,
         array $arguments
     ): array {
-        $this->injectArguments($dependencies, $arguments);
-        $resolvedArguments = DefinitionResolver::resolveArray($container, $this->referenceContainer, $dependencies);
-        return array_values($resolvedArguments);
-    }
-
-    /**
-     * @psalm-param array<string, ParameterDefinition> $dependencies
-     * @psalm-param-out array<array-key, Yiisoft\Definitions\ParameterDefinition|mixed> $dependencies
-     *
-     * @throws InvalidConfigException
-     */
-    private function injectArguments(array &$dependencies, array $arguments): void
-    {
         $isIntegerIndexed = $this->isIntegerIndexed($arguments);
         $dependencyIndex = 0;
         $usedArguments = [];
         $variadicKey = null;
+
         foreach ($dependencies as $key => &$value) {
             if ($value->isVariadic()) {
                 $variadicKey = $key;
@@ -212,24 +201,41 @@ final class ArrayDefinition implements DefinitionInterface
             $dependencyIndex++;
         }
         unset($value);
+
         if ($variadicKey !== null) {
             if (!$isIntegerIndexed && isset($arguments[$variadicKey])) {
+                if ($arguments[$variadicKey] instanceof ReferenceInterface) {
+                    /** @var mixed */
+                    $arguments[$variadicKey] = DefinitionResolver::resolve(
+                        $container,
+                        $this->referenceContainer,
+                        $arguments[$variadicKey]
+                    );
+                }
+
                 if (is_array($arguments[$variadicKey])) {
                     unset($dependencies[$variadicKey]);
                     $dependencies += $arguments[$variadicKey];
-                    return;
+                } else {
+                    throw new InvalidArgumentException(
+                        sprintf(
+                            'Named argument for a variadic parameter should be an array, "%s" given.',
+                            gettype($arguments[$variadicKey])
+                        )
+                    );
                 }
-
-                throw new InvalidArgumentException(sprintf('Named argument for a variadic parameter should be an array, "%s" given.', gettype($arguments[$variadicKey])));
-            }
-
-            /** @var mixed $value */
-            foreach ($arguments as $index => $value) {
-                if (!isset($usedArguments[$index])) {
-                    $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
+            } else {
+                /** @var mixed $value */
+                foreach ($arguments as $index => $value) {
+                    if (!isset($usedArguments[$index])) {
+                        $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
+                    }
                 }
             }
         }
+
+        $resolvedArguments = DefinitionResolver::resolveArray($container, $this->referenceContainer, $dependencies);
+        return array_values($resolvedArguments);
     }
 
     /**
