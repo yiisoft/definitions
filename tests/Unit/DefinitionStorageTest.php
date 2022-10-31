@@ -20,10 +20,46 @@ use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstr
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructorSubDependency;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\SelfDependency;
+use Yiisoft\Definitions\Tests\Support\UnionCar;
+use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionStorageTest extends TestCase
 {
+    public function testUnresolvableUnionSelfDependency(): void
+    {
+        $storage = new DefinitionStorage();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Service ' . UnionSelfDependency::class . ' doesn\'t exist in DefinitionStorage.'
+        );
+        $storage->get(UnionSelfDependency::class);
+    }
+
+    public function testResolvableUnionTypeDependency(): void
+    {
+        $storage = new DefinitionStorage();
+
+        $definition = $storage->get(UnionCar::class);
+
+        $this->assertSame(UnionCar::class, $definition);
+    }
+
+    public function testResolvableFromContainerUnionTypeDependency(): void
+    {
+        $storage = new DefinitionStorage();
+
+        $container = new SimpleContainer([
+            ColorInterface::class => new ColorPink(),
+        ]);
+        $storage->setDelegateContainer($container);
+
+        $definition = $storage->get(UnionSelfDependency::class);
+
+        $this->assertSame(UnionSelfDependency::class, $definition);
+    }
+
     public function testExplicitDefinitionIsNotChecked(): void
     {
         $storage = new DefinitionStorage(['existing' => 'anything']);
