@@ -23,7 +23,7 @@ final class DefinitionResolver
      *
      * @param ContainerInterface $container Container to get dependencies from.
      * @param ContainerInterface|null $referenceContainer Container to get references from.
-     * @psalm-param array<string,mixed> $definitions Definitions to resolve.
+     * @param array $definitions Definitions to resolve.
      *
      * @return array The resolved dependencies.
      */
@@ -65,7 +65,6 @@ final class DefinitionResolver
             /** @var mixed $definition */
             $definition = $definition->resolve($container);
         } elseif (is_array($definition)) {
-            /** @psalm-var array<string,mixed> $definition */
             return self::resolveArray($container, $referenceContainer, $definition);
         }
 

@@ -15,6 +15,7 @@ use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\EngineInterface;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\EngineMarkTwo;
+use Yiisoft\Definitions\Tests\Support\Mouse;
 use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
@@ -243,6 +244,181 @@ final class ArrayDefinitionTest extends TestCase
 
         self::assertSame($author, $phone->getAuthor());
         self::assertSame($country, $phone->getCountry());
+    }
+
+    public function dataMethodAutowiring(): array
+    {
+        return [
+            [
+                'kitty',
+                EngineMarkOne::class,
+                ['kitty'],
+            ],
+            [
+                'kitty',
+                EngineMarkOne::class,
+                ['name' => 'kitty'],
+            ],
+            [
+                'kitty',
+                EngineMarkTwo::class,
+                ['kitty', new EngineMarkTwo()],
+            ],
+            [
+                'kitty',
+                EngineMarkTwo::class,
+                ['name' => 'kitty', 'engine' => new EngineMarkTwo()],
+            ],
+            [
+                'kitty',
+                EngineMarkTwo::class,
+                ['kitty', Reference::to('mark2')],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataMethodAutowiring
+     */
+    public function testMethodAutowiring(?string $expectedName, ?string $expectedEngine, array $data): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            'mark2' => new EngineMarkTwo(),
+        ]);
+
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndEngine()' => $data,
+        ]);
+
+        /** @var Mouse $mouse */
+        $mouse = $definition->resolve($container);
+
+        self::assertSame($expectedName, $mouse->getName());
+        self::assertInstanceOf($expectedEngine, $mouse->getEngine());
+    }
+
+    public function dataMethodVariadic(): array
+    {
+        return [
+            [
+                'kitty',
+                [],
+                ['kitty'],
+            ],
+            [
+                'kitty',
+                [],
+                ['name' => 'kitty'],
+            ],
+            [
+                'kitty',
+                [],
+                ['name' => 'kitty', 'colors' => []],
+            ],
+            [
+                'kitty',
+                [1, 2, 3],
+                ['name' => 'kitty', 'colors' => [1, 2, 3]],
+            ],
+            [
+                'kitty',
+                [1, 2, 3],
+                ['kitty', 1, 2, 3],
+            ],
+            [
+                'kitty',
+                [[1, 2, 3]],
+                ['kitty', [1, 2, 3]],
+            ],
+            [
+                'kitty',
+                [1, 2, 3],
+                ['name' => 'kitty', 'colors' => Reference::to('data')],
+                ['data' => [1, 2, 3]],
+            ],
+            [
+                'kitty',
+                [[1, 2, 3]],
+                ['kitty', Reference::to('data')],
+                ['data' => [1, 2, 3]],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataMethodVariadic
+     */
+    public function testMethodVariadic(
+        ?string $expectedName,
+        array $expectedColors,
+        array $data,
+        array $containerDefinitions = []
+    ): void {
+        $container = new SimpleContainer($containerDefinitions);
+
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndColors()' => $data,
+        ]);
+
+        /** @var Mouse $mouse */
+        $mouse = $definition->resolve($container);
+
+        self::assertSame($expectedName, $mouse->getName());
+        self::assertSame($expectedColors, $mouse->getColors());
+    }
+
+    public function testArgumentsIndexedBothByNameAndByPositionInMethod(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndEngine()' => ['kitty', 'engine' => new EngineMarkOne()],
+        ]);
+        $container = new SimpleContainer();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Arguments indexed both by name and by position are not allowed in the same array.'
+        );
+        $definition->resolve($container);
+    }
+
+    public function testMethodWithWrongVariadicArgument(): void
+    {
+        $container = new SimpleContainer();
+
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndColors()' => [
+                'name' => 'kitty',
+                'colors' => 'red',
+            ],
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Named argument for a variadic parameter should be an array, "string" given.');
+        $definition->resolve($container);
+    }
+
+    public function testMethodWithWrongReferenceVariadicArgument(): void
+    {
+        $container = new SimpleContainer([
+            'data' => 32,
+        ]);
+
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndColors()' => [
+                'name' => 'kitty',
+                'colors' => Reference::to('data'),
+            ],
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Named argument for a variadic parameter should be an array, "integer" given.');
+        $definition->resolve($container);
     }
 
     public function testMerge(): void
