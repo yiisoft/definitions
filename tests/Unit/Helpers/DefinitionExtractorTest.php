@@ -78,22 +78,6 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertSame('self|' . ColorInterface::class, $actualType);
     }
 
-    public function testResolveConstructorWithDateTime(): void
-    {
-        $container = new SimpleContainer();
-
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = DefinitionExtractor::fromClassName(DateTime::class);
-
-        // Since reflection for built-in classes does not get default values.
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage(
-            'Can not determine default value of parameter "time" when instantiating' .
-            ' "DateTime::__construct()" because it is PHP internal. Please specify argument explicitly.'
-        );
-        $dependencies['time']->resolve($container);
-    }
-
     public function testResolveCarConstructor(): void
     {
         $container = new SimpleContainer();
