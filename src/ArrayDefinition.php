@@ -6,7 +6,9 @@ namespace Yiisoft\Definitions;
 
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use ReflectionMethod;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
+use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\Helpers\DefinitionResolver;
@@ -137,32 +139,35 @@ final class ArrayDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container): object
     {
-        $class = $this->getClass();
-        $dependencies = DefinitionExtractor::fromClassName($class);
-        $constructorArguments = $this->getConstructorArguments();
+        $class = $this->class;
 
-        $this->injectArguments($dependencies, $constructorArguments);
-
-        /** @psalm-suppress MixedArgumentTypeCoercion */
-        $resolved = DefinitionResolver::resolveArray($container, $this->referenceContainer, $dependencies);
+        $resolvedConstructorArguments = $this->resolveFunctionArguments(
+            $container,
+            DefinitionExtractor::fromClassName($class),
+            $this->getConstructorArguments()
+        );
 
         /** @psalm-suppress MixedMethodCall */
-        $object = new $class(...array_values($resolved));
+        $object = new $class(...$resolvedConstructorArguments);
 
         foreach ($this->getMethodsAndProperties() as $item) {
             /** @var mixed $value */
             [$type, $name, $value] = $item;
-            /** @var mixed */
-            $value = DefinitionResolver::resolve($container, $this->referenceContainer, $value);
             if ($type === self::TYPE_METHOD) {
-                /** @var mixed */
-                $setter = call_user_func_array([$object, $name], $value);
+                /** @var array $value */
+                $resolvedMethodArguments = $this->resolveFunctionArguments(
+                    $container,
+                    DefinitionExtractor::fromFunction(new ReflectionMethod($object, $name)),
+                    $value,
+                );
+                /** @var mixed $setter */
+                $setter = call_user_func_array([$object, $name], $resolvedMethodArguments);
                 if ($setter instanceof $object) {
-                    /** @var object */
+                    /** @var object $object */
                     $object = $setter;
                 }
             } elseif ($type === self::TYPE_PROPERTY) {
-                $object->$name = $value;
+                $object->$name = DefinitionResolver::resolve($container, $this->referenceContainer, $value);
             }
         }
 
@@ -170,17 +175,20 @@ final class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array<string, ParameterDefinition> $dependencies
-     * @psalm-param-out array<array-key, Yiisoft\Definitions\ParameterDefinition|mixed> $dependencies
+     * @param array<string,ParameterDefinition> $dependencies
      *
-     * @throws InvalidConfigException
+     * @psalm-return list<mixed>
      */
-    private function injectArguments(array &$dependencies, array $arguments): void
-    {
+    private function resolveFunctionArguments(
+        ContainerInterface $container,
+        array $dependencies,
+        array $arguments
+    ): array {
         $isIntegerIndexed = $this->isIntegerIndexed($arguments);
         $dependencyIndex = 0;
         $usedArguments = [];
         $variadicKey = null;
+
         foreach ($dependencies as $key => &$value) {
             if ($value->isVariadic()) {
                 $variadicKey = $key;
@@ -193,24 +201,41 @@ final class ArrayDefinition implements DefinitionInterface
             $dependencyIndex++;
         }
         unset($value);
+
         if ($variadicKey !== null) {
             if (!$isIntegerIndexed && isset($arguments[$variadicKey])) {
+                if ($arguments[$variadicKey] instanceof ReferenceInterface) {
+                    /** @var mixed */
+                    $arguments[$variadicKey] = DefinitionResolver::resolve(
+                        $container,
+                        $this->referenceContainer,
+                        $arguments[$variadicKey]
+                    );
+                }
+
                 if (is_array($arguments[$variadicKey])) {
                     unset($dependencies[$variadicKey]);
                     $dependencies += $arguments[$variadicKey];
-                    return;
+                } else {
+                    throw new InvalidArgumentException(
+                        sprintf(
+                            'Named argument for a variadic parameter should be an array, "%s" given.',
+                            gettype($arguments[$variadicKey])
+                        )
+                    );
                 }
-
-                throw new InvalidArgumentException(sprintf('Named argument for a variadic parameter should be an array, "%s" given.', gettype($arguments[$variadicKey])));
-            }
-
-            /** @var mixed $value */
-            foreach ($arguments as $index => $value) {
-                if (!isset($usedArguments[$index])) {
-                    $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
+            } else {
+                /** @var mixed $value */
+                foreach ($arguments as $index => $value) {
+                    if (!isset($usedArguments[$index])) {
+                        $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
+                    }
                 }
             }
         }
+
+        $resolvedArguments = DefinitionResolver::resolveArray($container, $this->referenceContainer, $dependencies);
+        return array_values($resolvedArguments);
     }
 
     /**
