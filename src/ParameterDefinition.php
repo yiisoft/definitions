@@ -99,8 +99,9 @@ final class ParameterDefinition implements DefinitionInterface
     }
 
     /**
-     * @return mixed
      * @throws NotInstantiableException
+     *
+     * @return mixed
      */
     private function resolveVariadicOrBuiltinOrNonTyped()
     {
