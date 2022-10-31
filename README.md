@@ -26,14 +26,14 @@ The following are provided:
 
 ## Requirements
 
-- PHP 7.4 or higher.
+- PHP 8.0 or higher.
 
 ## Installation
 
 The package could be installed with composer:
 
 ```shell
-composer require yiisoft/definitions --prefer-dist
+composer require yiisoft/definitions
 ```
 
 ## General usage
