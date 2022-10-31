@@ -233,25 +233,6 @@ final class ParameterDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
-    public function testNotInstantiablePhpInternal(): void
-    {
-        if (PHP_VERSION_ID >= 80000) {
-            $this->markTestSkipped('Can not determine default value of PHP internal parameters in PHP < 8.0.');
-        }
-
-        $definition = new ParameterDefinition(
-            $this->getParameters('trim')[1]
-        );
-        $container = new SimpleContainer();
-
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage(
-            'Can not determine default value of parameter "character_mask" when instantiating "trim()" ' .
-            'because it is PHP internal. Please specify argument explicitly.'
-        );
-        $definition->resolve($container);
-    }
-
     public function testOptionalBrokenDependency(): void
     {
         $container = new SimpleContainer(
