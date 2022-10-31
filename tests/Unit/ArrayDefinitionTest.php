@@ -405,7 +405,7 @@ final class ArrayDefinitionTest extends TestCase
     public function testMethodWithWrongReferenceVariadicArgument(): void
     {
         $container = new SimpleContainer([
-            'data' => 32
+            'data' => 32,
         ]);
 
         $definition = ArrayDefinition::fromConfig([
