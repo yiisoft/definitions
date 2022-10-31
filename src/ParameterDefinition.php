@@ -44,7 +44,7 @@ final class ParameterDefinition implements DefinitionInterface
         return $this->parameter->isDefaultValueAvailable();
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(ContainerInterface $container): mixed
     {
         $type = $this->parameter->getType();
 

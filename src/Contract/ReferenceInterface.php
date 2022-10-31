@@ -7,8 +7,8 @@ namespace Yiisoft\Definitions\Contract;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
 /**
- * Reference points to another named definition. Usually it is another service in the container
- * or another object definition in the factory.
+ * Reference points to another named definition. Usually it is another service in the container or another object
+ * definition in the factory.
  */
 interface ReferenceInterface extends DefinitionInterface
 {

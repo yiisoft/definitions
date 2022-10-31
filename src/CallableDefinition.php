@@ -41,7 +41,7 @@ final class CallableDefinition implements DefinitionInterface
         $this->callable = $callable;
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(ContainerInterface $container): mixed
     {
         try {
             $reflection = new ReflectionFunction(

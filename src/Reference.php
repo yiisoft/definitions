@@ -66,7 +66,7 @@ final class Reference implements ReferenceInterface
         return new self($id, true);
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(ContainerInterface $container): mixed
     {
         return (!$this->optional || $container->has($this->id)) ? $container->get($this->id) : null;
     }

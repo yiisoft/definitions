@@ -32,7 +32,7 @@ final class ValueDefinition implements DefinitionInterface
         return $this->type;
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(ContainerInterface $container): mixed
     {
         return $this->value;
     }

@@ -56,7 +56,7 @@ final class DynamicReference implements ReferenceInterface
         return new self($id);
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(ContainerInterface $container): mixed
     {
         return $this->definition->resolve($container);
     }
