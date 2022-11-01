@@ -2,7 +2,6 @@
 
 ## 2.1.1 under development
 
-- Enh: Add composer require checker into CI
 - Enh #44: In methods of array definitions add autowiring and improve variadic arguments support (@vjik)
 - Enh #41: Raise minimum PHP version to 8.0 and refactor code (@xepozz, @vjik)
 
