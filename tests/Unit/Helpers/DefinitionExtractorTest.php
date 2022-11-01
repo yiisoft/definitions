@@ -7,13 +7,15 @@ namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\NotFoundExceptionInterface;
+use ReflectionFunction;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
-use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Support\Car;
+use Yiisoft\Definitions\Tests\Support\ColorInterface;
 use Yiisoft\Definitions\Tests\Support\EngineInterface;
+use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\NullableInterfaceDependency;
@@ -22,28 +24,57 @@ use Yiisoft\Definitions\Tests\Support\OptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Support\NullableOptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\NullableOptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Support\SelfDependency;
+use Yiisoft\Definitions\Tests\Support\UnionCar;
+use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {
-        if (PHP_VERSION_ID >= 80000) {
-            $this->markTestSkipped('Can not determine default value of PHP internal parameters in PHP < 8.0.');
-        }
-
         $container = new SimpleContainer();
 
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = DefinitionExtractor::fromClassName(DateTime::class);
 
-        // Since reflection for built-in classes does not get default values.
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage(
-            'Can not determine default value of parameter "time" when instantiating' .
-            ' "DateTime::__construct()" because it is PHP internal. Please specify argument explicitly.'
-        );
-        $dependencies['time']->resolve($container);
+        $this->assertCount(2, $dependencies);
+        $this->assertEquals('now', $dependencies['datetime']->resolve($container));
+        $this->assertEquals(null, $dependencies['timezone']->resolve($container));
+    }
+
+    public function testResolveUnionCarConstructor(): void
+    {
+        $container = new SimpleContainer([
+            EngineMarkOne::class => new EngineMarkOne(),
+        ]);
+
+        $dependencies = DefinitionExtractor::fromClassName(UnionCar::class);
+
+        $this->assertCount(1, $dependencies);
+        $this->assertInstanceOf(ParameterDefinition::class, $dependencies['engine']);
+        $resolved = $dependencies['engine']->resolve($container);
+        $this->assertInstanceOf(EngineMarkOne::class, $resolved);
+    }
+
+    public function testUnionScalarTypes(): void
+    {
+        $definition = DefinitionExtractor::fromFunction(
+            new ReflectionFunction(static fn (string|int $a): bool => true),
+        )['a'];
+
+        $this->assertInstanceOf(ParameterDefinition::class, $definition);
+    }
+
+    public function testFromClassWithUnionSelfDependency(): void
+    {
+        $definition = DefinitionExtractor::fromClassName(UnionSelfDependency::class)['a'];
+
+        $actualType = implode('|', $definition
+            ->getReflection()
+            ->getType()
+            ->getTypes());
+        $this->assertInstanceOf(ParameterDefinition::class, $definition);
+        $this->assertSame('self|' . ColorInterface::class, $actualType);
     }
 
     public function testResolveCarConstructor(): void

@@ -17,20 +17,18 @@ use Yiisoft\Definitions\Helpers\DefinitionExtractor;
  */
 final class DefinitionStorage
 {
-    private array $definitions;
     private array $buildStack = [];
-    /** @psalm-suppress  PropertyNotSetInConstructor */
+
     private ?ContainerInterface $delegateContainer = null;
-    private bool $useStrictMode;
 
     /**
      * @param array $definitions Definitions to store.
      * @param bool $useStrictMode If every dependency should be defined explicitly including classes.
      */
-    public function __construct(array $definitions = [], bool $useStrictMode = false)
-    {
-        $this->definitions = $definitions;
-        $this->useStrictMode = $useStrictMode;
+    public function __construct(
+        private array $definitions = [],
+        private bool $useStrictMode = false
+    ) {
     }
 
     /**
@@ -70,7 +68,7 @@ final class DefinitionStorage
      *
      * @return mixed|object Definition with a given ID.
      */
-    public function get(string $id)
+    public function get(string $id): mixed
     {
         if (!$this->has($id)) {
             throw new RuntimeException("Service $id doesn't exist in DefinitionStorage.");
@@ -82,13 +80,16 @@ final class DefinitionStorage
      * Set a definition.
      *
      * @param string $id ID to set definition for.
-     * @param mixed|object $definition Definition to set.
+     * @param mixed $definition Definition to set.
      */
-    public function set(string $id, $definition): void
+    public function set(string $id, mixed $definition): void
     {
         $this->definitions[$id] = $definition;
     }
 
+    /**
+     * @throws CircularReferenceException
+     */
     private function isResolvable(string $id, array $building): bool
     {
         if (isset($this->definitions[$id])) {
@@ -110,7 +111,7 @@ final class DefinitionStorage
 
         try {
             $dependencies = DefinitionExtractor::fromClassName($id);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $this->buildStack += $building + [$id => 1];
             return false;
         }
@@ -132,29 +133,28 @@ final class DefinitionStorage
                     break;
                 }
 
-                /**
-                 * @var ReflectionNamedType|ReflectionUnionType|null $type
-                 * @psalm-suppress RedundantConditionGivenDocblockType
-                 * @psalm-suppress UndefinedClass
-                 */
-                if ($type === null || (!$type instanceof ReflectionUnionType && $type->isBuiltin())) {
+                if (
+                    ($type instanceof ReflectionNamedType && $type->isBuiltin())
+                    || (!$type instanceof ReflectionNamedType && !$type instanceof ReflectionUnionType)
+                ) {
                     $isResolvable = false;
                     break;
                 }
 
-                // PHP 8 union type is used as type hint
-                /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
+                /** @var ReflectionNamedType|ReflectionUnionType $type */
+
+                // Union type is used as type hint
                 if ($type instanceof ReflectionUnionType) {
                     $isUnionTypeResolvable = false;
                     $unionTypes = [];
-                    /**
-                     * @psalm-suppress UnnecessaryVarAnnotation Annotation below is needed in PHP 7.4
-                     *
-                     * @var ReflectionNamedType $unionType
-                     */
                     foreach ($type->getTypes() as $unionType) {
                         if (!$unionType->isBuiltin()) {
                             $typeName = $unionType->getName();
+                            /**
+                             * @psalm-suppress TypeDoesNotContainType
+                             *
+                             * @link https://github.com/vimeo/psalm/issues/6756
+                             */
                             if ($typeName === 'self') {
                                 continue;
                             }
@@ -165,7 +165,6 @@ final class DefinitionStorage
                             }
                         }
                     }
-
 
                     if (!$isUnionTypeResolvable) {
                         foreach ($unionTypes as $typeName) {
@@ -183,9 +182,8 @@ final class DefinitionStorage
                     continue;
                 }
 
-                /** @var ReflectionNamedType|null $type */
                 // Our parameter has a class type hint
-                if ($type !== null && !$type->isBuiltin()) {
+                if (!$type->isBuiltin()) {
                     $typeName = $type->getName();
                     /**
                      * @psalm-suppress TypeDoesNotContainType
@@ -193,15 +191,19 @@ final class DefinitionStorage
                      * @link https://github.com/vimeo/psalm/issues/6756
                      */
                     if ($typeName === 'self') {
-                        throw new CircularReferenceException(sprintf(
-                            'Circular reference to "%s" detected while building: %s.',
-                            $id,
-                            implode(', ', array_keys($building))
-                        ));
+                        throw new CircularReferenceException(
+                            sprintf(
+                                'Circular reference to "%s" detected while building: %s.',
+                                $id,
+                                implode(', ', array_keys($building))
+                            )
+                        );
                     }
 
-                    /** @psalm-suppress RedundantPropertyInitializationCheck */
-                    if (!$this->isResolvable($typeName, $building) && ($this->delegateContainer === null || !$this->delegateContainer->has($typeName))) {
+                    if (
+                        !$this->isResolvable($typeName, $building)
+                        && ($this->delegateContainer === null || !$this->delegateContainer->has($typeName))
+                    ) {
                         $isResolvable = false;
                         break;
                     }

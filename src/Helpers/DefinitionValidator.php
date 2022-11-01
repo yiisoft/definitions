@@ -9,8 +9,6 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
-use function get_class;
-use function gettype;
 use function is_array;
 use function is_callable;
 use function is_object;
@@ -28,7 +26,7 @@ final class DefinitionValidator
      *
      * @throws InvalidConfigException If definition is not valid.
      */
-    public static function validate($definition, ?string $id = null): void
+    public static function validate(mixed $definition, ?string $id = null): void
     {
         // Reference or ready object
         if (is_object($definition) && self::isValidObject($definition)) {
@@ -79,7 +77,7 @@ final class DefinitionValidator
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: invalid class name. Expected string, got %s.',
-                            self::getType($value),
+                            get_debug_type($value),
                         ),
                     );
                 }
@@ -95,7 +93,7 @@ final class DefinitionValidator
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
-                            self::getType($value)
+                            get_debug_type($value)
                         )
                     );
                 }
@@ -112,18 +110,18 @@ final class DefinitionValidator
             }
 
             // Methods and properties
-            if (substr($key, -2) === '()') {
+            if (str_ends_with($key, '()')) {
                 if (!is_array($value)) {
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: incorrect method arguments. Expected array, got %s.',
-                            self::getType($value)
+                            get_debug_type($value)
                         )
                     );
                 }
                 continue;
             }
-            if (strncmp($key, '$', 1) === 0) {
+            if (str_starts_with($key, '$')) {
                 continue;
             }
 
@@ -162,18 +160,10 @@ final class DefinitionValidator
     }
 
     /**
-     * Deny DefinitionInterface, exclude ReferenceInterface
+     * Deny `DefinitionInterface`, exclude `ReferenceInterface`
      */
     private static function isValidObject(object $value): bool
     {
         return !($value instanceof DefinitionInterface) || $value instanceof ReferenceInterface;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    private static function getType($value): string
-    {
-        return is_object($value) ? get_class($value) : gettype($value);
     }
 }

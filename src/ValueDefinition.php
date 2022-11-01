@@ -13,20 +13,13 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 final class ValueDefinition implements DefinitionInterface
 {
     /**
-     * @var mixed
-     */
-    private $value;
-
-    private ?string $type;
-
-    /**
      * @param mixed $value Value to be returned on resolving.
-     * @param ?string $type Value type.
+     * @param string|null $type Value type.
      */
-    public function __construct($value, string $type = null)
-    {
-        $this->value = $value;
-        $this->type = $type;
+    public function __construct(
+        private mixed $value,
+        private ?string $type = null
+    ) {
     }
 
     /**
@@ -39,7 +32,7 @@ final class ValueDefinition implements DefinitionInterface
         return $this->type;
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(ContainerInterface $container): mixed
     {
         return $this->value;
     }
