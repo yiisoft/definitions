@@ -9,9 +9,7 @@ use Yiisoft\Definitions\CallableDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
-
 use Yiisoft\Definitions\Reference;
-
 use Yiisoft\Definitions\ValueDefinition;
 
 use function array_key_exists;
@@ -38,7 +36,7 @@ final class Normalizer
      *  - ready object.
      *
      * @param mixed $definition The definition for normalization.
-     * @param string $class The class name of the object to be defined (optional). It is used in two cases.
+     * @param string|null $class The class name of the object to be defined (optional). It is used in two cases.
      *  - The definition is a string, and class name equals to definition. Returned `ArrayDefinition` with defined
      *    class.
      *  - The definition is an array without class name. Class name will be added to array and `ArrayDefinition`
@@ -48,7 +46,7 @@ final class Normalizer
      *
      * @return DefinitionInterface Normalized definition as an object.
      */
-    public static function normalize($definition, string $class = null): DefinitionInterface
+    public static function normalize(mixed $definition, ?string $class = null): DefinitionInterface
     {
         // Reference
         if ($definition instanceof ReferenceInterface) {

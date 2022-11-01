@@ -26,14 +26,14 @@ The following are provided:
 
 ## Requirements
 
-- PHP 7.4 or higher.
+- PHP 8.0 or higher.
 
 ## Installation
 
 The package could be installed with composer:
 
 ```shell
-composer require yiisoft/definitions --prefer-dist
+composer require yiisoft/definitions
 ```
 
 ## General usage
@@ -139,6 +139,20 @@ dependencies:
     MyService::class => [
         '__construct()' => [
             Reference::to('alternativeForA'),
+        ],
+    ],
+]
+```
+
+Optional reference returns `null` when there's no corresponding definition in container:
+
+```php
+[
+    MyService::class => [
+        '__construct()' => [
+            // If container doesn't have definition for `EventDispatcherInterface` reference returns `null`
+            // when resolving dependencies
+            Reference::optional(EventDispatcherInterface::class), 
         ],
     ],
 ]

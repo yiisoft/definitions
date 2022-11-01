@@ -6,11 +6,9 @@ namespace Yiisoft\Definitions\Tests\Support;
 
 final class UnionCar
 {
-    private NonExistingEngine|EngineMarkOne|EngineMarkTwo $engine;
-
-    public function __construct(NonExistingEngine|EngineMarkOne|EngineMarkTwo $engine)
-    {
-        $this->engine = $engine;
+    public function __construct(
+        private NonExistingEngine|EngineMarkOne|EngineMarkTwo $engine
+    ) {
     }
 
     public function getEngine(): NonExistingEngine|EngineMarkOne|EngineMarkTwo

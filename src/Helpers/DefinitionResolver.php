@@ -23,12 +23,15 @@ final class DefinitionResolver
      *
      * @param ContainerInterface $container Container to get dependencies from.
      * @param ContainerInterface|null $referenceContainer Container to get references from.
-     * @psalm-param array<string,mixed> $definitions Definitions to resolve.
+     * @param array $definitions Definitions to resolve.
      *
      * @return array The resolved dependencies.
      */
-    public static function resolveArray(ContainerInterface $container, ?ContainerInterface $referenceContainer, array $definitions): array
-    {
+    public static function resolveArray(
+        ContainerInterface $container,
+        ?ContainerInterface $referenceContainer,
+        array $definitions
+    ): array {
         $result = [];
         /** @var mixed $definition */
         foreach ($definitions as $key => $definition) {
@@ -53,11 +56,12 @@ final class DefinitionResolver
      * This function resolves a definition recursively, checking for loops.
      *
      * @param mixed $definition Definition to resolve.
-     *
-     * @return mixed
      */
-    public static function resolve(ContainerInterface $container, ?ContainerInterface $referenceContainer, $definition)
-    {
+    public static function resolve(
+        ContainerInterface $container,
+        ?ContainerInterface $referenceContainer,
+        mixed $definition
+    ): mixed {
         if ($definition instanceof DefinitionInterface) {
             $container = $referenceContainer !== null && $definition instanceof ReferenceInterface
                 ? $referenceContainer
@@ -65,7 +69,6 @@ final class DefinitionResolver
             /** @var mixed $definition */
             $definition = $definition->resolve($container);
         } elseif (is_array($definition)) {
-            /** @psalm-var array<string,mixed> $definition */
             return self::resolveArray($container, $referenceContainer, $definition);
         }
 
@@ -73,13 +76,9 @@ final class DefinitionResolver
     }
 
     /**
-     * @param mixed $value
-     *
      * @throws InvalidConfigException
-     *
-     * @return array|ReferenceInterface|ValueDefinition
      */
-    public static function ensureResolvable($value)
+    public static function ensureResolvable(mixed $value): array|ReferenceInterface|ValueDefinition
     {
         if ($value instanceof ReferenceInterface || is_array($value)) {
             return $value;
