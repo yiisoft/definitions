@@ -2,6 +2,7 @@
 
 ## 2.1.1 under development
 
+- Enh #46: In definition validator add a check of method name in array definitions (@vjik) 
 - Enh #44: In methods of array definitions add autowiring and improve variadic arguments support (@vjik)
 - Enh #41: Raise minimum PHP version to 8.0 and refactor code (@xepozz, @vjik)
 

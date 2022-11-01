@@ -13,6 +13,8 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\Helpers\DefinitionResolver;
 
+use Yiisoft\Definitions\Tests\Unit\Helpers\DefinitionValidatorTest;
+
 use function array_key_exists;
 use function call_user_func_array;
 use function count;
@@ -96,6 +98,10 @@ final class ArrayDefinition implements DefinitionInterface
                 continue;
             }
 
+            /**
+             * @infection-ignore-all Explode limit does not affect the result.
+             * @see DefinitionValidatorTest::testIncorrectMethodName()
+             */
             if (count($methodArray = explode('()', $key, 2)) === 2) {
                 $methodsAndProperties[$key] = [self::TYPE_METHOD, $methodArray[0], $value];
             } elseif (count($propertyArray = explode('$', $key)) === 2) {

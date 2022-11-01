@@ -111,6 +111,17 @@ final class DefinitionValidator
 
             // Methods and properties
             if (str_ends_with($key, '()')) {
+                /**
+                 * Regular expression from https://www.php.net/manual/en/functions.user-defined.php
+                 */
+                if (!preg_match('/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*\(\)$/', $key)) {
+                    throw new InvalidConfigException(
+                        sprintf(
+                            'Invalid definition: incorrect method name. Got "%s".',
+                            $key
+                        )
+                    );
+                }
                 if (!is_array($value)) {
                     throw new InvalidConfigException(
                         sprintf(
