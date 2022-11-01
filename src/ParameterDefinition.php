@@ -100,10 +100,8 @@ final class ParameterDefinition implements DefinitionInterface
 
     /**
      * @throws NotInstantiableException
-     *
-     * @return mixed
      */
-    private function resolveVariadicOrBuiltinOrNonTyped()
+    private function resolveVariadicOrBuiltinOrNonTyped(): mixed
     {
         if ($this->parameter->isDefaultValueAvailable()) {
             return $this->parameter->getDefaultValue();
@@ -139,10 +137,9 @@ final class ParameterDefinition implements DefinitionInterface
      * @throws InvalidConfigException If an object of incorrect type was created.
      * @throws Throwable
      *
-     * @return mixed|null Ready to use object or null if definition can
-     * not be resolved and is marked as optional.
+     * @return mixed Ready to use object or null if definition can not be resolved and is marked as optional.
      */
-    private function resolveUnionType(ContainerInterface $container)
+    private function resolveUnionType(ContainerInterface $container): mixed
     {
         /**
          * @var ReflectionUnionType $parameterType
@@ -222,6 +219,7 @@ final class ParameterDefinition implements DefinitionInterface
 
         if ($type instanceof ReflectionUnionType) {
             $namedTypes = $type->getTypes();
+            /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
             $names = array_map(
                 static fn (ReflectionNamedType $t) => $t->getName(),
                 $namedTypes
