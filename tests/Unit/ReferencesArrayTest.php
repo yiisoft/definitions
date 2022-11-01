@@ -28,7 +28,8 @@ final class ReferencesArrayTest extends TestCase
         $ids = ['first', 22];
 
         $this->expectException(InvalidConfigException::class);
-        $references = ReferencesArray::from($ids);
+        $this->expectExceptionMessage('Values of an array must be string alias or class name.');
+        ReferencesArray::from($ids);
     }
 
     public function testDynamicReferencesArray(): void
@@ -46,6 +47,7 @@ final class ReferencesArrayTest extends TestCase
         $ids = ['first', 22];
 
         $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Values of an array must be string alias or class name.');
         DynamicReferencesArray::from($ids);
     }
 }
