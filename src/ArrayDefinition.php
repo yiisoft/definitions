@@ -98,6 +98,7 @@ final class ArrayDefinition implements DefinitionInterface
 
             /**
              * @infection-ignore-all Explode limit does not affect the result.
+             *
              * @see DefinitionValidatorTest::testIncorrectMethodName()
              */
             if (count($methodArray = explode('()', $key, 2)) === 2) {
