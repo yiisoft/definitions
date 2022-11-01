@@ -246,13 +246,13 @@ final class ArrayDefinition implements DefinitionInterface
             if (is_string($index)) {
                 $hasStringIndex = true;
                 if ($hasIntegerIndex) {
-                    /** @infection-ignore-all Mutation don't change behaviour, but degrade performance */
+                    /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                     break;
                 }
             } else {
                 $hasIntegerIndex = true;
                 if ($hasStringIndex) {
-                    /** @infection-ignore-all Mutation don't change behaviour, but degrade performance */
+                    /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                     break;
                 }
             }
