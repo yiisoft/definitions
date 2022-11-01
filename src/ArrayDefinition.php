@@ -186,6 +186,7 @@ final class ArrayDefinition implements DefinitionInterface
             $index = $isIntegerIndexed ? $dependencyIndex : $key;
             if (array_key_exists($index, $arguments)) {
                 $value = DefinitionResolver::ensureResolvable($arguments[$index]);
+                /** @infection-ignore-all Mutation don't change behaviour. Values of `$usedArguments` not used. */
                 $usedArguments[$index] = 1;
             }
             $dependencyIndex++;
@@ -240,11 +241,13 @@ final class ArrayDefinition implements DefinitionInterface
             if (is_string($index)) {
                 $hasStringIndex = true;
                 if ($hasIntegerIndex) {
+                    /** @infection-ignore-all Mutation don't change behaviour, but degrade performance */
                     break;
                 }
             } else {
                 $hasIntegerIndex = true;
                 if ($hasStringIndex) {
+                    /** @infection-ignore-all Mutation don't change behaviour, but degrade performance */
                     break;
                 }
             }
