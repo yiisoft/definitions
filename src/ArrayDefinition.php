@@ -99,7 +99,7 @@ final class ArrayDefinition implements DefinitionInterface
             /**
              * @infection-ignore-all Explode limit does not affect the result.
              *
-             * @see DefinitionValidatorTest::testIncorrectMethodName()
+             * @see \Yiisoft\Definitions\Tests\Unit\Helpers\DefinitionValidatorTest::testIncorrectMethodName()
              */
             if (count($methodArray = explode('()', $key, 2)) === 2) {
                 $methodsAndProperties[$key] = [self::TYPE_METHOD, $methodArray[0], $value];
