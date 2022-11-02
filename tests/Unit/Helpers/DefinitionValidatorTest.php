@@ -158,4 +158,16 @@ final class DefinitionValidatorTest extends TestCase
             ],
         ]);
     }
+
+    public function testIncorrectMethodName(): void
+    {
+        $config = [
+            'class' => Phone::class,
+            'addApp()hm()' => ['name' => 'hello'],
+        ];
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: incorrect method name. Got "addApp()hm()".');
+        DefinitionValidator::validate($config);
+    }
 }
