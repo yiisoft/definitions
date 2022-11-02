@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionFunction;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Helpers\DefinitionResolver;
+use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\Tests\Support\Car;
+use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\ValueDefinition;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
@@ -45,5 +48,30 @@ final class DefinitionResolverTest extends TestCase
             ValueDefinition::class
         );
         DefinitionResolver::ensureResolvable(new ValueDefinition(7));
+    }
+
+    public function testCustomArrayOfDefinitions(): void
+    {
+        $container = new SimpleContainer([
+            'int' => 42,
+        ]);
+
+        $engineMarkOne = new EngineMarkOne();
+        $definitions['value'] = new ValueDefinition($engineMarkOne);
+
+        $reflection = new ReflectionFunction(static fn (...$a) => true);
+        $definitions['parameter'] = new ParameterDefinition($reflection->getParameters()[0]);
+
+        $definitions['reference'] = Reference::to('int');
+
+        $result = DefinitionResolver::resolveArray($container, null, $definitions);
+
+        $this->assertSame(
+            [
+                'value' => $engineMarkOne,
+                'reference' => 42
+            ],
+            $result
+        );
     }
 }
