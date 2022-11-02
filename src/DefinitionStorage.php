@@ -17,6 +17,9 @@ use Yiisoft\Definitions\Helpers\DefinitionExtractor;
  */
 final class DefinitionStorage
 {
+    /**
+     * @var array<string,1>
+     */
     private array $buildStack = [];
 
     private ?ContainerInterface $delegateContainer = null;
@@ -89,6 +92,8 @@ final class DefinitionStorage
     }
 
     /**
+     * @param array<string,1> $building
+     *
      * @throws CircularReferenceException
      */
     private function isResolvable(string $id, array $building): bool
