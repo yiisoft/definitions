@@ -39,7 +39,7 @@ final class DefinitionValidator
         }
 
         // Callable definition
-        if (is_callable($definition, true)) {
+        if (is_callable($definition, true) && $definition !== '') {
             return;
         }
 
@@ -49,7 +49,10 @@ final class DefinitionValidator
             return;
         }
 
-        throw new InvalidConfigException('Invalid definition: ' . var_export($definition, true));
+        throw new InvalidConfigException(
+            'Invalid definition: '
+            . ($definition === '' ? 'empty string.' : var_export($definition, true))
+        );
     }
 
     /**

@@ -4,6 +4,7 @@
 
 - Enh #44: In methods of array definitions add autowiring and improve variadic arguments support (@vjik)
 - Enh #41: Raise minimum PHP version to 8.0 and refactor code (@xepozz, @vjik)
+- Bug #48: Definition validator returns false positive result on empty string (@vjik) 
 
 ## 2.1.0 October 25, 2022
 
