@@ -35,13 +35,8 @@ final class DefinitionResolver
         $result = [];
         /** @var mixed $definition */
         foreach ($definitions as $key => $definition) {
-            if (
-                $definition instanceof ParameterDefinition &&
-                (
-                    $definition->isVariadic() ||
-                    ($definition->isOptional() && !$definition->hasValue())
-                )
-            ) {
+            // Don't resolve variadic parameters
+            if ($definition instanceof ParameterDefinition && $definition->isVariadic()) {
                 continue;
             }
 
