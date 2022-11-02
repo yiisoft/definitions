@@ -69,7 +69,7 @@ final class DefinitionResolverTest extends TestCase
         $this->assertSame(
             [
                 'value' => $engineMarkOne,
-                'reference' => 42
+                'reference' => 42,
             ],
             $result
         );
