@@ -71,7 +71,7 @@ final class DefinitionStorageTest extends TestCase
     {
         $storage = new DefinitionStorage([]);
         $this->assertFalse($storage->has(NonExisitng::class));
-        $this->assertSame([NonExisitng::class => 1], $storage->getBuildStack());
+        $this->assertSame([NonExisitng::class], $storage->getBuildStack());
     }
 
     public function testServiceWithNonExistingDependency(): void
@@ -80,8 +80,8 @@ final class DefinitionStorageTest extends TestCase
         $this->assertFalse($storage->has(ServiceWithNonExistingDependency::class));
         $this->assertSame(
             [
-                ServiceWithNonExistingDependency::class => 1,
-                \NonExisting::class => 1,
+                ServiceWithNonExistingDependency::class,
+                \NonExisting::class,
             ],
             $storage->getBuildStack()
         );
@@ -93,9 +93,9 @@ final class DefinitionStorageTest extends TestCase
         $this->assertFalse($storage->has(ServiceWithNonExistingSubDependency::class));
         $this->assertSame(
             [
-                ServiceWithNonExistingSubDependency::class => 1,
-                ServiceWithNonExistingDependency::class => 1,
-                \NonExisting::class => 1,
+                ServiceWithNonExistingSubDependency::class,
+                ServiceWithNonExistingDependency::class ,
+                \NonExisting::class,
             ],
             $storage->getBuildStack()
         );
@@ -105,7 +105,7 @@ final class DefinitionStorageTest extends TestCase
     {
         $storage = new DefinitionStorage([]);
         $this->assertFalse($storage->has(ServiceWithPrivateConstructor::class));
-        $this->assertSame([ServiceWithPrivateConstructor::class => 1], $storage->getBuildStack());
+        $this->assertSame([ServiceWithPrivateConstructor::class], $storage->getBuildStack());
     }
 
     public function testServiceWithPrivateConstructorSubDependency(): void
@@ -114,8 +114,8 @@ final class DefinitionStorageTest extends TestCase
         $this->assertFalse($storage->has(ServiceWithPrivateConstructorSubDependency::class));
         $this->assertSame(
             [
-                ServiceWithPrivateConstructorSubDependency::class => 1,
-                ServiceWithPrivateConstructor::class => 1,
+                ServiceWithPrivateConstructorSubDependency::class,
+                ServiceWithPrivateConstructor::class,
             ],
             $storage->getBuildStack()
         );
@@ -125,7 +125,7 @@ final class DefinitionStorageTest extends TestCase
     {
         $storage = new DefinitionStorage([]);
         $this->assertFalse($storage->has(ServiceWithBuiltinTypeWithoutDefault::class));
-        $this->assertSame([ServiceWithBuiltinTypeWithoutDefault::class => 1], $storage->getBuildStack());
+        $this->assertSame([ServiceWithBuiltinTypeWithoutDefault::class], $storage->getBuildStack());
     }
 
     public function testEmptyDelegateContainer(): void
@@ -134,7 +134,7 @@ final class DefinitionStorageTest extends TestCase
         $storage = new DefinitionStorage([]);
         $storage->setDelegateContainer($container);
         $this->assertFalse($storage->has(\NonExisitng::class));
-        $this->assertSame([\NonExisitng::class => 1], $storage->getBuildStack());
+        $this->assertSame([\NonExisitng::class], $storage->getBuildStack());
     }
 
     public function testServiceWithNonExistingUnionTypes(): void
@@ -147,10 +147,10 @@ final class DefinitionStorageTest extends TestCase
         $this->assertFalse($storage->has(ServiceWithNonResolvableUnionTypes::class));
         $this->assertSame(
             [
-                ServiceWithNonResolvableUnionTypes::class => 1,
-                ServiceWithNonExistingDependency::class => 1,
-                \NonExisting::class => 1,
-                ServiceWithPrivateConstructor::class => 1,
+                ServiceWithNonResolvableUnionTypes::class,
+                ServiceWithNonExistingDependency::class,
+                \NonExisting::class,
+                ServiceWithPrivateConstructor::class,
             ],
             $storage->getBuildStack()
         );
@@ -207,6 +207,19 @@ final class DefinitionStorageTest extends TestCase
             'Circular reference to "' . SelfDependency::class . '" detected while building: ' . SelfDependency::class
         );
         $storage->get(SelfDependency::class);
+    }
+
+    public function testBuildStackOnThrowException(): void
+    {
+        $storage = new DefinitionStorage();
+
+        try {
+            $storage->get(Chicken::class);
+        } catch (CircularReferenceException) {
+            $stack = $storage->getBuildStack();
+        }
+
+        $this->assertSame([Chicken::class, Egg::class], $stack);
     }
 
     public function testWithoutDependencies(): void

@@ -53,20 +53,21 @@ final class DefinitionStorage
     }
 
     /**
-     * Returns a stack with definition IDs as keys and 1 as values in the order the latest dependency obtained would
-     * be built.
+     * Returns a stack with definition IDs in the order the latest dependency obtained would be built.
      *
-     * @return array Build stack.
+     * @return string[] Build stack.
      */
     public function getBuildStack(): array
     {
-        return $this->buildStack;
+        return array_keys($this->buildStack);
     }
 
     /**
      * Get a definition with a given ID.
      *
      * @return mixed|object Definition with a given ID.
+     *
+     * @throws CircularReferenceException
      */
     public function get(string $id): mixed
     {
