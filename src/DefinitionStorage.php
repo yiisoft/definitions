@@ -68,9 +68,9 @@ final class DefinitionStorage
     /**
      * Get a definition with a given ID.
      *
-     * @return mixed|object Definition with a given ID.
-     *
      * @throws CircularReferenceException
+     *
+     * @return mixed|object Definition with a given ID.
      */
     public function get(string $id): mixed
     {
