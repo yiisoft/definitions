@@ -26,6 +26,7 @@ use Yiisoft\Definitions\Tests\Support\EngineInterface;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\Mechanism;
 use Yiisoft\Definitions\Tests\Support\SelfDependency;
+use Yiisoft\Definitions\Tests\Support\Tree;
 use Yiisoft\Definitions\Tests\Support\UnionCar;
 use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
@@ -240,6 +241,7 @@ final class DefinitionStorageTest extends TestCase
     public function dataHas(): array
     {
         return [
+            [false, Tree::class, [], new SimpleContainer([ColorInterface::class => new ColorPink()])],
             [false, FunBike::class, [], new SimpleContainer([EngineInterface::class => new EngineMarkOne()])],
             [false, Bike::class, [ColorInterface::class => ColorPink::class]],
             [false, Mechanism::class, [], new SimpleContainer([ColorInterface::class => new ColorPink()])],
