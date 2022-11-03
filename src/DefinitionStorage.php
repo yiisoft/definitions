@@ -211,7 +211,6 @@ final class DefinitionStorage
             }
         } finally {
             $this->buildStack += $building;
-            unset($building[$id]);
         }
 
         if ($isResolvable) {
