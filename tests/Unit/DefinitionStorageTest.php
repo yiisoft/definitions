@@ -25,6 +25,7 @@ use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstr
 use Yiisoft\Definitions\Tests\Support\EngineInterface;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\Mechanism;
+use Yiisoft\Definitions\Tests\Support\Notebook;
 use Yiisoft\Definitions\Tests\Support\SelfDependency;
 use Yiisoft\Definitions\Tests\Support\Tree;
 use Yiisoft\Definitions\Tests\Support\UnionCar;
@@ -128,6 +129,20 @@ final class DefinitionStorageTest extends TestCase
         );
     }
 
+    public function testNotExistsUnionTypes(): void
+    {
+        $storage = new DefinitionStorage();
+        $this->assertFalse($storage->has(Notebook::class));
+        $this->assertSame(
+            [
+                Notebook::class,
+                \NotExist1::class,
+                \NotExist2::class,
+            ],
+            $storage->getBuildStack()
+        );
+    }
+
     public function testServiceWithBuiltInTypeWithoutDefault(): void
     {
         $storage = new DefinitionStorage([]);
@@ -146,10 +161,6 @@ final class DefinitionStorageTest extends TestCase
 
     public function testServiceWithNonExistingUnionTypes(): void
     {
-        if (PHP_VERSION_ID < 80000) {
-            $this->markTestSkipped('Union types are supported by PHP 8+ only.');
-        }
-
         $storage = new DefinitionStorage([]);
         $this->assertFalse($storage->has(ServiceWithNonResolvableUnionTypes::class));
         $this->assertSame(
