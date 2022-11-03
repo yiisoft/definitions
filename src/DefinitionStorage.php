@@ -136,6 +136,7 @@ final class DefinitionStorage
                 $type = $parameter->getType();
 
                 if ($parameter->isVariadic() || $parameter->isOptional()) {
+                    /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                     break;
                 }
 
