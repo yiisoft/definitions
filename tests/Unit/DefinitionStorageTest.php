@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Yiisoft\Dfinitions\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Yiisoft\Definitions\DefinitionStorage;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
+use Yiisoft\Definitions\Tests\FunBike;
+use Yiisoft\Definitions\Tests\Support\Bike;
+use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\Circular\Chicken;
 use Yiisoft\Definitions\Tests\Support\Circular\Egg;
 use Yiisoft\Definitions\Tests\Support\ColorInterface;
@@ -18,7 +22,9 @@ use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingDe
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonResolvableUnionTypes;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructor;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructorSubDependency;
+use Yiisoft\Definitions\Tests\Support\EngineInterface;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
+use Yiisoft\Definitions\Tests\Support\Mechanism;
 use Yiisoft\Definitions\Tests\Support\SelfDependency;
 use Yiisoft\Definitions\Tests\Support\UnionCar;
 use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
@@ -229,5 +235,33 @@ final class DefinitionStorageTest extends TestCase
         $object = $storage->get(ColorPink::class);
 
         $this->assertSame(ColorPink::class, $object);
+    }
+
+    public function dataHas(): array
+    {
+        return [
+            [false, FunBike::class, [], new SimpleContainer([EngineInterface::class => new EngineMarkOne()])],
+            [false, Bike::class, [ColorInterface::class => ColorPink::class]],
+            [false, Mechanism::class, [], new SimpleContainer([ColorInterface::class => new ColorPink()])],
+            [true, Car::class, [EngineInterface::class => EngineMarkOne::class]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataHas
+     */
+    public function testHas(
+        bool $expected,
+        string $id,
+        array $definitions = [],
+        ?ContainerInterface $delegateContainer = null,
+    ): void {
+        $storage = new DefinitionStorage($definitions);
+
+        if ($delegateContainer !== null) {
+            $storage->setDelegateContainer($delegateContainer);
+        }
+
+        $this->assertSame($expected, $storage->has($id));
     }
 }
