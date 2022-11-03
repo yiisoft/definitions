@@ -39,7 +39,7 @@ final class DefinitionValidator
         }
 
         // Callable definition
-        if (is_callable($definition, true) && $definition !== '') {
+        if ($definition !== '' && is_callable($definition, true)) {
             return;
         }
 
