@@ -144,6 +144,23 @@ final class DefinitionValidatorTest extends TestCase
         $this->assertSame(1, 1);
     }
 
+    public function dataValidateArrayDefinition(): array
+    {
+        return [
+            [['class' => ColorPink::class]],
+            [[], ColorPink::class],
+        ];
+    }
+
+    /**
+     * @dataProvider dataValidateArrayDefinition
+     */
+    public function testValidateArrayDefinition(array $definition, ?string $id = null): void
+    {
+        DefinitionValidator::validateArrayDefinition($definition, $id);
+        $this->assertSame(1, 1);
+    }
+
     public function testInteger(): void
     {
         $this->expectException(InvalidConfigException::class);

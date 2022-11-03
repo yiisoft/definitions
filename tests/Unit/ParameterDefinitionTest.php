@@ -175,7 +175,9 @@ final class ParameterDefinitionTest extends TestCase
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
-            'Can not determine value of the "x" parameter without type when instantiating'
+            'Can not determine value of the "x" parameter without type when instantiating '
+            . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::Yiisoft\Definitions\Tests\Unit\{closure}()"'
+            . '. Please specify argument explicitly.'
         );
         $definition->resolve($container);
     }
@@ -191,7 +193,9 @@ final class ParameterDefinitionTest extends TestCase
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
-            'Can not determine value of the "n" parameter of type "int" when instantiating'
+            'Can not determine value of the "n" parameter of type "int" when instantiating '
+            . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::Yiisoft\Definitions\Tests\Unit\{closure}()".'
+            . ' Please specify argument explicitly.'
         );
         $definition->resolve($container);
     }

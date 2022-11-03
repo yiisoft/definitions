@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\Tests\Support\Car;
@@ -26,5 +27,15 @@ final class ReferenceTest extends TestCase
         $reference = Reference::optional(Car::class);
 
         $this->assertNull($reference->resolve($container));
+    }
+
+    public function testNonExist(): void
+    {
+        $container = new SimpleContainer();
+
+        $reference = Reference::to(EngineInterface::class);
+
+        $this->expectException(NotFoundExceptionInterface::class);
+        $reference->resolve($container);
     }
 }

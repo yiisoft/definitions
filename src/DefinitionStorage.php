@@ -136,6 +136,7 @@ final class DefinitionStorage
                 $type = $parameter->getType();
 
                 if ($parameter->isVariadic() || $parameter->isOptional()) {
+                    /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                     break;
                 }
 
@@ -167,6 +168,7 @@ final class DefinitionStorage
                             $unionTypes[] = $typeName;
                             if ($this->isResolvable($typeName, $building)) {
                                 $isUnionTypeResolvable = true;
+                                /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                                 break;
                             }
                         }
@@ -176,6 +178,7 @@ final class DefinitionStorage
                         foreach ($unionTypes as $typeName) {
                             if ($this->delegateContainer !== null && $this->delegateContainer->has($typeName)) {
                                 $isUnionTypeResolvable = true;
+                                /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                                 break;
                             }
                         }

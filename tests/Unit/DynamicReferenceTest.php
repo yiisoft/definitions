@@ -82,7 +82,7 @@ final class DynamicReferenceTest extends TestCase
     public function testArrayWithoutClass(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessageMatches('/^Array definition should contain the key "class": /');
+        $this->expectExceptionMessageMatches('/^Array definition should contain the key "class": array /');
         DynamicReference::to([
             '__construct()' => [42],
         ]);
