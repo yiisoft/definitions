@@ -216,8 +216,8 @@ if (!$storage->has(MyInterface::class)) {
 }
 ```
 
-In the above `$buildStack` will contain a stack with definition IDs as keys and 1 as values in the order the latest
-dependency obtained would be built.
+In the above `$buildStack` will contain a stack with definition IDs in the order the latest dependency obtained would be
+built.
 
 By default, if a class is checked in `has()` and it is not explicitly defined, the storage tries to autoload it first
 before failing. The storage may also work in a strict mode when everything in it should be defined explicitly:

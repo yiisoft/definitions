@@ -17,6 +17,9 @@ use Yiisoft\Definitions\Helpers\DefinitionExtractor;
  */
 final class DefinitionStorage
 {
+    /**
+     * @var array<string,1>
+     */
     private array $buildStack = [];
 
     private ?ContainerInterface $delegateContainer = null;
@@ -53,18 +56,19 @@ final class DefinitionStorage
     }
 
     /**
-     * Returns a stack with definition IDs as keys and 1 as values in the order the latest dependency obtained would
-     * be built.
+     * Returns a stack with definition IDs in the order the latest dependency obtained would be built.
      *
-     * @return array Build stack.
+     * @return string[] Build stack.
      */
     public function getBuildStack(): array
     {
-        return $this->buildStack;
+        return array_keys($this->buildStack);
     }
 
     /**
      * Get a definition with a given ID.
+     *
+     * @throws CircularReferenceException
      *
      * @return mixed|object Definition with a given ID.
      */
@@ -88,6 +92,8 @@ final class DefinitionStorage
     }
 
     /**
+     * @param array<string,1> $building
+     *
      * @throws CircularReferenceException
      */
     private function isResolvable(string $id, array $building): bool
