@@ -56,6 +56,13 @@ final class DefinitionValidatorTest extends TestCase
         DefinitionValidator::validate([]);
     }
 
+    public function testEmptyString(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: empty string.');
+        DefinitionValidator::validate('');
+    }
+
     public function testInvalidConstructor(): void
     {
         $this->expectException(InvalidConfigException::class);
