@@ -1,5 +1,9 @@
 # Yii Definitions Change Log
 
+## 3.0.1 under development
+
+- no changes in this release.
+
 ## 3.0.0 November 04, 2022
 
 - Chg #49: Change result format of `DefinitionStorage::getBuildStack()` method to definition IDs array (@vjik)
