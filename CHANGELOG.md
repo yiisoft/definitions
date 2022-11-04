@@ -1,6 +1,6 @@
 # Yii Definitions Change Log
 
-## 2.1.1 under development
+## 3.0.0 under development
 
 - Enh #46: In definition validator add a check of method name in array definitions (@vjik) 
 - Enh #44: In methods of array definitions add autowiring and improve variadic arguments support (@vjik)
