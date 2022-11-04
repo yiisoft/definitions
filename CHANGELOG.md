@@ -1,12 +1,12 @@
 # Yii Definitions Change Log
 
-## 3.0.0 under development
+## 3.0.0 November 04, 2022
 
-- Enh #46: In definition validator add a check of method name in array definitions (@vjik) 
-- Enh #44: In methods of array definitions add autowiring and improve variadic arguments support (@vjik)
+- Chg #49: Change result format of `DefinitionStorage::getBuildStack()` method to definition IDs array (@vjik)
 - Enh #41: Raise minimum PHP version to 8.0 and refactor code (@xepozz, @vjik)
-- Bug #48: Definition validator returns false positive result on empty string (@vjik) 
-- Chg #49: Change result format of `DefinitionStorage::getBuildStack()` method to definition IDs array (@vjik) 
+- Enh #44: In methods of array definitions add autowiring and improve variadic arguments support (@vjik)
+- Enh #46: In definition validator add a check of method name in array definitions (@vjik)
+- Bug #48: Definition validator returns false positive result on empty string (@vjik)
 
 ## 2.1.0 October 25, 2022
 
