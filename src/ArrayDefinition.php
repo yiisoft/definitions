@@ -150,11 +150,15 @@ final class ArrayDefinition implements DefinitionInterface
             [$type, $name, $value] = $item;
             if ($type === self::TYPE_METHOD) {
                 /** @var array $value */
-                $resolvedMethodArguments = $this->resolveFunctionArguments(
-                    $container,
-                    DefinitionExtractor::fromFunction(new ReflectionMethod($object, $name)),
-                    $value,
-                );
+                if (method_exists($object, $name)) {
+                    $resolvedMethodArguments = $this->resolveFunctionArguments(
+                        $container,
+                        DefinitionExtractor::fromFunction(new ReflectionMethod($object, $name)),
+                        $value,
+                    );
+                } else {
+                    $resolvedMethodArguments = $value;
+                }
                 /** @var mixed $setter */
                 $setter = call_user_func_array([$object, $name], $resolvedMethodArguments);
                 if ($setter instanceof $object) {

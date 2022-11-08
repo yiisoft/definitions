@@ -17,6 +17,7 @@ use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\EngineMarkTwo;
 use Yiisoft\Definitions\Tests\Support\Mouse;
 use Yiisoft\Definitions\Tests\Support\Phone;
+use Yiisoft\Definitions\Tests\Support\Recorder;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ArrayDefinitionTest extends TestCase
@@ -498,5 +499,28 @@ final class ArrayDefinitionTest extends TestCase
         $this->assertNotSame($definition, $newDefinition);
         $this->assertInstanceOf(Car::class, $object);
         $this->assertInstanceOf(EngineMarkOne::class, $object->getEngine());
+    }
+
+    public function testMagicMethods(): void
+    {
+        $definiton = ArrayDefinition::fromConfig([
+            'class' => Recorder::class,
+            'first()' => [],
+            '$second' => null,
+            'third()' => ['hello', true],
+            '$fourth' => 'hello',
+        ]);
+
+        $object = $definiton->resolve(new SimpleContainer());
+
+        $this->assertSame(
+            [
+                'Call first()',
+                'Set $second to null',
+                'Call third(string, bool)',
+                'Set $fourth to string'
+            ],
+            $object->getEvents()
+        );
     }
 }
