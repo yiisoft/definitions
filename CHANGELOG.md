@@ -1,5 +1,9 @@
 # Yii Definitions Change Log
 
+## 3.0.2 under development
+
+- no changes in this release.
+
 ## 3.0.1 November 08, 2022
 
 - Bug #53: Fixed error on use in array definition methods that should be work via magic `__call()` method (@vjik)
