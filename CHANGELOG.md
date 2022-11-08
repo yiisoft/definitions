@@ -2,7 +2,7 @@
 
 ## 3.0.1 under development
 
-- no changes in this release.
+- Bug #53: Fixed error on use in array definition methods that should be work via magic `__call()` method (@vjik)
 
 ## 3.0.0 November 04, 2022
 
