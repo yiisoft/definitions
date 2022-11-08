@@ -518,7 +518,7 @@ final class ArrayDefinitionTest extends TestCase
                 'Call first()',
                 'Set $second to null',
                 'Call third(string, bool)',
-                'Set $fourth to string'
+                'Set $fourth to string',
             ],
             $object->getEvents()
         );
