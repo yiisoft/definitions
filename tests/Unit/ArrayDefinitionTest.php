@@ -386,6 +386,21 @@ final class ArrayDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
+    public function testNonArrayArguments(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndEngine()' => 'kitty',
+        ]);
+        $container = new SimpleContainer();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Invalid definition: method\'s arguments should be array, string given.'
+        );
+        $definition->resolve($container);
+    }
+
     public function testMethodWithWrongVariadicArgument(): void
     {
         $container = new SimpleContainer();

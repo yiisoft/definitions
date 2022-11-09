@@ -149,6 +149,14 @@ final class ArrayDefinition implements DefinitionInterface
             /** @var mixed $value */
             [$type, $name, $value] = $item;
             if ($type === self::TYPE_METHOD) {
+                if (!is_array($value)) {
+                    throw new InvalidConfigException(sprintf(
+                            'Invalid definition: method\'s arguments should be array, %s given.',
+                            get_debug_type($value),
+                        )
+                    );
+                }
+
                 /** @var array $value */
                 if (method_exists($object, $name)) {
                     $resolvedMethodArguments = $this->resolveFunctionArguments(
