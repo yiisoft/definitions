@@ -234,7 +234,7 @@ final class DefinitionValidator
             throw new InvalidConfigException(
                 sprintf(
                     'Invalid definition: class name must be a non-empty string, got %s.',
-                    is_string($class) ? '"'.$class.'"' : get_debug_type($class),
+                    is_string($class) ? '"' . $class . '"' : get_debug_type($class),
                 )
             );
         }
