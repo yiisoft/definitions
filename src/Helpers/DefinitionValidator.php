@@ -64,6 +64,11 @@ final class DefinitionValidator
      */
     public static function validateArrayDefinition(array $definition, ?string $id = null): void
     {
+        $className = $definition[ArrayDefinition::CLASS_NAME] ?? $id ?? throw new InvalidConfigException(
+            'Invalid definition: no class name specified.'
+        );
+        self::validateClassName($className);
+
         foreach ($definition as $key => $value) {
             if (!is_string($key)) {
                 throw new InvalidConfigException(
@@ -76,17 +81,6 @@ final class DefinitionValidator
 
             // Class
             if ($key === ArrayDefinition::CLASS_NAME) {
-                if (!is_string($value)) {
-                    throw new InvalidConfigException(
-                        sprintf(
-                            'Invalid definition: invalid class name. Expected string, got %s.',
-                            get_debug_type($value),
-                        ),
-                    );
-                }
-                if ($value === '') {
-                    throw new InvalidConfigException('Invalid definition: empty class name.');
-                }
                 continue;
             }
 
@@ -141,10 +135,6 @@ final class DefinitionValidator
 
             self::throwInvalidArrayDefinitionKey($key);
         }
-
-        if ($id === null && !isset($definition[ArrayDefinition::CLASS_NAME])) {
-            throw new InvalidConfigException('Invalid definition: no class name specified.');
-        }
     }
 
     /**
@@ -179,5 +169,25 @@ final class DefinitionValidator
     private static function isValidObject(object $value): bool
     {
         return !($value instanceof DefinitionInterface) || $value instanceof ReferenceInterface;
+    }
+
+    private static function validateClassName(mixed $class): void
+    {
+        if ($class === '' || !is_string($class)) {
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: class name must be a non-empty string, got "%s".',
+                    get_debug_type($class),
+                )
+            );
+        }
+        if (!class_exists($class)) {
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: invalid class name "%s". Class must exist.',
+                    $class,
+                ),
+            );
+        }
     }
 }
