@@ -64,6 +64,7 @@ final class DefinitionValidator
      */
     public static function validateArrayDefinition(array $definition, ?string $id = null): void
     {
+        /** @var string $className */
         $className = $definition[ArrayDefinition::CLASS_NAME] ?? $id ?? throw new InvalidConfigException(
             'Invalid definition: no class name specified.'
         );
@@ -138,7 +139,7 @@ final class DefinitionValidator
                             'Invalid definition: incorrect property name must not be an empty string.',
                     );
                 }
-                if (is_numeric($parsedKey) || !is_string($parsedKey)) {
+                if (is_numeric($parsedKey)) {
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: incorrect property name "%s".',
