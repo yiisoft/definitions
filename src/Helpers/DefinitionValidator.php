@@ -132,6 +132,20 @@ final class DefinitionValidator
                 continue;
             }
             if (str_starts_with($key, '$')) {
+                $parsedKey = mb_substr($key, 1);
+                if ($parsedKey === '') {
+                    throw new InvalidConfigException(
+                            'Invalid definition: incorrect property name must not be an empty string.',
+                    );
+                }
+                if (is_numeric($parsedKey) || !is_string($parsedKey)) {
+                    throw new InvalidConfigException(
+                        sprintf(
+                            'Invalid definition: incorrect property name "%s".',
+                            $parsedKey,
+                        )
+                    );
+                }
                 continue;
             }
 

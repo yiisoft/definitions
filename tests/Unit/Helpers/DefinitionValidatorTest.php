@@ -49,6 +49,27 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
+    public function dataInvalidProperty(): array
+    {
+        return [
+            ['$', 'Invalid definition: incorrect property name must not be an empty string.'],
+            ['$1', 'Invalid definition: incorrect property name "1".'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataInvalidProperty
+     */
+    public function testInvalidProperty($property, string $message): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage($message);
+        DefinitionValidator::validate([
+            ArrayDefinition::CLASS_NAME => stdClass::class,
+            $property => []
+        ]);
+    }
+
     public function testWithoutClass(): void
     {
         $this->expectException(InvalidConfigException::class);
