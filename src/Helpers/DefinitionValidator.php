@@ -123,7 +123,7 @@ final class DefinitionValidator
                 if (!is_array($value)) {
                     throw new InvalidConfigException(
                         sprintf(
-                            'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". '.
+                            'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". ' .
                             'Probably you should wrap them into square brackets.',
                             $key,
                             get_debug_type($value),
@@ -136,7 +136,7 @@ final class DefinitionValidator
                 $parsedKey = mb_substr($key, 1);
                 if ($parsedKey === '') {
                     throw new InvalidConfigException(
-                            'Invalid definition: incorrect property name must not be an empty string.',
+                        'Invalid definition: incorrect property name must not be an empty string.',
                     );
                 }
                 if (is_numeric($parsedKey)) {
