@@ -32,8 +32,8 @@ final class DefinitionValidatorTest extends TestCase
     public function dataInvalidClass(): array
     {
         return [
-            [42, 'Invalid definition: invalid class name. Expected string, got int'],
-            ['', 'Invalid definition: empty class name.'],
+            [42, 'Invalid definition: class name must be a non-empty string, got "int".'],
+            ['', 'Invalid definition: class name must be a non-empty string, got "string".'],
         ];
     }
 
