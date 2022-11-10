@@ -66,7 +66,7 @@ final class DefinitionValidatorTest extends TestCase
         $this->expectExceptionMessage($message);
         DefinitionValidator::validate([
             ArrayDefinition::CLASS_NAME => stdClass::class,
-            $property => []
+            $property => [],
         ]);
     }
 
