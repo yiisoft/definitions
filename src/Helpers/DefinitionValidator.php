@@ -76,13 +76,13 @@ final class DefinitionValidator
         $classReflection = new ReflectionClass($className);
         $classPublicMethods = [];
         foreach ($classReflection->getMethods() as $reflectionMethod) {
-            if ($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC !== 0) {
+            if (($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC) !== 0) {
                 $classPublicMethods[] = $reflectionMethod->getName();
             }
         }
         $classPublicProperties = [];
-        foreach ($classReflection->getProperties(ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
-            if ($reflectionProperty->getModifiers() & ReflectionProperty::IS_PUBLIC !== 0) {
+        foreach ($classReflection->getProperties() as $reflectionProperty) {
+            if (($reflectionProperty->getModifiers() & ReflectionProperty::IS_PUBLIC) !== 0) {
                 $classPublicProperties[] = $reflectionProperty->getName();
             }
         }
@@ -126,7 +126,7 @@ final class DefinitionValidator
 
             // Methods and properties
             if (str_ends_with($key, '()')) {
-                $parsedKey = mb_substr($key, 0, -2);
+                $parsedKey = substr($key, 0, -2);
                 if (!$classReflection->hasMethod($parsedKey)) {
                     $possiblePropertiesMessage = $classPublicMethods === []
                         ? 'No public methods available to call.'
@@ -163,7 +163,7 @@ final class DefinitionValidator
                 continue;
             }
             if (str_starts_with($key, '$')) {
-                $parsedKey = mb_substr($key, 1);
+                $parsedKey = substr($key, 1);
                 if (!$classReflection->hasProperty($parsedKey)) {
                     if ($classPublicProperties === []) {
                         $message = sprintf(
@@ -217,11 +217,18 @@ final class DefinitionValidator
 
     private static function validateClassName(mixed $class): void
     {
-        if ($class === '' || !is_string($class)) {
+        if (!is_string($class)) {
             throw new InvalidConfigException(
                 sprintf(
                     'Invalid definition: class name must be a non-empty string, got %s.',
-                    is_string($class) ? '"' . $class . '"' : get_debug_type($class),
+                    get_debug_type($class),
+                )
+            );
+        }
+        if (trim($class) === '') {
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: class name must be a non-empty string.',
                 )
             );
         }

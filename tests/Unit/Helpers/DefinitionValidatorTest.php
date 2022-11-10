@@ -36,7 +36,7 @@ final class DefinitionValidatorTest extends TestCase
     {
         return [
             [42, 'Invalid definition: class name must be a non-empty string, got int.'],
-            ['', 'Invalid definition: class name must be a non-empty string, got "".'],
+            ['', 'Invalid definition: class name must be a non-empty string.'],
         ];
     }
 
@@ -110,7 +110,8 @@ final class DefinitionValidatorTest extends TestCase
     public function dataInvalidStringDefinition(): array
     {
         return [
-            ['', 'Invalid definition: class name must be a non-empty string, got "".'],
+            ['', 'Invalid definition: class name must be a non-empty string.'],
+            ['       ', 'Invalid definition: class name must be a non-empty string.'],
             ['not a class', 'Invalid definition: class "not a class" does not exist.'],
         ];
     }
@@ -180,6 +181,8 @@ final class DefinitionValidatorTest extends TestCase
         return [
             ['dev', true, 'Invalid definition: key "dev" is not allowed. Did you mean "$dev"?'],
             ['setId', [42], 'Invalid definition: key "setId" is not allowed. Did you mean "setId()"?'],
+            ['set()Id', [42], 'Invalid definition: key "set()Id" is not allowed. Did you mean "setId()"?'],
+            [' set()Id', [42], 'Invalid definition: key " set()Id" is not allowed. Did you mean "setId()"?'],
             [
                 'getCountryPrivate',
                 [42],
