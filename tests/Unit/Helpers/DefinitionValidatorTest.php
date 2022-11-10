@@ -76,7 +76,7 @@ final class DefinitionValidatorTest extends TestCase
     public function dataInvalidMethodCalls(): array
     {
         return [
-            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method arguments. Expected array, got string.'],
+            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method "addApp()" arguments. Expected array, got "string". Probably you should wrap them into square brackets.'],
         ];
     }
 

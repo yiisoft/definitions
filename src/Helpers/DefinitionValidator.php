@@ -122,8 +122,10 @@ final class DefinitionValidator
                 if (!is_array($value)) {
                     throw new InvalidConfigException(
                         sprintf(
-                            'Invalid definition: incorrect method arguments. Expected array, got %s.',
-                            get_debug_type($value)
+                            'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". '.
+                            'Probably you should wrap them into square brackets.',
+                            $key,
+                            get_debug_type($value),
                         )
                     );
                 }
