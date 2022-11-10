@@ -15,6 +15,7 @@ use Yiisoft\Definitions\Tests\Support\CarFactory;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\Tests\Support\Phone;
+use Yiisoft\Definitions\Tests\Support\UTF8User;
 use Yiisoft\Definitions\ValueDefinition;
 
 final class DefinitionValidatorTest extends TestCase
@@ -22,7 +23,9 @@ final class DefinitionValidatorTest extends TestCase
     public function testIntegerKeyOfArray(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: invalid key in array definition. Allow only string keys, got 0.');
+        $this->expectExceptionMessage(
+            'Invalid definition: invalid key in array definition. Allow only string keys, got 0.'
+        );
         DefinitionValidator::validate([
             ArrayDefinition::CLASS_NAME => Phone::class,
             'RX',
@@ -56,20 +59,29 @@ final class DefinitionValidatorTest extends TestCase
             private bool $invisible = true;
         };
         return [
-            [new stdClass(), '$', 'Invalid definition: class "stdClass" does not have any public properties.'],
+            [stdClass::class, '$', 'Invalid definition: class "stdClass" does not have any public properties.'],
             [
-                $object1,
+                $object1::class,
                 '$1',
                 sprintf(
                     'Invalid definition: class "%s" does not have the public property with name "1". Possible properties to set: "visible".',
                     $object1::class
                 ),
-            ],[
-                $object1,
+            ],
+            [
+                $object1::class,
                 '$invisible',
                 sprintf(
                     'Invalid definition: property "%s" must be public.',
                     $object1::class . '::$invisible',
+                ),
+            ],
+            [
+                UTF8User::class,
+                '$имя',
+                sprintf(
+                    'Invalid definition: property "%s" must be public.',
+                    UTF8User::class . '::$имя',
                 ),
             ],
         ];
@@ -78,12 +90,12 @@ final class DefinitionValidatorTest extends TestCase
     /**
      * @dataProvider dataInvalidProperty
      */
-    public function testInvalidProperty($object, $property, string $message): void
+    public function testInvalidProperty(string $object,string $property, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
         DefinitionValidator::validate([
-            ArrayDefinition::CLASS_NAME => $object::class,
+            ArrayDefinition::CLASS_NAME => $object,
             $property => [],
         ]);
     }
@@ -116,7 +128,9 @@ final class DefinitionValidatorTest extends TestCase
     public function testInvalidConstructor(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: incorrect constructor arguments. Expected array, got string.');
+        $this->expectExceptionMessage(
+            'Invalid definition: incorrect constructor arguments. Expected array, got string.'
+        );
         DefinitionValidator::validate([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => 'Kiradzu',
@@ -126,12 +140,24 @@ final class DefinitionValidatorTest extends TestCase
     public function dataInvalidMethodCalls(): array
     {
         return [
-            [Phone::class,['addApp()' => 'Browser'], 'Invalid definition: incorrect method "addApp()" arguments. Expected array, got "string". Probably you should wrap them into square brackets.'],
-            [Phone::class,['deleteApp()' => ['Browser']], sprintf(
-                'Invalid definition: class "%s" does not have the public method with name "deleteApp". Possible methods to call: "__construct", "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
+            [
                 Phone::class,
-            )],
-            [stdClass::class,['addApp()' => ['Browser']], 'Invalid definition: class "stdClass" does not have the public method with name "addApp". No public methods available to call.'],
+                ['addApp()' => 'Browser'],
+                'Invalid definition: incorrect method "addApp()" arguments. Expected array, got "string". Probably you should wrap them into square brackets.',
+            ],
+            [
+                Phone::class,
+                ['deleteApp()' => ['Browser']],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "deleteApp". Possible methods to call: "__construct", "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
+                    Phone::class,
+                ),
+            ],
+            [
+                stdClass::class,
+                ['addApp()' => ['Browser']],
+                'Invalid definition: class "stdClass" does not have the public method with name "addApp". No public methods available to call.',
+            ],
         ];
     }
 
@@ -142,9 +168,11 @@ final class DefinitionValidatorTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        DefinitionValidator::validate(array_merge([
-            ArrayDefinition::CLASS_NAME => $class,
-        ], $methodCalls));
+        DefinitionValidator::validate(
+            array_merge([
+                ArrayDefinition::CLASS_NAME => $class,
+            ], $methodCalls)
+        );
     }
 
     public function dataErrorOnPropertyOrMethodTypo(): array
@@ -159,7 +187,8 @@ final class DefinitionValidatorTest extends TestCase
                     'Invalid definition: key "getCountryPrivate" is not allowed. Method "%s" must be public to be able to be called.',
                     Phone::class . '::getCountryPrivate()',
                 ),
-            ],[
+            ],
+            [
                 'country',
                 [42],
                 sprintf(
@@ -234,7 +263,8 @@ final class DefinitionValidatorTest extends TestCase
     public function dataValidateArrayDefinition(): array
     {
         return [
-            [['class' => ColorPink::class]],
+            [['class' => ColorPink::class], 'pink_color'],
+            [['class' => ColorPink::class], null],
             [[], ColorPink::class],
         ];
     }
@@ -242,7 +272,7 @@ final class DefinitionValidatorTest extends TestCase
     /**
      * @dataProvider dataValidateArrayDefinition
      */
-    public function testValidateArrayDefinition(array $definition, ?string $id = null): void
+    public function testValidateArrayDefinition(array $definition, ?string $id): void
     {
         DefinitionValidator::validateArrayDefinition($definition, $id);
         $this->assertSame(1, 1);
@@ -270,18 +300,39 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function testIncorrectMethodName(): void
+    public function dataIncorrectMethodName(): array
     {
-        $config = [
-            'class' => Phone::class,
-            'addApp()hm()' => ['name' => 'hello'],
+        return [
+            [
+                [
+                    'class' => Phone::class,
+                    'addApp()hm()' => ['name' => 'hello'],
+                ],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "addApp()hm".',
+                    Phone::class,
+                ),
+            ],
+            [
+                [
+                    'class' => UTF8User::class,
+                    'имя()aa()' => ['значение'],
+                ],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "имя()aa".',
+                    UTF8User::class,
+                ),
+            ],
         ];
+    }
 
+    /**
+     * @dataProvider dataIncorrectMethodName
+     */
+    public function testIncorrectMethodName(array $config, string $message): void
+    {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage(sprintf(
-            'Invalid definition: class "%s" does not have the public method with name "addApp()hm".',
-            Phone::class,
-        ));
+        $this->expectExceptionMessage($message);
         DefinitionValidator::validate($config);
     }
 }

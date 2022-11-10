@@ -76,13 +76,13 @@ final class DefinitionValidator
         $classReflection = new ReflectionClass($className);
         $classPublicMethods = [];
         foreach ($classReflection->getMethods() as $reflectionMethod) {
-            if ($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC) {
+            if ($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC !== 0) {
                 $classPublicMethods[] = $reflectionMethod->getName();
             }
         }
         $classPublicProperties = [];
         foreach ($classReflection->getProperties(ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
-            if ($reflectionProperty->getModifiers() & ReflectionProperty::IS_PUBLIC) {
+            if ($reflectionProperty->getModifiers() & ReflectionProperty::IS_PUBLIC !== 0) {
                 $classPublicProperties[] = $reflectionProperty->getName();
             }
         }
