@@ -32,8 +32,8 @@ final class DefinitionValidatorTest extends TestCase
     public function dataInvalidClass(): array
     {
         return [
-            [42, 'Invalid definition: class name must be a non-empty string, got "int".'],
-            ['', 'Invalid definition: class name must be a non-empty string, got "string".'],
+            [42, 'Invalid definition: class name must be a non-empty string, got int.'],
+            ['', 'Invalid definition: class name must be a non-empty string, got "".'],
         ];
     }
 
@@ -95,11 +95,22 @@ final class DefinitionValidatorTest extends TestCase
         DefinitionValidator::validate([]);
     }
 
-    public function testEmptyString(): void
+    public function dataInvalidStringDefinition(): array
+    {
+        return [
+            ['', 'Invalid definition: class name must be a non-empty string, got "".'],
+            ['not a class', 'Invalid definition: class "not a class" does not exist.'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataInvalidStringDefinition
+     */
+    public function testInvalidStringDefinition(string $definition, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: empty string.');
-        DefinitionValidator::validate('');
+        $this->expectExceptionMessage($message);
+        DefinitionValidator::validate($definition);
     }
 
     public function testInvalidConstructor(): void

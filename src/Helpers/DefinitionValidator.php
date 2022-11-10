@@ -37,7 +37,8 @@ final class DefinitionValidator
         }
 
         // Class
-        if (is_string($definition) && $definition !== '') {
+        if (is_string($definition)) {
+            self::validateClassName($definition);
             return;
         }
 
@@ -232,15 +233,15 @@ final class DefinitionValidator
         if ($class === '' || !is_string($class)) {
             throw new InvalidConfigException(
                 sprintf(
-                    'Invalid definition: class name must be a non-empty string, got "%s".',
-                    get_debug_type($class),
+                    'Invalid definition: class name must be a non-empty string, got %s.',
+                    is_string($class) ? '"'.$class.'"' : get_debug_type($class),
                 )
             );
         }
         if (!class_exists($class)) {
             throw new InvalidConfigException(
                 sprintf(
-                    'Invalid definition: invalid class name "%s". Class must exist.',
+                    'Invalid definition: class "%s" does not exist.',
                     $class,
                 ),
             );
