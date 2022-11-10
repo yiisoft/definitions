@@ -90,7 +90,7 @@ final class DefinitionValidatorTest extends TestCase
     /**
      * @dataProvider dataInvalidProperty
      */
-    public function testInvalidProperty(string $object,string $property, string $message): void
+    public function testInvalidProperty(string $object, string $property, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
