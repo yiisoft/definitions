@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Helpers;
 
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
@@ -64,11 +67,24 @@ final class DefinitionValidator
      */
     public static function validateArrayDefinition(array $definition, ?string $id = null): void
     {
-        /** @var string $className */
+        /** @var class-string $className */
         $className = $definition[ArrayDefinition::CLASS_NAME] ?? $id ?? throw new InvalidConfigException(
             'Invalid definition: no class name specified.'
         );
         self::validateClassName($className);
+        $classReflection = new ReflectionClass($className);
+        $classPublicMethods = [];
+        foreach ($classReflection->getMethods() as $reflectionMethod) {
+            if ($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC) {
+                $classPublicMethods[] = $reflectionMethod->getName();
+            }
+        }
+        $classPublicProperties = [];
+        foreach ($classReflection->getProperties(ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
+            if ($reflectionProperty->getModifiers() & ReflectionProperty::IS_PUBLIC) {
+                $classPublicProperties[] = $reflectionProperty->getName();
+            }
+        }
 
         foreach ($definition as $key => $value) {
             if (!is_string($key)) {
@@ -109,14 +125,26 @@ final class DefinitionValidator
 
             // Methods and properties
             if (str_ends_with($key, '()')) {
-                /**
-                 * Regular expression from https://www.php.net/manual/en/functions.user-defined.php
-                 */
-                if (!preg_match('/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*\(\)$/', $key)) {
+                $parsedKey = mb_substr($key, 0, -2);
+                if (!$classReflection->hasMethod($parsedKey)) {
+                    $possiblePropertiesMessage = $classPublicMethods === []
+                        ? 'No public methods available to call.'
+                        : sprintf(
+                            'Possible methods to call: %s',
+                            '"' . implode('", "', $classPublicMethods) . '"',
+                        );
                     throw new InvalidConfigException(
                         sprintf(
-                            'Invalid definition: incorrect method name. Got "%s".',
-                            $key
+                            'Invalid definition: class "%s" does not have the public method with name "%s". '.$possiblePropertiesMessage,
+                            $className,
+                            $parsedKey,
+                        )
+                    );
+                } elseif (!in_array($parsedKey, $classPublicMethods, true)){
+                    throw new InvalidConfigException(
+                        sprintf(
+                            'Invalid definition: method "%s" must be public.' .
+                            $className.'::'.$key,
                         )
                     );
                 }
@@ -134,16 +162,26 @@ final class DefinitionValidator
             }
             if (str_starts_with($key, '$')) {
                 $parsedKey = mb_substr($key, 1);
-                if ($parsedKey === '') {
-                    throw new InvalidConfigException(
-                        'Invalid definition: incorrect property name must not be an empty string.',
-                    );
-                }
-                if (is_numeric($parsedKey)) {
+                if (!$classReflection->hasProperty($parsedKey)) {
+                    if ($classPublicProperties === []) {
+                        $message = sprintf(
+                            'Invalid definition: class "%s" does not have any public properties.',
+                            $className,
+                        );
+                    }else{
+                        $message = sprintf(
+                            'Invalid definition: class "%s" does not have the public property with name "%s". Possible properties to set: %s.',
+                            $className,
+                            $parsedKey,
+                            '"' . implode('", "', $classPublicProperties) . '"',
+                        );
+                    }
+                    throw new InvalidConfigException($message);
+                } elseif (!in_array($parsedKey, $classPublicProperties, true)){
                     throw new InvalidConfigException(
                         sprintf(
-                            'Invalid definition: incorrect property name "%s".',
-                            $parsedKey,
+                            'Invalid definition: property "%s" must be public.',
+                            $className.'::'.$key,
                         )
                     );
                 }

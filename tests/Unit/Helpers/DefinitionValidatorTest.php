@@ -51,21 +51,39 @@ final class DefinitionValidatorTest extends TestCase
 
     public function dataInvalidProperty(): array
     {
+        $object1 = new class {
+            public bool $visible = true;
+            private bool $invisible = true;
+        };
         return [
-            ['$', 'Invalid definition: incorrect property name must not be an empty string.'],
-            ['$1', 'Invalid definition: incorrect property name "1".'],
+            [new stdClass(), '$', 'Invalid definition: class "stdClass" does not have any public properties.'],
+            [
+                $object1,
+                '$1',
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public property with name "1". Possible properties to set: "visible".',
+                    $object1::class
+                ),
+            ],[
+                $object1,
+                '$invisible',
+                sprintf(
+                    'Invalid definition: property "%s" must be public.',
+                    $object1::class . '::$invisible',
+                ),
+            ],
         ];
     }
 
     /**
      * @dataProvider dataInvalidProperty
      */
-    public function testInvalidProperty($property, string $message): void
+    public function testInvalidProperty($object, $property, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
         DefinitionValidator::validate([
-            ArrayDefinition::CLASS_NAME => stdClass::class,
+            ArrayDefinition::CLASS_NAME => $object::class,
             $property => [],
         ]);
     }
@@ -97,23 +115,26 @@ final class DefinitionValidatorTest extends TestCase
     public function dataInvalidMethodCalls(): array
     {
         return [
-            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method "addApp()" arguments. Expected array, got "string". Probably you should wrap them into square brackets.'],
+            [Phone::class,['addApp()' => 'Browser'], 'Invalid definition: incorrect method "addApp()" arguments. Expected array, got "string". Probably you should wrap them into square brackets.'],
+            [Phone::class,['deleteApp()' => ['Browser']], sprintf(
+                'Invalid definition: class "%s" does not have the public method with name "deleteApp". Possible methods to call: "__construct", "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
+                Phone::class,
+            )],
+            [stdClass::class,['addApp()' => ['Browser']], 'Invalid definition: class "stdClass" does not have the public method with name "addApp". No public methods available to call.'],
         ];
     }
 
     /**
      * @dataProvider dataInvalidMethodCalls
      */
-    public function testInvalidMethodCalls(array $methodCalls, string $message): void
+    public function testInvalidMethodCalls(string $class, array $methodCalls, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        DefinitionValidator::validate(array_merge(
-            [
-                ArrayDefinition::CLASS_NAME => Phone::class,
-            ],
-            $methodCalls
-        ));
+        DefinitionValidator::validate([
+            ArrayDefinition::CLASS_NAME => $class,
+            ...$methodCalls,
+        ]);
     }
 
     public function dataErrorOnPropertyOrMethodTypo(): array
@@ -212,7 +233,10 @@ final class DefinitionValidatorTest extends TestCase
         ];
 
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: incorrect method name. Got "addApp()hm()".');
+        $this->expectExceptionMessage(sprintf(
+            'Invalid definition: class "%s" does not have the public method with name "addApp()hm".',
+            Phone::class,
+        ));
         DefinitionValidator::validate($config);
     }
 }
