@@ -150,13 +150,48 @@ final class DefinitionValidatorTest extends TestCase
     public function dataErrorOnPropertyOrMethodTypo(): array
     {
         return [
-            ['dev', true, 'Invalid definition: key "dev" is not allowed. Did you mean "dev()" or "$dev"?'],
-            ['setId', [42], 'Invalid definition: key "setId" is not allowed. Did you mean "setId()" or "$setId"?'],
-            ['()test', [42], 'Invalid definition: key "()test" is not allowed. Did you mean "test()" or "$test"?'],
-            ['var$', true, 'Invalid definition: key "var$" is not allowed. Did you mean "var()" or "$var"?'],
-            [' var$', true, 'Invalid definition: key " var$" is not allowed. Did you mean "var()" or "$var"?'],
-            ['100$', true, 'Invalid definition: key "100$" is not allowed.'],
-            ['test-тест', true, 'Invalid definition: key "test-тест" is not allowed.'],
+            ['dev', true, 'Invalid definition: key "dev" is not allowed. Did you mean "$dev"?'],
+            ['setId', [42], 'Invalid definition: key "setId" is not allowed. Did you mean "setId()"?'],
+            [
+                'getCountryPrivate',
+                [42],
+                sprintf(
+                    'Invalid definition: key "getCountryPrivate" is not allowed. Method "%s" must be public to be able to be called.',
+                    Phone::class . '::getCountryPrivate()',
+                ),
+            ],[
+                'country',
+                [42],
+                sprintf(
+                    'Invalid definition: key "country" is not allowed. Property "%s" must be public to be able to be called.',
+                    Phone::class . '::$country',
+                ),
+            ],
+            [
+                '()test',
+                [42],
+                'Invalid definition: key "()test" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
+            [
+                'var$',
+                true,
+                'Invalid definition: key "var$" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
+            [
+                ' var$',
+                true,
+                'Invalid definition: key " var$" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
+            [
+                '100$',
+                true,
+                'Invalid definition: key "100$" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
+            [
+                'test-тест',
+                true,
+                'Invalid definition: key "test-тест" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
         ];
     }
 

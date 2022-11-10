@@ -190,34 +190,21 @@ final class DefinitionValidator
                 continue;
             }
 
-            self::throwInvalidArrayDefinitionKey($key);
-        }
-    }
+            $possibleOptionsMessage = self::generatePossibleMessage(
+                $key,
+                $classPublicMethods,
+                $classPublicProperties,
+                $classReflection,
+                $className
+            );
 
-    /**
-     * @throws InvalidConfigException
-     */
-    private static function throwInvalidArrayDefinitionKey(string $key): void
-    {
-        $preparedKey = trim(strtr($key, [
-            '()' => '',
-            '$' => '',
-        ]));
-
-        if ($preparedKey === '' || !preg_match('/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$/', $preparedKey)) {
             throw new InvalidConfigException(
-                sprintf('Invalid definition: key "%s" is not allowed.', $key)
+                sprintf(
+                    'Invalid definition: key "%s" is not allowed. ' . $possibleOptionsMessage,
+                    $key,
+                )
             );
         }
-
-        throw new InvalidConfigException(
-            sprintf(
-                'Invalid definition: key "%s" is not allowed. Did you mean "%s()" or "$%s"?',
-                $key,
-                $preparedKey,
-                $preparedKey
-            )
-        );
     }
 
     /**
@@ -246,5 +233,46 @@ final class DefinitionValidator
                 ),
             );
         }
+    }
+
+    private static function generatePossibleMessage(
+        string $key,
+        array $classPublicMethods,
+        array $classPublicProperties,
+        ReflectionClass $classReflection,
+        string $className
+    ): string {
+        $parsedKey = trim(
+            strtr($key, [
+                '()' => '',
+                '$' => '',
+            ])
+        );
+        if (in_array($parsedKey, $classPublicMethods, true)) {
+            return sprintf(
+                'Did you mean "%s"?',
+                $parsedKey . '()',
+            );
+        }
+        if (in_array($parsedKey, $classPublicProperties, true)) {
+            return sprintf(
+                'Did you mean "%s"?',
+                '$' . $parsedKey,
+            );
+        }
+        if ($classReflection->hasMethod($parsedKey)) {
+            return sprintf(
+                'Method "%s" must be public to be able to be called.',
+                $className . '::' . $parsedKey . '()',
+            );
+        }
+        if ($classReflection->hasProperty($parsedKey)) {
+            return sprintf(
+                'Property "%s" must be public to be able to be called.',
+                $className . '::$' . $parsedKey,
+            );
+        }
+
+        return 'The key may be a call of a method or a setting of a property.';
     }
 }
