@@ -142,10 +142,9 @@ final class DefinitionValidatorTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        DefinitionValidator::validate([
+        DefinitionValidator::validate(array_merge([
             ArrayDefinition::CLASS_NAME => $class,
-            ...$methodCalls,
-        ]);
+        ], $methodCalls));
     }
 
     public function dataErrorOnPropertyOrMethodTypo(): array
