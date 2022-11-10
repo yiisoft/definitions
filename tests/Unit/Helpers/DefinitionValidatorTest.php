@@ -51,7 +51,7 @@ final class DefinitionValidatorTest extends TestCase
 
     public function dataInvalidProperty(): array
     {
-        $object1 = new class {
+        $object1 = new class () {
             public bool $visible = true;
             private bool $invisible = true;
         };

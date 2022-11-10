@@ -135,16 +135,17 @@ final class DefinitionValidator
                         );
                     throw new InvalidConfigException(
                         sprintf(
-                            'Invalid definition: class "%s" does not have the public method with name "%s". '.$possiblePropertiesMessage,
+                            'Invalid definition: class "%s" does not have the public method with name "%s". ' . $possiblePropertiesMessage,
                             $className,
                             $parsedKey,
                         )
                     );
-                } elseif (!in_array($parsedKey, $classPublicMethods, true)){
+                }
+                if (!in_array($parsedKey, $classPublicMethods, true)) {
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: method "%s" must be public.' .
-                            $className.'::'.$key,
+                            $className . '::' . $key,
                         )
                     );
                 }
@@ -168,7 +169,7 @@ final class DefinitionValidator
                             'Invalid definition: class "%s" does not have any public properties.',
                             $className,
                         );
-                    }else{
+                    } else {
                         $message = sprintf(
                             'Invalid definition: class "%s" does not have the public property with name "%s". Possible properties to set: %s.',
                             $className,
@@ -177,11 +178,11 @@ final class DefinitionValidator
                         );
                     }
                     throw new InvalidConfigException($message);
-                } elseif (!in_array($parsedKey, $classPublicProperties, true)){
+                } elseif (!in_array($parsedKey, $classPublicProperties, true)) {
                     throw new InvalidConfigException(
                         sprintf(
                             'Invalid definition: property "%s" must be public.',
-                            $className.'::'.$key,
+                            $className . '::' . $key,
                         )
                     );
                 }
