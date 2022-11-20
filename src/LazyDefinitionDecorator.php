@@ -14,8 +14,7 @@ final class LazyDefinitionDecorator implements DefinitionInterface
         private LazyLoadingValueHolderFactory $factory,
         private DefinitionInterface $definition,
         private string $objectClass,
-    )
-    {
+    ) {
     }
 
     public function resolve(ContainerInterface $container): mixed
