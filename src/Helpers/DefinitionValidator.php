@@ -76,7 +76,9 @@ final class DefinitionValidator
         $classReflection = new ReflectionClass($className);
         $classPublicMethods = [];
         foreach ($classReflection->getMethods() as $reflectionMethod) {
-            if (($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC) !== 0) {
+            if (($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC) !== 0 && !self::isMagicMethod(
+                    $reflectionMethod->getName()
+                )) {
                 $classPublicMethods[] = $reflectionMethod->getName();
             }
         }
@@ -104,89 +106,17 @@ final class DefinitionValidator
 
             // Constructor arguments
             if ($key === ArrayDefinition::CONSTRUCTOR) {
-                if (!is_array($value)) {
-                    throw new InvalidConfigException(
-                        sprintf(
-                            'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
-                            get_debug_type($value)
-                        )
-                    );
-                }
-                /** @var mixed $argument */
-                foreach ($value as $argument) {
-                    if (is_object($argument) && !self::isValidObject($argument)) {
-                        throw new InvalidConfigException(
-                            'Only references are allowed in constructor arguments, a definition object was provided: ' .
-                            var_export($argument, true)
-                        );
-                    }
-                }
+                self::validateConstructor($value);
                 continue;
             }
 
             // Methods and properties
             if (str_ends_with($key, '()')) {
-                $parsedKey = substr($key, 0, -2);
-                if (!$classReflection->hasMethod($parsedKey)) {
-                    $possiblePropertiesMessage = $classPublicMethods === []
-                        ? 'No public methods available to call.'
-                        : sprintf(
-                            'Possible methods to call: %s',
-                            '"' . implode('", "', $classPublicMethods) . '"',
-                        );
-                    throw new InvalidConfigException(
-                        sprintf(
-                            'Invalid definition: class "%s" does not have the public method with name "%s". ' . $possiblePropertiesMessage,
-                            $className,
-                            $parsedKey,
-                        )
-                    );
-                }
-                if (!in_array($parsedKey, $classPublicMethods, true)) {
-                    throw new InvalidConfigException(
-                        sprintf(
-                            'Invalid definition: method "%s" must be public.' .
-                            $className . '::' . $key,
-                        )
-                    );
-                }
-                if (!is_array($value)) {
-                    throw new InvalidConfigException(
-                        sprintf(
-                            'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". ' .
-                            'Probably you should wrap them into square brackets.',
-                            $key,
-                            get_debug_type($value),
-                        )
-                    );
-                }
+                self::validateMethod($key, $classReflection, $classPublicMethods, $className, $value);
                 continue;
             }
             if (str_starts_with($key, '$')) {
-                $parsedKey = substr($key, 1);
-                if (!$classReflection->hasProperty($parsedKey)) {
-                    if ($classPublicProperties === []) {
-                        $message = sprintf(
-                            'Invalid definition: class "%s" does not have any public properties.',
-                            $className,
-                        );
-                    } else {
-                        $message = sprintf(
-                            'Invalid definition: class "%s" does not have the public property with name "%s". Possible properties to set: %s.',
-                            $className,
-                            $parsedKey,
-                            '"' . implode('", "', $classPublicProperties) . '"',
-                        );
-                    }
-                    throw new InvalidConfigException($message);
-                } elseif (!in_array($parsedKey, $classPublicProperties, true)) {
-                    throw new InvalidConfigException(
-                        sprintf(
-                            'Invalid definition: property "%s" must be public.',
-                            $className . '::' . $key,
-                        )
-                    );
-                }
+                self::validateProperty($key, $classReflection, $classPublicProperties, $className);
                 continue;
             }
 
@@ -199,10 +129,7 @@ final class DefinitionValidator
             );
 
             throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: key "%s" is not allowed. ' . $possibleOptionsMessage,
-                    $key,
-                )
+                "Invalid definition: key \"$key\" is not allowed. $possibleOptionsMessage",
             );
         }
     }
@@ -281,5 +208,136 @@ final class DefinitionValidator
         }
 
         return 'The key may be a call of a method or a setting of a property.';
+    }
+
+    private static function validateMethod(
+        string $key,
+        ReflectionClass $classReflection,
+        array $classPublicMethods,
+        string $className,
+        mixed $value
+    ): void {
+        $parsedKey = substr($key, 0, -2);
+        if (!$classReflection->hasMethod($parsedKey)) {
+            if ($classReflection->hasMethod('__call') || $classReflection->hasMethod('__callStatic')) {
+                /**
+                 * Magic method may intercept the call, but reflection does not know about it.
+                 */
+                return;
+            }
+            $possiblePropertiesMessage = $classPublicMethods === []
+                ? 'No public methods available to call.'
+                : sprintf(
+                    'Possible methods to call: %s',
+                    '"' . implode('", "', $classPublicMethods) . '"',
+                );
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "%s". ' . $possiblePropertiesMessage,
+                    $className,
+                    $parsedKey,
+                )
+            );
+        }
+        if (!in_array($parsedKey, $classPublicMethods, true)) {
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: method "%s" must be public.',
+                    $className . '::' . $key,
+                )
+            );
+        }
+        if (!is_array($value)) {
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". ' .
+                    'Probably you should wrap them into square brackets.',
+                    $key,
+                    get_debug_type($value),
+                )
+            );
+        }
+    }
+
+    private static function validateProperty(
+        string $key,
+        ReflectionClass $classReflection,
+        array $classPublicProperties,
+        string $className
+    ): void {
+        $parsedKey = substr($key, 1);
+        if (!$classReflection->hasProperty($parsedKey)) {
+            if ($classReflection->hasMethod('__set')) {
+                /**
+                 * Magic method may intercept the call, but reflection does not know about it.
+                 */
+                return;
+            }
+            if ($classPublicProperties === []) {
+                $message = sprintf(
+                    'Invalid definition: class "%s" does not have any public properties.',
+                    $className,
+                );
+            } else {
+                $message = sprintf(
+                    'Invalid definition: class "%s" does not have the public property with name "%s". Possible properties to set: %s.',
+                    $className,
+                    $parsedKey,
+                    '"' . implode('", "', $classPublicProperties) . '"',
+                );
+            }
+            throw new InvalidConfigException($message);
+        } elseif (!in_array($parsedKey, $classPublicProperties, true)) {
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: property "%s" must be public.',
+                    $className . '::' . $key,
+                )
+            );
+        }
+    }
+
+    private static function validateConstructor(mixed $value): void
+    {
+        if (!is_array($value)) {
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
+                    get_debug_type($value)
+                )
+            );
+        }
+        /** @var mixed $argument */
+        foreach ($value as $argument) {
+            if (is_object($argument) && !self::isValidObject($argument)) {
+                throw new InvalidConfigException(
+                    'Only references are allowed in constructor arguments, a definition object was provided: ' .
+                    var_export($argument, true)
+                );
+            }
+        }
+    }
+
+    private static function isMagicMethod(string $getName): bool
+    {
+        return in_array($getName, [
+            '__construct',
+            '__destruct',
+            '__call',
+            '__callStatic',
+            '__get',
+            '__set',
+            '__isset',
+            '__unset',
+            '__sleep',
+            '__wakeup',
+            '__serialize',
+            '__unserialize',
+            '__toString',
+            '__invoke',
+            '__set_state',
+            '__clone',
+            '__debugInfo',
+        ], true);
     }
 }

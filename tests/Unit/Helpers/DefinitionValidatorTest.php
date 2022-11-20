@@ -15,6 +15,7 @@ use Yiisoft\Definitions\Tests\Support\CarFactory;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\Tests\Support\Phone;
+use Yiisoft\Definitions\Tests\Support\Recorder;
 use Yiisoft\Definitions\Tests\Support\UTF8User;
 use Yiisoft\Definitions\ValueDefinition;
 
@@ -150,7 +151,7 @@ final class DefinitionValidatorTest extends TestCase
                 Phone::class,
                 ['deleteApp()' => ['Browser']],
                 sprintf(
-                    'Invalid definition: class "%s" does not have the public method with name "deleteApp". Possible methods to call: "__construct", "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
+                    'Invalid definition: class "%s" does not have the public method with name "deleteApp". Possible methods to call: "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
                     Phone::class,
                 ),
             ],
@@ -158,6 +159,11 @@ final class DefinitionValidatorTest extends TestCase
                 stdClass::class,
                 ['addApp()' => ['Browser']],
                 'Invalid definition: class "stdClass" does not have the public method with name "addApp". No public methods available to call.',
+            ],
+            [
+                Recorder::class,
+                ['__call()' => ['test magic method']],
+                sprintf('Invalid definition: method "%s::__call()" must be public.', Recorder::class),
             ],
         ];
     }
@@ -251,6 +257,8 @@ final class DefinitionValidatorTest extends TestCase
             'class-name' => [Car::class],
             'callable' => [[CarFactory::class, 'create']],
             'array-definition' => [['class' => ColorPink::class]],
+            'magic method reference' => [['class' => Recorder::class, 'add()' => ['test magic method']]],
+            'magic property reference' => [['class' => Recorder::class, '$add' => ['test magic property']]],
         ];
     }
 
@@ -260,7 +268,7 @@ final class DefinitionValidatorTest extends TestCase
     public function testValidate($definition, ?string $id = null): void
     {
         DefinitionValidator::validate($definition, $id);
-        $this->assertSame(1, 1);
+        $this->expectNotToPerformAssertions();
     }
 
     public function dataValidateArrayDefinition(): array
