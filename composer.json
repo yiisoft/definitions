@@ -39,6 +39,9 @@
         "vimeo/psalm": "^4.22",
         "yiisoft/test-support": "^1.4"
     },
+    "suggest": {
+        "ocramius/proxy-manager": "Allows create proxy classes"
+    },
     "autoload": {
         "psr-4": {
             "Yiisoft\\Definitions\\": "src"
