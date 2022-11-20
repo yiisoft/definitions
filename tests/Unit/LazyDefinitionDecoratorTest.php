@@ -10,9 +10,9 @@ use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use ProxyManager\Proxy\LazyLoadingInterface;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\LazyDefinitionDecorator;
-use Yiisoft\Factory\Tests\Support\EngineInterface;
-use Yiisoft\Factory\Tests\Support\NotFinalClass;
-use Yiisoft\Factory\Tests\Support\Phone;
+use Yiisoft\Definitions\Tests\Support\EngineInterface;
+use Yiisoft\Definitions\Tests\Support\NotFinalClass;
+use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class LazyDefinitionDecoratorTest extends TestCase
