@@ -87,8 +87,12 @@ final class Normalizer
             return ArrayDefinition::fromConfig($config);
         }
 
+        if ($definition instanceof DefinitionInterface) {
+            return $definition;
+        }
+
         // Ready object
-        if (is_object($definition) && !($definition instanceof DefinitionInterface)) {
+        if (is_object($definition)) {
             return new ValueDefinition($definition);
         }
 

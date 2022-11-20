@@ -7,7 +7,7 @@ namespace Yiisoft\Definitions;
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Helpers\DefinitionResolver;
+use Yiisoft\Di\Helpers\DefinitionNormalizer;
 
 final class LazyDefinitionDecorator implements DefinitionInterface
 {
@@ -23,7 +23,9 @@ final class LazyDefinitionDecorator implements DefinitionInterface
         return $this->factory->createProxy(
             $this->objectClass,
             function (&$wrappedObject) use ($container) {
-                $wrappedObject = DefinitionResolver::resolve($container, null, $this->definition);
+                $definition = DefinitionNormalizer::normalize($this->definition, $this->objectClass);
+
+                $wrappedObject = $definition->resolve($container);
             }
         );
     }
