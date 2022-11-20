@@ -52,6 +52,7 @@ final class DefinitionResolverTest extends TestCase
 
     public function testCustomArrayOfDefinitions(): void
     {
+        $definitions = [];
         $container = new SimpleContainer([
             'int' => 42,
         ]);
