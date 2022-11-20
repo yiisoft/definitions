@@ -29,21 +29,17 @@ use function is_string;
 final class Reference implements ReferenceInterface
 {
     private string $id;
-    private bool $optional;
 
     /**
-     * @param mixed $id
-     *
      * @throws InvalidConfigException
      */
-    private function __construct(mixed $id, bool $optional)
+    private function __construct(mixed $id, private bool $optional)
     {
         if (!is_string($id)) {
             throw new InvalidConfigException('Reference ID must be string.');
         }
 
         $this->id = $id;
-        $this->optional = $optional;
     }
 
     /**
