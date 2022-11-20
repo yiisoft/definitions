@@ -77,8 +77,8 @@ final class DefinitionValidator
         $classPublicMethods = [];
         foreach ($classReflection->getMethods() as $reflectionMethod) {
             if (($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC) !== 0 && !self::isMagicMethod(
-                    $reflectionMethod->getName()
-                )) {
+                $reflectionMethod->getName()
+            )) {
                 $classPublicMethods[] = $reflectionMethod->getName();
             }
         }
