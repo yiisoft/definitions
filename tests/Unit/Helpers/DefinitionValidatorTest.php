@@ -25,7 +25,7 @@ final class DefinitionValidatorTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Invalid definition: invalid key in array definition. Allow only string keys, got 0.'
+            'Invalid definition: invalid key in array definition. Only string keys are allowed, got 0.'
         );
         DefinitionValidator::validate([
             ArrayDefinition::CLASS_NAME => Phone::class,
@@ -101,11 +101,22 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function testWithoutClass(): void
+    public function dataInvalidDefinitionWithoutClass(): array
+    {
+        return [
+            [[]],
+            [[stdClass::class]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataInvalidDefinitionWithoutClass
+     */
+    public function testWithoutClass($definition): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: no class name specified.');
-        DefinitionValidator::validate([]);
+        DefinitionValidator::validate($definition);
     }
 
     public function dataInvalidStringDefinition(): array
@@ -113,7 +124,6 @@ final class DefinitionValidatorTest extends TestCase
         return [
             ['', 'Invalid definition: class name must be a non-empty string.'],
             ['       ', 'Invalid definition: class name must be a non-empty string.'],
-            ['not a class', 'Invalid definition: class "not a class" does not exist.'],
         ];
     }
 

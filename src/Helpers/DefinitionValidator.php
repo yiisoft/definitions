@@ -38,7 +38,7 @@ final class DefinitionValidator
 
         // Class
         if (is_string($definition)) {
-            self::validateClassName($definition);
+            self::validateString($definition);
             return;
         }
 
@@ -93,7 +93,7 @@ final class DefinitionValidator
             if (!is_string($key)) {
                 throw new InvalidConfigException(
                     sprintf(
-                        'Invalid definition: invalid key in array definition. Allow only string keys, got %d.',
+                        'Invalid definition: invalid key in array definition. Only string keys are allowed, got %d.',
                         $key,
                     ),
                 );
@@ -147,17 +147,7 @@ final class DefinitionValidator
      */
     private static function validateClassName(mixed $class): void
     {
-        if (!is_string($class)) {
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: class name must be a non-empty string, got %s.',
-                    get_debug_type($class),
-                )
-            );
-        }
-        if (trim($class) === '') {
-            throw new InvalidConfigException('Invalid definition: class name must be a non-empty string.');
-        }
+        self::validateString($class);
         if (!class_exists($class)) {
             throw new InvalidConfigException(
                 sprintf(
@@ -351,5 +341,23 @@ final class DefinitionValidator
             '__clone',
             '__debugInfo',
         ], true);
+    }
+
+    /**
+     * @throws InvalidConfigException
+     */
+    private static function validateString(mixed $class): void
+    {
+        if (!is_string($class)) {
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: class name must be a non-empty string, got %s.',
+                    get_debug_type($class),
+                )
+            );
+        }
+        if (trim($class) === '') {
+            throw new InvalidConfigException('Invalid definition: class name must be a non-empty string.');
+        }
     }
 }
