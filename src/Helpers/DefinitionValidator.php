@@ -148,6 +148,7 @@ final class DefinitionValidator
     private static function validateClassName(mixed $class): void
     {
         self::validateString($class);
+        /** @var string $class */
         if (!class_exists($class)) {
             throw new InvalidConfigException(
                 sprintf(
