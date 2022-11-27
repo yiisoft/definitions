@@ -63,6 +63,7 @@ final class DefinitionValidator
      * Validates that array definition is valid. Throws exception otherwise.
      *
      * @param array $definition Array definition to validate.
+     *
      * @throws InvalidConfigException If definition is not valid.
      * @throws ReflectionException
      */
@@ -210,6 +211,7 @@ final class DefinitionValidator
 
     /**
      * @param string[] $classPublicMethods
+     *
      * @throws InvalidConfigException
      */
     private static function validateMethod(
@@ -263,6 +265,7 @@ final class DefinitionValidator
 
     /**
      * @param string[] $classPublicProperties
+     *
      * @throws InvalidConfigException
      */
     private static function validateProperty(
