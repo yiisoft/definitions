@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Helpers;
 
 use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
+use ReflectionException;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
@@ -28,6 +27,7 @@ final class DefinitionValidator
      * @param mixed $definition Definition to validate.
      *
      * @throws InvalidConfigException If definition is not valid.
+     * @throws ReflectionException
      */
     public static function validate(mixed $definition, ?string $id = null): void
     {
@@ -63,8 +63,8 @@ final class DefinitionValidator
      * Validates that array definition is valid. Throws exception otherwise.
      *
      * @param array $definition Array definition to validate.
-     *
      * @throws InvalidConfigException If definition is not valid.
+     * @throws ReflectionException
      */
     public static function validateArrayDefinition(array $definition, ?string $id = null): void
     {
@@ -76,19 +76,18 @@ final class DefinitionValidator
         $classReflection = new ReflectionClass($className);
         $classPublicMethods = [];
         foreach ($classReflection->getMethods() as $reflectionMethod) {
-            if (($reflectionMethod->getModifiers() & ReflectionMethod::IS_PUBLIC) !== 0 && !self::isMagicMethod(
-                $reflectionMethod->getName()
-            )) {
+            if ($reflectionMethod->isPublic() && !self::isMagicMethod($reflectionMethod->getName())) {
                 $classPublicMethods[] = $reflectionMethod->getName();
             }
         }
         $classPublicProperties = [];
         foreach ($classReflection->getProperties() as $reflectionProperty) {
-            if (($reflectionProperty->getModifiers() & ReflectionProperty::IS_PUBLIC) !== 0) {
+            if ($reflectionProperty->isPublic()) {
                 $classPublicProperties[] = $reflectionProperty->getName();
             }
         }
 
+        /** @var mixed $value */
         foreach ($definition as $key => $value) {
             if (!is_string($key)) {
                 throw new InvalidConfigException(
@@ -142,6 +141,9 @@ final class DefinitionValidator
         return !($value instanceof DefinitionInterface) || $value instanceof ReferenceInterface;
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     private static function validateClassName(mixed $class): void
     {
         if (!is_string($class)) {
@@ -153,11 +155,7 @@ final class DefinitionValidator
             );
         }
         if (trim($class) === '') {
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: class name must be a non-empty string.',
-                )
-            );
+            throw new InvalidConfigException('Invalid definition: class name must be a non-empty string.');
         }
         if (!class_exists($class)) {
             throw new InvalidConfigException(
@@ -210,6 +208,10 @@ final class DefinitionValidator
         return 'The key may be a call of a method or a setting of a property.';
     }
 
+    /**
+     * @param string[] $classPublicMethods
+     * @throws InvalidConfigException
+     */
     private static function validateMethod(
         string $key,
         ReflectionClass $classReflection,
@@ -259,6 +261,10 @@ final class DefinitionValidator
         }
     }
 
+    /**
+     * @param string[] $classPublicProperties
+     * @throws InvalidConfigException
+     */
     private static function validateProperty(
         string $key,
         ReflectionClass $classReflection,
@@ -297,6 +303,9 @@ final class DefinitionValidator
         }
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     private static function validateConstructor(mixed $value): void
     {
         if (!is_array($value)) {
