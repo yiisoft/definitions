@@ -2,7 +2,7 @@
 
 ## 3.0.2 under development
 
-- no changes in this release.
+- Enh #57: Improve validation messages
 
 ## 3.0.1 November 08, 2022
 
