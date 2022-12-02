@@ -86,4 +86,9 @@ final class Phone
     {
         return $this->country;
     }
+
+    private function getCountryPrivate(): ?string
+    {
+        return $this->country;
+    }
 }

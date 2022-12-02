@@ -229,6 +229,7 @@ final class DefinitionStorageTest extends TestCase
 
     public function testBuildStackOnThrowException(): void
     {
+        $stack = null;
         $storage = new DefinitionStorage();
 
         try {

@@ -6,6 +6,7 @@ namespace Yiisoft\Definitions\Tests\Support;
 
 final class Recorder
 {
+    private static array $staticRecord = [];
     private array $record = [];
 
     public function __call($name, $arguments)
@@ -16,6 +17,16 @@ final class Recorder
         );
 
         $this->record[] = 'Call ' . $name . '(' . implode(', ', $arguments) . ')';
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        $arguments = array_map(
+            static fn ($argument) => get_debug_type($argument),
+            $arguments,
+        );
+
+        self::$staticRecord[] = 'Call ' . $name . '(' . implode(', ', $arguments) . ')';
     }
 
     public function __isset($name)
