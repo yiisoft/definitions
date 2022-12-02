@@ -73,7 +73,7 @@ final class DefinitionValidator
         $className = $definition[ArrayDefinition::CLASS_NAME] ?? $id ?? throw new InvalidConfigException(
             'Invalid definition: no class name specified.'
         );
-        self::validateClassName($className);
+        self::validateString($className);
         $classReflection = new ReflectionClass($className);
         $classPublicMethods = [];
         foreach ($classReflection->getMethods() as $reflectionMethod) {
@@ -140,23 +140,6 @@ final class DefinitionValidator
     private static function isValidObject(object $value): bool
     {
         return !($value instanceof DefinitionInterface) || $value instanceof ReferenceInterface;
-    }
-
-    /**
-     * @throws InvalidConfigException
-     */
-    private static function validateClassName(mixed $class): void
-    {
-        self::validateString($class);
-        /** @var string $class */
-        if (!class_exists($class)) {
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: class "%s" does not exist.',
-                    $class,
-                ),
-            );
-        }
     }
 
     private static function generatePossibleMessage(
