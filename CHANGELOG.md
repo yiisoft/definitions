@@ -1,6 +1,6 @@
 # Yii Definitions Change Log
 
-## 3.0.2 under development
+## 3.0.2 December 02, 2022
 
 - Enh #57: Improve validation messages (@xepozz)
 
