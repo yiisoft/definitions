@@ -2,7 +2,7 @@
 
 ## 3.0.2 under development
 
-- Enh #57: Improve validation messages
+- Enh #57: Improve validation messages (@xepozz)
 
 ## 3.0.1 November 08, 2022
 
