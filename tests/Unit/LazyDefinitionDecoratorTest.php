@@ -9,7 +9,7 @@ use ProxyManager\Exception\InvalidProxiedClassException;
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use ProxyManager\Proxy\LazyLoadingInterface;
 use Yiisoft\Definitions\ArrayDefinition;
-use Yiisoft\Definitions\LazyDefinitionDecorator;
+use Yiisoft\Definitions\LazyDefinition;
 use Yiisoft\Definitions\Tests\Support\EngineInterface;
 use Yiisoft\Definitions\Tests\Support\NotFinalClass;
 use Yiisoft\Definitions\Tests\Support\Phone;
@@ -19,15 +19,16 @@ final class LazyDefinitionDecoratorTest extends TestCase
 {
     public function testDecorateFinalClass(): void
     {
-        $container = new SimpleContainer();
-        $factory = new LazyLoadingValueHolderFactory();
+        $container = new SimpleContainer([
+            LazyLoadingValueHolderFactory::class => new LazyLoadingValueHolderFactory(),
+        ]);
 
         $class = Phone::class;
 
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => $class,
         ]);
-        $definition = new LazyDefinitionDecorator($factory, $definition, $class);
+        $definition = new LazyDefinition($definition, $class);
 
         $this->expectException(InvalidProxiedClassException::class);
         $definition->resolve($container);
@@ -35,15 +36,16 @@ final class LazyDefinitionDecoratorTest extends TestCase
 
     public function testDecorateNotFinalClass(): void
     {
-        $container = new SimpleContainer();
-        $factory = new LazyLoadingValueHolderFactory();
+        $container = new SimpleContainer([
+            LazyLoadingValueHolderFactory::class => new LazyLoadingValueHolderFactory(),
+        ]);
 
         $class = NotFinalClass::class;
 
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => $class,
         ]);
-        $definition = new LazyDefinitionDecorator($factory, $definition, $class);
+        $definition = new LazyDefinition($definition, $class);
 
         $phone = $definition->resolve($container);
 
@@ -52,15 +54,16 @@ final class LazyDefinitionDecoratorTest extends TestCase
 
     public function testDecorateInterface(): void
     {
-        $container = new SimpleContainer();
-        $factory = new LazyLoadingValueHolderFactory();
+        $container = new SimpleContainer([
+            LazyLoadingValueHolderFactory::class => new LazyLoadingValueHolderFactory(),
+        ]);
 
         $class = EngineInterface::class;
 
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => $class,
         ]);
-        $definition = new LazyDefinitionDecorator($factory, $definition, $class);
+        $definition = new LazyDefinition($definition, $class);
 
         $phone = $definition->resolve($container);
 

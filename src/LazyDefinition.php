@@ -9,10 +9,9 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Di\Helpers\DefinitionNormalizer;
 
-final class LazyDefinitionDecorator implements DefinitionInterface
+final class LazyDefinition implements DefinitionInterface
 {
     public function __construct(
-        private LazyLoadingValueHolderFactory $factory,
         private mixed $definition,
         private string $objectClass,
     ) {
@@ -20,11 +19,14 @@ final class LazyDefinitionDecorator implements DefinitionInterface
 
     public function resolve(ContainerInterface $container): mixed
     {
-        return $this->factory->createProxy(
-            $this->objectClass,
-            function (&$wrappedObject) use ($container) {
-                $definition = DefinitionNormalizer::normalize($this->definition, $this->objectClass);
+        $factory = $container->get(LazyLoadingValueHolderFactory::class);
+        $definition = $this->definition;
+        $objectClass = $this->objectClass;
 
+        return $factory->createProxy(
+            $objectClass,
+            function (&$wrappedObject) use ($container, $objectClass, $definition) {
+                $definition = DefinitionNormalizer::normalize($definition, $objectClass);
                 $wrappedObject = $definition->resolve($container);
             }
         );
