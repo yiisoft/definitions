@@ -31,7 +31,7 @@
     },
     "require-dev": {
         "maglnet/composer-require-checker": "^4.2",
-        "ocramius/proxy-manager": "^2.14.1",
+        "friendsofphp/proxy-manager-lts": "^1.0",
         "phpunit/phpunit": "^9.5",
         "rector/rector": "^0.14.3",
         "roave/infection-static-analysis-plugin": "^1.18",
@@ -40,7 +40,7 @@
         "yiisoft/test-support": "^1.4"
     },
     "suggest": {
-        "ocramius/proxy-manager": "Allows create proxy classes"
+        "friendsofphp/proxy-manager-lts": "Allows create proxy classes"
     },
     "autoload": {
         "psr-4": {
