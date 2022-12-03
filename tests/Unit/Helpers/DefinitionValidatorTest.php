@@ -15,6 +15,8 @@ use Yiisoft\Definitions\Tests\Support\CarFactory;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\Tests\Support\Phone;
+use Yiisoft\Definitions\Tests\Support\Recorder;
+use Yiisoft\Definitions\Tests\Support\UTF8User;
 use Yiisoft\Definitions\ValueDefinition;
 
 final class DefinitionValidatorTest extends TestCase
@@ -22,7 +24,9 @@ final class DefinitionValidatorTest extends TestCase
     public function testIntegerKeyOfArray(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: invalid key in array definition. Allow only string keys, got 0.');
+        $this->expectExceptionMessage(
+            'Invalid definition: invalid key in array definition. Only string keys are allowed, got 0.'
+        );
         DefinitionValidator::validate([
             ArrayDefinition::CLASS_NAME => Phone::class,
             'RX',
@@ -32,8 +36,8 @@ final class DefinitionValidatorTest extends TestCase
     public function dataInvalidClass(): array
     {
         return [
-            [42, 'Invalid definition: invalid class name. Expected string, got int'],
-            ['', 'Invalid definition: empty class name.'],
+            [42, 'Invalid definition: class name must be a non-empty string, got int.'],
+            ['', 'Invalid definition: class name must be a non-empty string.'],
         ];
     }
 
@@ -49,24 +53,96 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function testWithoutClass(): void
+    public function dataInvalidProperty(): array
+    {
+        $object1 = new class () {
+            public bool $visible = true;
+            private bool $invisible = true;
+        };
+        return [
+            [stdClass::class, '$', 'Invalid definition: class "stdClass" does not have any public properties.'],
+            [
+                $object1::class,
+                '$1',
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public property with name "1". Possible properties to set: "visible".',
+                    $object1::class
+                ),
+            ],
+            [
+                $object1::class,
+                '$invisible',
+                sprintf(
+                    'Invalid definition: property "%s" must be public.',
+                    $object1::class . '::$invisible',
+                ),
+            ],
+            [
+                UTF8User::class,
+                '$имя',
+                sprintf(
+                    'Invalid definition: property "%s" must be public.',
+                    UTF8User::class . '::$имя',
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataInvalidProperty
+     */
+    public function testInvalidProperty(string $object, string $property, string $message): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage($message);
+        DefinitionValidator::validate([
+            ArrayDefinition::CLASS_NAME => $object,
+            $property => [],
+        ]);
+    }
+
+    public function dataInvalidDefinitionWithoutClass(): array
+    {
+        return [
+            [[]],
+            [[stdClass::class]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataInvalidDefinitionWithoutClass
+     */
+    public function testWithoutClass($definition): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: no class name specified.');
-        DefinitionValidator::validate([]);
+        DefinitionValidator::validate($definition);
     }
 
-    public function testEmptyString(): void
+    public function dataInvalidStringDefinition(): array
+    {
+        return [
+            ['', 'Invalid definition: class name must be a non-empty string.'],
+            ['       ', 'Invalid definition: class name must be a non-empty string.'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataInvalidStringDefinition
+     */
+    public function testInvalidStringDefinition(string $definition, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: empty string.');
-        DefinitionValidator::validate('');
+        $this->expectExceptionMessage($message);
+        DefinitionValidator::validate($definition);
     }
 
     public function testInvalidConstructor(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: incorrect constructor arguments. Expected array, got string.');
+        $this->expectExceptionMessage(
+            'Invalid definition: incorrect constructor arguments. Expected array, got string.'
+        );
         DefinitionValidator::validate([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => 'Kiradzu',
@@ -76,45 +152,104 @@ final class DefinitionValidatorTest extends TestCase
     public function dataInvalidMethodCalls(): array
     {
         return [
-            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method arguments. Expected array, got string.'],
+            [
+                Phone::class,
+                ['addApp()' => 'Browser'],
+                'Invalid definition: incorrect method "addApp()" arguments. Expected array, got "string". Probably you should wrap them into square brackets.',
+            ],
+            [
+                Phone::class,
+                ['deleteApp()' => ['Browser']],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "deleteApp". Possible methods to call: "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
+                    Phone::class,
+                ),
+            ],
+            [
+                stdClass::class,
+                ['addApp()' => ['Browser']],
+                'Invalid definition: class "stdClass" does not have the public method with name "addApp". No public methods available to call.',
+            ],
+            [
+                Recorder::class,
+                ['__call()' => ['test magic method']],
+                sprintf('Invalid definition: method "%s::__call()" must be public.', Recorder::class),
+            ],
         ];
     }
 
     /**
      * @dataProvider dataInvalidMethodCalls
      */
-    public function testInvalidMethodCalls(array $methodCalls, string $message): void
+    public function testInvalidMethodCalls(string $class, array $methodCalls, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        DefinitionValidator::validate(array_merge(
-            [
-                ArrayDefinition::CLASS_NAME => Phone::class,
-            ],
-            $methodCalls
-        ));
+        DefinitionValidator::validate(
+            array_merge([
+                ArrayDefinition::CLASS_NAME => $class,
+            ], $methodCalls)
+        );
     }
 
     public function dataErrorOnPropertyOrMethodTypo(): array
     {
         return [
-            ['dev', true, '~^Invalid definition: key "dev" is not allowed\. Did you mean "dev\(\)" or "\$dev"\?$~'],
-            ['setId', [42], '~^Invalid definition: key "setId" is not allowed\. Did you mean "setId\(\)" or "\$setId"\?$~'],
-            ['()test', [42], '~^Invalid definition: key "\(\)test" is not allowed\. Did you mean "test\(\)" or "\$test"\?$~'],
-            ['var$', true, '~^Invalid definition: key "var\$" is not allowed\. Did you mean "var\(\)" or "\$var"\?$~'],
-            [' var$', true, '~^Invalid definition: key " var\$" is not allowed\. Did you mean "var\(\)" or "\$var"\?$~'],
-            ['100$', true, '~^Invalid definition: key "100\$" is not allowed\.$~'],
-            ['test-тест', true, '~^Invalid definition: key "test-тест" is not allowed\.$~'],
+            ['dev', true, 'Invalid definition: key "dev" is not allowed. Did you mean "$dev"?'],
+            ['setId', [42], 'Invalid definition: key "setId" is not allowed. Did you mean "setId()"?'],
+            ['set()Id', [42], 'Invalid definition: key "set()Id" is not allowed. Did you mean "setId()"?'],
+            [' set()Id', [42], 'Invalid definition: key " set()Id" is not allowed. Did you mean "setId()"?'],
+            [
+                'getCountryPrivate',
+                [42],
+                sprintf(
+                    'Invalid definition: key "getCountryPrivate" is not allowed. Method "%s" must be public to be able to be called.',
+                    Phone::class . '::getCountryPrivate()',
+                ),
+            ],
+            [
+                'country',
+                [42],
+                sprintf(
+                    'Invalid definition: key "country" is not allowed. Property "%s" must be public to be able to be called.',
+                    Phone::class . '::$country',
+                ),
+            ],
+            [
+                '()test',
+                [42],
+                'Invalid definition: key "()test" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
+            [
+                'var$',
+                true,
+                'Invalid definition: key "var$" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
+            [
+                ' var$',
+                true,
+                'Invalid definition: key " var$" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
+            [
+                '100$',
+                true,
+                'Invalid definition: key "100$" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
+            [
+                'test-тест',
+                true,
+                'Invalid definition: key "test-тест" is not allowed. The key may be a call of a method or a setting of a property.',
+            ],
         ];
     }
 
     /**
      * @dataProvider dataErrorOnPropertyOrMethodTypo
      */
-    public function testErrorOnPropertyOrMethodTypo(string $key, $value, string $regExp): void
+    public function testErrorOnPropertyOrMethodTypo(string $key, $value, string $errorMessage): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessageMatches($regExp);
+        $this->expectExceptionMessage($errorMessage);
         DefinitionValidator::validate([
             'class' => Phone::class,
             '__construct()' => ['name' => 'hello'],
@@ -132,6 +267,8 @@ final class DefinitionValidatorTest extends TestCase
             'class-name' => [Car::class],
             'callable' => [[CarFactory::class, 'create']],
             'array-definition' => [['class' => ColorPink::class]],
+            'magic method reference' => [['class' => Recorder::class, 'add()' => ['test magic method']]],
+            'magic property reference' => [['class' => Recorder::class, '$add' => ['test magic property']]],
         ];
     }
 
@@ -141,13 +278,14 @@ final class DefinitionValidatorTest extends TestCase
     public function testValidate($definition, ?string $id = null): void
     {
         DefinitionValidator::validate($definition, $id);
-        $this->assertSame(1, 1);
+        $this->expectNotToPerformAssertions();
     }
 
     public function dataValidateArrayDefinition(): array
     {
         return [
-            [['class' => ColorPink::class]],
+            [['class' => ColorPink::class], 'pink_color'],
+            [['class' => ColorPink::class], null],
             [[], ColorPink::class],
         ];
     }
@@ -155,7 +293,7 @@ final class DefinitionValidatorTest extends TestCase
     /**
      * @dataProvider dataValidateArrayDefinition
      */
-    public function testValidateArrayDefinition(array $definition, ?string $id = null): void
+    public function testValidateArrayDefinition(array $definition, ?string $id): void
     {
         DefinitionValidator::validateArrayDefinition($definition, $id);
         $this->assertSame(1, 1);
@@ -183,15 +321,39 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function testIncorrectMethodName(): void
+    public function dataIncorrectMethodName(): array
     {
-        $config = [
-            'class' => Phone::class,
-            'addApp()hm()' => ['name' => 'hello'],
+        return [
+            [
+                [
+                    'class' => Phone::class,
+                    'addApp()hm()' => ['name' => 'hello'],
+                ],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "addApp()hm".',
+                    Phone::class,
+                ),
+            ],
+            [
+                [
+                    'class' => UTF8User::class,
+                    'имя()aa()' => ['значение'],
+                ],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "имя()aa".',
+                    UTF8User::class,
+                ),
+            ],
         ];
+    }
 
+    /**
+     * @dataProvider dataIncorrectMethodName
+     */
+    public function testIncorrectMethodName(array $config, string $message): void
+    {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: incorrect method name. Got "addApp()hm()".');
+        $this->expectExceptionMessage($message);
         DefinitionValidator::validate($config);
     }
 }
