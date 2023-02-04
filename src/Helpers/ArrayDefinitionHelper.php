@@ -51,6 +51,7 @@ final class ArrayDefinitionHelper
                     }
                     /** @var mixed */
                     $result[$key] = self::mergeArguments($result[$key], $value);
+                    continue;
                 }
 
                 /** @var mixed */
