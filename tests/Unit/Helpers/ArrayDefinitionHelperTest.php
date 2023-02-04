@@ -62,10 +62,12 @@ final class ArrayDefinitionHelperTest extends TestCase
             ],
             'complex test' => [
                 [
-                    '__construct()' => ['number' => 42, 'color' => 'red'],
+                    '__construct()' => ['number' => 42, 'color' => 'green'],
                     'run()' => [15, 23],
                     '$value' => 7,
+                    '$count' => 7,
                     'support' => ['name' => 'background'],
+                    'do()' => [1],
                 ],
                 [
                     [
@@ -75,8 +77,13 @@ final class ArrayDefinitionHelperTest extends TestCase
                     [
                         '$value' => 7,
                         'run()' => [15, 23],
+                        '$count' => 7,
                         'support' => ['name' => 'background'],
                     ],
+                    [
+                        '__construct()' => ['color' => 'green'],
+                        'do()' => [1],
+                    ]
                 ],
             ],
         ];
