@@ -83,7 +83,7 @@ final class ArrayDefinitionHelperTest extends TestCase
                     [
                         '__construct()' => ['color' => 'green'],
                         'do()' => [1],
-                    ]
+                    ],
                 ],
             ],
         ];
