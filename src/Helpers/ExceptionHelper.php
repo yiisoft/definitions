@@ -11,12 +11,9 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
  */
 final class ExceptionHelper
 {
-    /**
-     * @throws InvalidConfigException
-     */
-    public static function throwInvalidArrayDefinitionKey(int|string $key): void
+    public static function invalidArrayDefinitionKey(int|string $key): InvalidConfigException
     {
-        throw new InvalidConfigException(
+        return new InvalidConfigException(
             sprintf(
                 'Invalid definition: invalid key in array definition. Only string keys are allowed, got %d.',
                 $key,
@@ -24,12 +21,9 @@ final class ExceptionHelper
         );
     }
 
-    /**
-     * @throws InvalidConfigException
-     */
-    public static function throwIncorrectArrayDefinitionConstructorArguments(mixed $value): void
+    public static function incorrectArrayDefinitionConstructorArguments(mixed $value): InvalidConfigException
     {
-        throw new InvalidConfigException(
+        return new InvalidConfigException(
             sprintf(
                 'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
                 get_debug_type($value)
@@ -37,12 +31,9 @@ final class ExceptionHelper
         );
     }
 
-    /**
-     * @throws InvalidConfigException
-     */
-    public static function throwIncorrectArrayDefinitionMethodArguments(string $key, mixed $value): void
+    public static function incorrectArrayDefinitionMethodArguments(string $key, mixed $value): InvalidConfigException
     {
-        throw new InvalidConfigException(
+        return new InvalidConfigException(
             sprintf(
                 'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". ' .
                 'Probably you should wrap them into square brackets.',

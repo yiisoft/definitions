@@ -17,9 +17,12 @@ final class ArrayDefinitionHelper
      */
     public static function merge(array $configA, array $configB): array
     {
+        /**
+         * @var mixed $value
+         */
         foreach ($configB as $key => $value) {
             if (!is_string($key)) {
-                ExceptionHelper::throwInvalidArrayDefinitionKey((string) $key);
+                throw ExceptionHelper::invalidArrayDefinitionKey($key);
             }
 
             if (!isset($configA[$key])) {
@@ -30,10 +33,10 @@ final class ArrayDefinitionHelper
 
             if ($key === ArrayDefinition::CONSTRUCTOR) {
                 if (!is_array($value)) {
-                    ExceptionHelper::throwIncorrectArrayDefinitionConstructorArguments($value);
+                    throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($value);
                 }
                 if (!is_array($configA[$key])) {
-                    ExceptionHelper::throwIncorrectArrayDefinitionConstructorArguments($configA[$key]);
+                    throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($configA[$key]);
                 }
                 $configA[$key] = self::mergeArguments($configA[$key], $value);
                 continue;
@@ -41,10 +44,10 @@ final class ArrayDefinitionHelper
 
             if (str_ends_with($key, '()')) {
                 if (!is_array($value)) {
-                    ExceptionHelper::throwIncorrectArrayDefinitionMethodArguments($key, $value);
+                    throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $value);
                 }
                 if (!is_array($configA[$key])) {
-                    ExceptionHelper::throwIncorrectArrayDefinitionMethodArguments($key, $configA[$key]);
+                    throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $configA[$key]);
                 }
                 /** @var mixed */
                 $configA[$key] = self::mergeArguments($configA[$key], $value);

@@ -91,7 +91,7 @@ final class DefinitionValidator
         /** @var mixed $value */
         foreach ($definition as $key => $value) {
             if (!is_string($key)) {
-                ExceptionHelper::throwInvalidArrayDefinitionKey($key);
+                throw ExceptionHelper::invalidArrayDefinitionKey($key);
             }
 
             // Class
@@ -221,7 +221,7 @@ final class DefinitionValidator
             );
         }
         if (!is_array($value)) {
-            ExceptionHelper::throwIncorrectArrayDefinitionMethodArguments($key, $value);
+            throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $value);
         }
     }
 
@@ -274,7 +274,7 @@ final class DefinitionValidator
     private static function validateConstructor(mixed $value): void
     {
         if (!is_array($value)) {
-            ExceptionHelper::throwIncorrectArrayDefinitionConstructorArguments($value);
+            throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($value);
         }
 
         /** @var mixed $argument */
