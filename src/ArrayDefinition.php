@@ -10,6 +10,7 @@ use ReflectionMethod;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
+use Yiisoft\Definitions\Helpers\ArrayDefinitionHelper;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\Helpers\DefinitionResolver;
 
@@ -281,7 +282,7 @@ final class ArrayDefinition implements DefinitionInterface
     {
         $new = clone $this;
         $new->class = $other->class;
-        $new->constructorArguments = $this->mergeArguments($this->constructorArguments, $other->constructorArguments);
+        $new->constructorArguments = ArrayDefinitionHelper::mergeArguments($this->constructorArguments, $other->constructorArguments);
 
         $methodsAndProperties = $this->methodsAndProperties;
         foreach ($other->methodsAndProperties as $key => $item) {
@@ -290,7 +291,7 @@ final class ArrayDefinition implements DefinitionInterface
             } elseif ($item[0] === self::TYPE_METHOD) {
                 /** @psalm-suppress MixedArgument, MixedAssignment */
                 $arguments = isset($methodsAndProperties[$key])
-                    ? $this->mergeArguments($methodsAndProperties[$key][2], $item[2])
+                    ? ArrayDefinitionHelper::mergeArguments($methodsAndProperties[$key][2], $item[2])
                     : $item[2];
                 $methodsAndProperties[$key] = [$item[0], $item[1], $arguments];
             }
@@ -298,16 +299,5 @@ final class ArrayDefinition implements DefinitionInterface
         $new->methodsAndProperties = $methodsAndProperties;
 
         return $new;
-    }
-
-    private function mergeArguments(array $selfArguments, array $otherArguments): array
-    {
-        /** @var mixed $argument */
-        foreach ($otherArguments as $name => $argument) {
-            /** @var mixed */
-            $selfArguments[$name] = $argument;
-        }
-
-        return $selfArguments;
     }
 }
