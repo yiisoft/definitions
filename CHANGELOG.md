@@ -1,6 +1,6 @@
 # Yii Definitions Change Log
 
-## 3.1.0 under development
+## 3.1.0 February 04, 2023
 
 - New #67: Add `ArrayDefinitionHelper::merge()` method that merge array definitions (@vjik)
 
