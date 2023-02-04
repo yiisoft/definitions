@@ -91,12 +91,7 @@ final class DefinitionValidator
         /** @var mixed $value */
         foreach ($definition as $key => $value) {
             if (!is_string($key)) {
-                throw new InvalidConfigException(
-                    sprintf(
-                        'Invalid definition: invalid key in array definition. Only string keys are allowed, got %d.',
-                        $key,
-                    ),
-                );
+                throw ExceptionHelper::invalidArrayDefinitionKey($key);
             }
 
             // Class
@@ -226,14 +221,7 @@ final class DefinitionValidator
             );
         }
         if (!is_array($value)) {
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". ' .
-                    'Probably you should wrap them into square brackets.',
-                    $key,
-                    get_debug_type($value),
-                )
-            );
+            throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $value);
         }
     }
 
@@ -286,13 +274,9 @@ final class DefinitionValidator
     private static function validateConstructor(mixed $value): void
     {
         if (!is_array($value)) {
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
-                    get_debug_type($value)
-                )
-            );
+            throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($value);
         }
+
         /** @var mixed $argument */
         foreach ($value as $argument) {
             if (is_object($argument) && !self::isValidObject($argument)) {
