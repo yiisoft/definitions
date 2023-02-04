@@ -15,49 +15,50 @@ final class ArrayDefinitionHelper
     /**
      * @throws InvalidConfigException
      */
-    public static function merge(array $configA, array $configB): array
+    public static function merge(array ...$configs): array
     {
-        /**
-         * @var mixed $value
-         */
-        foreach ($configB as $key => $value) {
-            if (!is_string($key)) {
-                throw ExceptionHelper::invalidArrayDefinitionKey($key);
-            }
+        $result = array_shift($configs) ?: [];
+        while (!empty($configs)) {
+            /** @var mixed $value */
+            foreach (array_shift($configs) as $key => $value) {
+                if (!is_string($key)) {
+                    throw ExceptionHelper::invalidArrayDefinitionKey($key);
+                }
 
-            if (!isset($configA[$key])) {
+                if (!isset($result[$key])) {
+                    /** @var mixed */
+                    $result[$key] = $value;
+                    continue;
+                }
+
+                if ($key === ArrayDefinition::CONSTRUCTOR) {
+                    if (!is_array($value)) {
+                        throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($value);
+                    }
+                    if (!is_array($result[$key])) {
+                        throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($result[$key]);
+                    }
+                    $result[$key] = self::mergeArguments($result[$key], $value);
+                    continue;
+                }
+
+                if (str_ends_with($key, '()')) {
+                    if (!is_array($value)) {
+                        throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $value);
+                    }
+                    if (!is_array($result[$key])) {
+                        throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $result[$key]);
+                    }
+                    /** @var mixed */
+                    $result[$key] = self::mergeArguments($result[$key], $value);
+                }
+
                 /** @var mixed */
-                $configA[$key] = $value;
-                continue;
+                $result[$key] = $value;
             }
-
-            if ($key === ArrayDefinition::CONSTRUCTOR) {
-                if (!is_array($value)) {
-                    throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($value);
-                }
-                if (!is_array($configA[$key])) {
-                    throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($configA[$key]);
-                }
-                $configA[$key] = self::mergeArguments($configA[$key], $value);
-                continue;
-            }
-
-            if (str_ends_with($key, '()')) {
-                if (!is_array($value)) {
-                    throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $value);
-                }
-                if (!is_array($configA[$key])) {
-                    throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $configA[$key]);
-                }
-                /** @var mixed */
-                $configA[$key] = self::mergeArguments($configA[$key], $value);
-            }
-
-            /** @var mixed */
-            $configA[$key] = $value;
         }
 
-        return $configA;
+        return $result;
     }
 
     public static function mergeArguments(array $argumentsA, array $argumentsB): array
