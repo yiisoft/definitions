@@ -6,8 +6,6 @@ namespace Yiisoft\Definitions;
 
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
-use function is_string;
-
 /**
  * Allows creating an array of dynamic references from key-reference pairs.
  *
