@@ -22,7 +22,7 @@ final class DynamicReferencesArray
      * it is done as:
      *
      * ```php
-     * //web.php
+     * // di-web.php
      *
      * ContentNegotiator::class => [
      *     '__construct()' => [
@@ -39,7 +39,7 @@ final class DynamicReferencesArray
      * `DynamicReference::to()` for each formatter:
      *
      * ```php
-     * //params.php
+     * // params.php
      * return [
      *      'yiisoft/data-response' => [
      *          'contentFormatters' => [
@@ -54,7 +54,7 @@ final class DynamicReferencesArray
      * Then we can use it like the following:
      *
      * ```php
-     * //web.php
+     * // di-web.php
      *
      * ContentNegotiator::class => [
      *     '__construct()' => [
@@ -63,22 +63,18 @@ final class DynamicReferencesArray
      * ],
      * ```
      *
-     * @param string[] $ids Name-reference pairs.
+     * @param array $ids Name-reference pairs.
      *
      * @throws InvalidConfigException
      *
      * @return DynamicReference[]
-     * @psalm-suppress DocblockTypeContradiction
      */
-    public static function from(array $ids): array
+    public static function from(array $definitions): array
     {
         $references = [];
 
-        foreach ($ids as $key => $id) {
-            if (!is_string($id)) {
-                throw new InvalidConfigException('Values of an array must be string alias or class name.');
-            }
-            $references[$key] = DynamicReference::to($id);
+        foreach ($definitions as $key => $definition) {
+            $references[$key] = DynamicReference::to($definition);
         }
 
         return $references;

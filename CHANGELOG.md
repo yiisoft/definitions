@@ -1,8 +1,8 @@
 # Yii Definitions Change Log
 
-## 3.1.1 under development
+## 3.2.0 under development
 
-- no changes in this release.
+- Enh #68: Add ability to use any allowed definitions in `DynamicReferencesArray::from()` (@vjik) 
 
 ## 3.1.0 February 04, 2023
 

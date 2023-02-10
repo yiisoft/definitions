@@ -34,20 +34,16 @@ final class ReferencesArrayTest extends TestCase
 
     public function testDynamicReferencesArray(): void
     {
-        $ids = ['key1' => 'first', 'key2' => 'second'];
+        $definitions = [
+            'key1' => 'first',
+            'key2' => 'second',
+            static fn () => 'thrid',
+        ];
 
-        $references = DynamicReferencesArray::from($ids);
+        $references = DynamicReferencesArray::from($definitions);
 
         $this->assertInstanceOf(DynamicReference::class, $references['key1']);
         $this->assertInstanceOf(DynamicReference::class, $references['key2']);
-    }
-
-    public function testDynamicReferencesArrayFail(): void
-    {
-        $ids = ['first', 22];
-
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Values of an array must be string alias or class name.');
-        DynamicReferencesArray::from($ids);
+        $this->assertInstanceOf(DynamicReference::class, $references[0]);
     }
 }
