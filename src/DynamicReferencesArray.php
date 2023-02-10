@@ -6,8 +6,6 @@ namespace Yiisoft\Definitions;
 
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
-use function is_string;
-
 /**
  * Allows creating an array of dynamic references from key-reference pairs.
  *
@@ -58,12 +56,13 @@ final class DynamicReferencesArray
      *
      * ContentNegotiator::class => [
      *     '__construct()' => [
-     *         'contentFormatters' => DynamicReferencesArray::from($params['yiisoft/data-response']['contentFormatters']),
+     *         'contentFormatters' =>
+     * DynamicReferencesArray::from($params['yiisoft/data-response']['contentFormatters']),
      *     ],
      * ],
      * ```
      *
-     * @param array $ids Name-reference pairs.
+     * @param array $definitions Name-reference pairs.
      *
      * @throws InvalidConfigException
      *
@@ -73,6 +72,7 @@ final class DynamicReferencesArray
     {
         $references = [];
 
+        /** @var mixed $definition */
         foreach ($definitions as $key => $definition) {
             $references[$key] = DynamicReference::to($definition);
         }
