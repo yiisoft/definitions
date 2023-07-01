@@ -3,7 +3,7 @@
 ## 3.3.0 under development
 
 - Enh #76: `Normalizer` returns objects implements `DefinitionInterface` as is. Previously, returns `ReferenceInterface`
-  only, on another `DefinitionInterface` throws exception (@vjik)
+  only, on another `DefinitionInterface` throws exception (@xepozz, vjik)
 
 ## 3.2.0 February 12, 2023
 
