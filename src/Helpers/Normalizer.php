@@ -7,7 +7,6 @@ namespace Yiisoft\Definitions\Helpers;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\CallableDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\ValueDefinition;
@@ -30,7 +29,7 @@ final class Normalizer
      * Definition may be defined multiple ways:
      *  - class name,
      *  - string as reference to another class or alias,
-     *  - instance of {@see ReferenceInterface},
+     *  - instance of {@see DefinitionInterface},
      *  - callable,
      *  - array,
      *  - ready object.
@@ -48,8 +47,7 @@ final class Normalizer
      */
     public static function normalize(mixed $definition, ?string $class = null): DefinitionInterface
     {
-        // Reference
-        if ($definition instanceof ReferenceInterface) {
+        if ($definition instanceof DefinitionInterface) {
             return $definition;
         }
 
@@ -88,7 +86,7 @@ final class Normalizer
         }
 
         // Ready object
-        if (is_object($definition) && !($definition instanceof DefinitionInterface)) {
+        if (is_object($definition)) {
             return new ValueDefinition($definition);
         }
 

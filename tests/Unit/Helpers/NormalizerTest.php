@@ -70,4 +70,13 @@ final class NormalizerTest extends TestCase
         $this->expectExceptionMessage('Invalid definition: 42');
         Normalizer::normalize(42);
     }
+
+    public function testDefinition(): void
+    {
+        $value = new ValueDefinition(42);
+
+        $definition = Normalizer::normalize($value);
+
+        $this->assertSame($value, $definition);
+    }
 }
