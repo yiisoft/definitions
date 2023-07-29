@@ -1,8 +1,16 @@
 # Yii Definitions Change Log
 
-## 3.0.3 under development
+## 3.2.1 under development
 
 - no changes in this release.
+
+## 3.2.0 February 12, 2023
+
+- Enh #68: Add ability to use any allowed definitions in `DynamicReferencesArray::from()` (@vjik)
+
+## 3.1.0 February 04, 2023
+
+- New #67: Add `ArrayDefinitionHelper::merge()` method that merge array definitions (@vjik)
 
 ## 3.0.2 December 02, 2022
 
