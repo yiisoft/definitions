@@ -6,7 +6,7 @@ namespace Yiisoft\Definitions\Tests\Support;
 
 class NotFinalClass
 {
-    private $arguments;
+    private array $arguments;
 
     public function __construct(...$arguments)
     {
