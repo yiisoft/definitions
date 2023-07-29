@@ -131,7 +131,7 @@ final class ServiceDefinitionTest extends TestCase
                 'name' => null,
                 'version' => null,
                 'colors' => $colors,
-        ]);
+            ]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Named argument for a variadic parameter should be an array, "string" given.');
@@ -354,7 +354,7 @@ final class ServiceDefinitionTest extends TestCase
     public function testArgumentsIndexedBothByNameAndByPositionInMethod(): void
     {
         $definition = ServiceDefinition::for(Mouse::class)
-            ->callMethod('setNameAndEngine()',  ['kitty', 'engine' => new EngineMarkOne()]);
+            ->callMethod('setNameAndEngine()', ['kitty', 'engine' => new EngineMarkOne()]);
 
         $container = new SimpleContainer();
 
@@ -370,7 +370,7 @@ final class ServiceDefinitionTest extends TestCase
         $container = new SimpleContainer();
 
         $definition = ServiceDefinition::for(Mouse::class)
-            ->callMethod('setNameAndColors()',  [
+            ->callMethod('setNameAndColors()', [
                 'name' => 'kitty',
                 'colors' => 'red',
             ]);
@@ -387,7 +387,7 @@ final class ServiceDefinitionTest extends TestCase
         ]);
 
         $definition = ServiceDefinition::for(Mouse::class)
-            ->callMethod('setNameAndColors()',   [
+            ->callMethod('setNameAndColors()', [
                 'name' => 'kitty',
                 'colors' => Reference::to('data'),
             ]);
@@ -402,15 +402,15 @@ final class ServiceDefinitionTest extends TestCase
         $this->markTestSkipped('TBD');
 
         $a = ServiceDefinition::for(Phone::class)
-            ->constructor( ['version' => '2.0'])
+            ->constructor(['version' => '2.0'])
             ->setProperty('$codeName', 'a')
-            ->callMethod('setColors()',    ['red', 'green'],);
+            ->callMethod('setColors()', ['red', 'green'], );
 
         $b = ServiceDefinition::for(Phone::class)
             ->constructor(['name' => 'Retro', 'version' => '1.0'])
             ->setProperty('$dev', true)
             ->setProperty('$codeName', 'b')
-            ->callMethod('setId()',  [42])
+            ->callMethod('setId()', [42])
             ->callMethod('setColors()', ['yellow']);
 
         $c = $a->merge($b);
