@@ -10,14 +10,15 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 final class ServiceDefinition implements DefinitionInterface
 {
     private array $constructorArguments = [];
-    private string $class;
     private array $calls = [];
+
+    private function __construct(private string $class)
+    {
+    }
 
     public static function for(string $class): self
     {
-        $definition = new self();
-        $definition->class = $class;
-        return $definition;
+        return new self($class);
     }
 
     public function constructor(array $arguments): self
@@ -26,30 +27,30 @@ final class ServiceDefinition implements DefinitionInterface
         return $this;
     }
 
-    public function callMethod(string $method, array $arguments = []): self
+    public function call(string $method, array $arguments = []): self
     {
-        $this->calls[$method] = $arguments;
+        $this->calls[$method . '()'] = $arguments;
         return $this;
     }
 
-    public function callMethods(array $properties): self
+    public function calls(array $methods): self
     {
-        foreach ($properties as $property => $value) {
-            $this->callMethod($property, $value);
+        foreach ($methods as $method => $arguments) {
+            $this->call($method, $arguments);
         }
         return $this;
     }
 
-    public function setProperty(string $property, mixed $value): self
+    public function set(string $property, mixed $value): self
     {
-        $this->calls[$property] = $value;
+        $this->calls['$' . $property] = $value;
         return $this;
     }
 
-    public function setProperties(array $properties): self
+    public function sets(array $properties): self
     {
         foreach ($properties as $property => $value) {
-            $this->setProperty($property, $value);
+            $this->set($property, $value);
         }
         return $this;
     }

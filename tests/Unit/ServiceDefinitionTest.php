@@ -143,8 +143,8 @@ final class ServiceDefinitionTest extends TestCase
     {
         return [
             [false, null, []],
-            [true, null, ['$dev' => true]],
-            [true, 'Radar', ['$dev' => true, '$codeName' => 'Radar']],
+            [true, null, ['dev' => true]],
+            [true, 'Radar', ['dev' => true, 'codeName' => 'Radar']],
         ];
     }
 
@@ -156,7 +156,7 @@ final class ServiceDefinitionTest extends TestCase
         $container = new SimpleContainer();
 
         $definition = ServiceDefinition::for(Phone::class)
-            ->setProperties($setProperties);
+            ->sets($setProperties);
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
@@ -169,29 +169,29 @@ final class ServiceDefinitionTest extends TestCase
     {
         return [
             [null, [], []],
-            ['s43g23456', [], ['setId()' => ['s43g23456']]],
-            ['777', [], ['setId777()' => []]],
+            ['s43g23456', [], ['setId' => ['s43g23456']]],
+            ['777', [], ['setId777' => []]],
             [
                 '777',
                 [['Browser', null]],
                 [
-                    'addApp()' => ['Browser'],
-                    'setId777()' => [],
+                    'addApp' => ['Browser'],
+                    'setId777' => [],
                 ],
             ],
             [
                 '42',
                 [['Browser', '7']],
                 [
-                    'setId()' => ['42'],
-                    'addApp()' => ['Browser', '7'],
+                    'setId' => ['42'],
+                    'addApp' => ['Browser', '7'],
                 ],
             ],
             [
                 null,
                 [['Browser', '7']],
                 [
-                    'addApp()' => ['name' => 'Browser', 'version' => '7'],
+                    'addApp' => ['name' => 'Browser', 'version' => '7'],
                 ],
             ],
         ];
@@ -205,7 +205,7 @@ final class ServiceDefinitionTest extends TestCase
         $container = new SimpleContainer();
 
         $definition = ServiceDefinition::for(Phone::class)
-            ->callMethods($callMethods);
+            ->calls($callMethods);
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
@@ -221,8 +221,8 @@ final class ServiceDefinitionTest extends TestCase
         $author = 'Sergei';
         $country = 'Russia';
         $definition = ServiceDefinition::for(Phone::class)
-            ->callMethod('withAuthor()', [$author])
-            ->callMethod('withCountry()', [$country]);
+            ->call('withAuthor', [$author])
+            ->call('withCountry', [$country]);
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
@@ -273,7 +273,7 @@ final class ServiceDefinitionTest extends TestCase
         ]);
 
         $definition = ServiceDefinition::for(Mouse::class)
-            ->callMethod('setNameAndEngine()', $data);
+            ->call('setNameAndEngine', $data);
 
         /** @var Mouse $mouse */
         $mouse = $definition->resolve($container);
@@ -342,7 +342,7 @@ final class ServiceDefinitionTest extends TestCase
         $container = new SimpleContainer($containerDefinitions);
 
         $definition = ServiceDefinition::for(Mouse::class)
-            ->callMethod('setNameAndColors()', $data);
+            ->call('setNameAndColors', $data);
 
         /** @var Mouse $mouse */
         $mouse = $definition->resolve($container);
@@ -354,7 +354,7 @@ final class ServiceDefinitionTest extends TestCase
     public function testArgumentsIndexedBothByNameAndByPositionInMethod(): void
     {
         $definition = ServiceDefinition::for(Mouse::class)
-            ->callMethod('setNameAndEngine()', ['kitty', 'engine' => new EngineMarkOne()]);
+            ->call('setNameAndEngine', ['kitty', 'engine' => new EngineMarkOne()]);
 
         $container = new SimpleContainer();
 
@@ -370,7 +370,7 @@ final class ServiceDefinitionTest extends TestCase
         $container = new SimpleContainer();
 
         $definition = ServiceDefinition::for(Mouse::class)
-            ->callMethod('setNameAndColors()', [
+            ->call('setNameAndColors', [
                 'name' => 'kitty',
                 'colors' => 'red',
             ]);
@@ -387,7 +387,7 @@ final class ServiceDefinitionTest extends TestCase
         ]);
 
         $definition = ServiceDefinition::for(Mouse::class)
-            ->callMethod('setNameAndColors()', [
+            ->call('setNameAndColors', [
                 'name' => 'kitty',
                 'colors' => Reference::to('data'),
             ]);
@@ -403,15 +403,15 @@ final class ServiceDefinitionTest extends TestCase
 
         $a = ServiceDefinition::for(Phone::class)
             ->constructor(['version' => '2.0'])
-            ->setProperty('$codeName', 'a')
-            ->callMethod('setColors()', ['red', 'green'], );
+            ->set('codeName', 'a')
+            ->call('setColors', ['red', 'green'], );
 
         $b = ServiceDefinition::for(Phone::class)
             ->constructor(['name' => 'Retro', 'version' => '1.0'])
-            ->setProperty('$dev', true)
-            ->setProperty('$codeName', 'b')
-            ->callMethod('setId()', [42])
-            ->callMethod('setColors()', ['yellow']);
+            ->set('dev', true)
+            ->set('codeName', 'b')
+            ->call('setId', [42])
+            ->call('setColors', ['yellow']);
 
         $c = $a->merge($b);
 
@@ -419,10 +419,10 @@ final class ServiceDefinitionTest extends TestCase
         $this->assertSame(['name' => 'Retro', 'version' => '2.0'], $c->getConstructorArguments());
         $this->assertSame(
             [
-                '$codeName' => [ArrayDefinition::TYPE_PROPERTY, 'codeName', 'b'],
-                'setColors()' => [ArrayDefinition::TYPE_METHOD, 'setColors', ['yellow', 'green']],
-                '$dev' => [ArrayDefinition::TYPE_PROPERTY, 'dev', true],
-                'setId()' => [ArrayDefinition::TYPE_METHOD, 'setId', [42]],
+                'codeName' => [ArrayDefinition::TYPE_PROPERTY, 'codeName', 'b'],
+                'setColors' => [ArrayDefinition::TYPE_METHOD, 'setColors', ['yellow', 'green']],
+                'dev' => [ArrayDefinition::TYPE_PROPERTY, 'dev', true],
+                'setId' =>[ArrayDefinition::TYPE_METHOD, 'setId', [42]],
             ],
             $c->getMethodsAndProperties(),
         );
@@ -463,7 +463,7 @@ final class ServiceDefinitionTest extends TestCase
         ]);
 
         $definition = ServiceDefinition::for(Car::class)
-            ->callMethod('setColor()', [Reference::to(ColorInterface::class)]);
+            ->call('setColor', [Reference::to(ColorInterface::class)]);
 
         $newDefinition = $definition->withReferenceContainer($referenceContainer);
 
@@ -478,10 +478,10 @@ final class ServiceDefinitionTest extends TestCase
     public function testMagicMethods(): void
     {
         $definiton = ServiceDefinition::for(Recorder::class)
-            ->callMethod('first()')
-            ->setProperty('$second', null)
-            ->callMethod('third()', ['hello', true])
-            ->setProperty('$fourth', 'hello');
+            ->call('first')
+            ->set('second', null)
+            ->call('third', ['hello', true])
+            ->set('fourth', 'hello');
 
         $object = $definiton->resolve(new SimpleContainer());
 
