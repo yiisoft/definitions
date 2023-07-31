@@ -422,7 +422,7 @@ final class ServiceDefinitionTest extends TestCase
                 'codeName' => [ArrayDefinition::TYPE_PROPERTY, 'codeName', 'b'],
                 'setColors' => [ArrayDefinition::TYPE_METHOD, 'setColors', ['yellow', 'green']],
                 'dev' => [ArrayDefinition::TYPE_PROPERTY, 'dev', true],
-                'setId' =>[ArrayDefinition::TYPE_METHOD, 'setId', [42]],
+                'setId' => [ArrayDefinition::TYPE_METHOD, 'setId', [42]],
             ],
             $c->getMethodsAndProperties(),
         );
