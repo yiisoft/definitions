@@ -62,6 +62,22 @@ final class ServiceDefinitionTest extends TestCase
         self::assertSame($version, $phone->getVersion());
     }
 
+    /**
+     * @dataProvider dataConstructor
+     */
+    public function testShortConstructor(?string $name, ?string $version, array $constructorArguments): void
+    {
+        $container = new SimpleContainer();
+
+        $definition = ServiceDefinition::for(Phone::class, $constructorArguments);
+
+        /** @var Phone $phone */
+        $phone = $definition->resolve($container);
+
+        self::assertSame($name, $phone->getName());
+        self::assertSame($version, $phone->getVersion());
+    }
+
     public function testConstructorWithVariadicAndIntKeys(): void
     {
         $container = new SimpleContainer();

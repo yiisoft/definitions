@@ -9,21 +9,22 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 
 final class ServiceDefinition implements DefinitionInterface
 {
-    private array $constructorArguments = [];
     private array $calls = [];
 
-    private function __construct(private string $class)
-    {
+    private function __construct(
+        private string $class,
+        private array $constructor = [],
+    ) {
     }
 
-    public static function for(string $class): self
+    public static function for(string $class, array $constructor = []): self
     {
-        return new self($class);
+        return new self($class, $constructor);
     }
 
     public function constructor(array $arguments): self
     {
-        $this->constructorArguments = $arguments;
+        $this->constructor = $arguments;
         return $this;
     }
 
@@ -59,7 +60,7 @@ final class ServiceDefinition implements DefinitionInterface
     {
         $config = [
             ArrayDefinition::CLASS_NAME => $this->class,
-            ArrayDefinition::CONSTRUCTOR => $this->constructorArguments,
+            ArrayDefinition::CONSTRUCTOR => $this->constructor,
             ...$this->calls,
         ];
         return ArrayDefinition::fromConfig($config)->resolve($container);
