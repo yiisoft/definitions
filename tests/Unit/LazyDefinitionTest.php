@@ -15,9 +15,9 @@ use Yiisoft\Definitions\Tests\Support\NotFinalClass;
 use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
-final class LazyDefinitionDecoratorTest extends TestCase
+final class LazyDefinitionTest extends TestCase
 {
-    public function testDecorateFinalClass(): void
+    public function testFinalClass(): void
     {
         $container = new SimpleContainer([
             LazyLoadingValueHolderFactory::class => new LazyLoadingValueHolderFactory(),
@@ -31,7 +31,7 @@ final class LazyDefinitionDecoratorTest extends TestCase
         $definition->resolve($container);
     }
 
-    public function testDecorateNotFinalClass(): void
+    public function testNotFinalClass(): void
     {
         $container = new SimpleContainer([
             LazyLoadingValueHolderFactory::class => new LazyLoadingValueHolderFactory(),
@@ -41,12 +41,13 @@ final class LazyDefinitionDecoratorTest extends TestCase
 
         $definition = new LazyDefinition([ArrayDefinition::CLASS_NAME => $class], $class);
 
-        $phone = $definition->resolve($container);
+        $object = $definition->resolve($container);
 
-        self::assertInstanceOf(LazyLoadingInterface::class, $phone);
+        self::assertInstanceOf($class, $object);
+        self::assertInstanceOf(LazyLoadingInterface::class, $object);
     }
 
-    public function testDecorateInterface(): void
+    public function testInterface(): void
     {
         $container = new SimpleContainer([
             LazyLoadingValueHolderFactory::class => new LazyLoadingValueHolderFactory(),
@@ -56,8 +57,9 @@ final class LazyDefinitionDecoratorTest extends TestCase
 
         $definition = new LazyDefinition([ArrayDefinition::CLASS_NAME => $class], $class);
 
-        $phone = $definition->resolve($container);
+        $engine = $definition->resolve($container);
 
-        self::assertInstanceOf(LazyLoadingInterface::class, $phone);
+        self::assertInstanceOf($class, $engine);
+        self::assertInstanceOf(LazyLoadingInterface::class, $engine);
     }
 }

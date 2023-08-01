@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions;
 
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
+use ProxyManager\Proxy\VirtualProxyInterface;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Helpers\Normalizer;
@@ -16,14 +17,11 @@ final class LazyDefinition implements DefinitionInterface
         /**
          * @var class-string
          */
-        private string $objectClass,
+        private string $class,
     ) {
     }
 
-    /**
-     * @psalm-suppress MixedArgumentTypeCoercion
-     */
-    public function resolve(ContainerInterface $container): mixed
+    public function resolve(ContainerInterface $container): VirtualProxyInterface
     {
         /** @var LazyLoadingValueHolderFactory $factory */
         $factory = $container->get(LazyLoadingValueHolderFactory::class);
@@ -31,17 +29,17 @@ final class LazyDefinition implements DefinitionInterface
          * @var mixed $definition
          */
         $definition = $this->definition;
-        $objectClass = $this->objectClass;
+        $class = $this->class;
 
-        /** @psalm-suppress InvalidArgument */
         return $factory->createProxy(
-            $objectClass,
-            function (mixed &$wrappedObject) use ($container, $objectClass, $definition) {
-                $definition = Normalizer::normalize($definition, $objectClass);
+            $class,
+            static function (mixed &$wrappedObject) use ($container, $class, $definition) {
+                $definition = Normalizer::normalize($definition, $class);
                 /**
                  * @var mixed $wrappedObject
                  */
                 $wrappedObject = $definition->resolve($container);
+                return true;
             }
         );
     }

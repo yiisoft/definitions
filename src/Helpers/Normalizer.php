@@ -49,7 +49,7 @@ final class Normalizer
     public static function normalize(mixed $definition, ?string $class = null): DefinitionInterface
     {
         // Reference
-        if ($definition instanceof ReferenceInterface) {
+        if ($definition instanceof DefinitionInterface) {
             return $definition;
         }
 
@@ -85,10 +85,6 @@ final class Normalizer
             }
             /** @psalm-var ArrayDefinitionConfig $config */
             return ArrayDefinition::fromConfig($config);
-        }
-
-        if ($definition instanceof DefinitionInterface) {
-            return $definition;
         }
 
         // Ready object

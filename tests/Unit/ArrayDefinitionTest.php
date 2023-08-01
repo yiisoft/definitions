@@ -525,7 +525,7 @@ final class ArrayDefinitionTest extends TestCase
         );
     }
 
-    public function testNonArrayArguments(): void
+    public function testNonArrayMethodArguments(): void
     {
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Mouse::class,
