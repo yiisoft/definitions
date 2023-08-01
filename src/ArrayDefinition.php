@@ -69,7 +69,8 @@ final class ArrayDefinition implements DefinitionInterface
         return new self(
             $config[self::CLASS_NAME],
             $config[self::CONSTRUCTOR] ?? [],
-            self::getMethodsAndPropertiesFromConfig($config)
+            // Already normalized config. Ignore all the rest parameters
+            $config['methodsAndProperties'] ?? self::getMethodsAndPropertiesFromConfig($config),
         );
     }
 
