@@ -75,7 +75,7 @@ final class Normalizer
         // Array definition
         if (is_array($definition)) {
             $config = $definition;
-            if (!array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
+            if (!isset($config[ArrayDefinition::CLASS_NAME])) {
                 if ($class === null) {
                     throw new InvalidConfigException(
                         'Array definition should contain the key "class": ' . var_export($definition, true)
