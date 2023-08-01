@@ -40,7 +40,7 @@
         "yiisoft/test-support": "^1.4"
     },
     "suggest": {
-        "friendsofphp/proxy-manager-lts": "Allows create proxy classes"
+        "friendsofphp/proxy-manager-lts": "Allows use lazy definitions"
     },
     "autoload": {
         "psr-4": {

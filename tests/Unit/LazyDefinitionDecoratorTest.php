@@ -25,10 +25,7 @@ final class LazyDefinitionDecoratorTest extends TestCase
 
         $class = Phone::class;
 
-        $definition = ArrayDefinition::fromConfig([
-            ArrayDefinition::CLASS_NAME => $class,
-        ]);
-        $definition = new LazyDefinition($definition, $class);
+        $definition = new LazyDefinition([ArrayDefinition::CLASS_NAME => $class], $class);
 
         $this->expectException(InvalidProxiedClassException::class);
         $definition->resolve($container);
@@ -42,10 +39,7 @@ final class LazyDefinitionDecoratorTest extends TestCase
 
         $class = NotFinalClass::class;
 
-        $definition = ArrayDefinition::fromConfig([
-            ArrayDefinition::CLASS_NAME => $class,
-        ]);
-        $definition = new LazyDefinition($definition, $class);
+        $definition = new LazyDefinition([ArrayDefinition::CLASS_NAME => $class], $class);
 
         $phone = $definition->resolve($container);
 
@@ -60,10 +54,7 @@ final class LazyDefinitionDecoratorTest extends TestCase
 
         $class = EngineInterface::class;
 
-        $definition = ArrayDefinition::fromConfig([
-            ArrayDefinition::CLASS_NAME => $class,
-        ]);
-        $definition = new LazyDefinition($definition, $class);
+        $definition = new LazyDefinition([ArrayDefinition::CLASS_NAME => $class], $class);
 
         $phone = $definition->resolve($container);
 
