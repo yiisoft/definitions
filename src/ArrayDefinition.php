@@ -66,6 +66,9 @@ final class ArrayDefinition implements DefinitionInterface
      */
     public static function fromConfig(array $config): self
     {
+        /**
+         * @psalm-suppress MixedArgument
+         */
         return new self(
             $config[self::CLASS_NAME],
             $config[self::CONSTRUCTOR] ?? [],
