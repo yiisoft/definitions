@@ -19,14 +19,12 @@ final class ArrayDefinitionHelper
     {
         $result = array_shift($configs) ?: [];
         while (!empty($configs)) {
-            /** @var mixed $value */
             foreach (array_shift($configs) as $key => $value) {
                 if (!is_string($key)) {
                     throw ExceptionHelper::invalidArrayDefinitionKey($key);
                 }
 
                 if (!isset($result[$key])) {
-                    /** @var mixed */
                     $result[$key] = $value;
                     continue;
                 }
@@ -49,12 +47,10 @@ final class ArrayDefinitionHelper
                     if (!is_array($result[$key])) {
                         throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $result[$key]);
                     }
-                    /** @var mixed */
                     $result[$key] = self::mergeArguments($result[$key], $value);
                     continue;
                 }
 
-                /** @var mixed */
                 $result[$key] = $value;
             }
         }
@@ -64,9 +60,7 @@ final class ArrayDefinitionHelper
 
     public static function mergeArguments(array $argumentsA, array $argumentsB): array
     {
-        /** @var mixed $argument */
         foreach ($argumentsB as $name => $argument) {
-            /** @var mixed */
             $argumentsA[$name] = $argument;
         }
 
