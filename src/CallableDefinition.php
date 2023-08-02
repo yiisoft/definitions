@@ -68,7 +68,6 @@ final class CallableDefinition implements DefinitionInterface
         if (is_array($callable) && !is_object($callable[0])) {
             $reflection = new ReflectionMethod($callable[0], $callable[1]);
             if (!$reflection->isStatic()) {
-                /** @var mixed */
                 $callable[0] = $container->get($callable[0]);
             }
         }

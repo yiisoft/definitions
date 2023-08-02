@@ -88,7 +88,6 @@ final class DefinitionValidator
             }
         }
 
-        /** @var mixed $value */
         foreach ($definition as $key => $value) {
             if (!is_string($key)) {
                 throw ExceptionHelper::invalidArrayDefinitionKey($key);
@@ -277,7 +276,6 @@ final class DefinitionValidator
             throw ExceptionHelper::incorrectArrayDefinitionConstructorArguments($value);
         }
 
-        /** @var mixed $argument */
         foreach ($value as $argument) {
             if (is_object($argument) && !self::isValidObject($argument)) {
                 throw new InvalidConfigException(
