@@ -72,7 +72,6 @@ final class DynamicReferencesArray
     {
         $references = [];
 
-        /** @var mixed $definition */
         foreach ($definitions as $key => $definition) {
             $references[$key] = DynamicReference::to($definition);
         }
