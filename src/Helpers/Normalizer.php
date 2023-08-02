@@ -12,7 +12,6 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\ValueDefinition;
 
-use function array_key_exists;
 use function is_array;
 use function is_callable;
 use function is_object;
