@@ -33,14 +33,12 @@ final class DefinitionResolver
         array $definitions
     ): array {
         $result = [];
-        /** @var mixed $definition */
         foreach ($definitions as $key => $definition) {
             // Don't resolve variadic parameters
             if ($definition instanceof ParameterDefinition && $definition->isVariadic()) {
                 continue;
             }
 
-            /** @var mixed */
             $result[$key] = self::resolve($container, $referenceContainer, $definition);
         }
 
@@ -61,7 +59,6 @@ final class DefinitionResolver
             $container = $referenceContainer !== null && $definition instanceof ReferenceInterface
                 ? $referenceContainer
                 : $container;
-            /** @var mixed $definition */
             $definition = $definition->resolve($container);
         } elseif (is_array($definition)) {
             return self::resolveArray($container, $referenceContainer, $definition);
