@@ -58,11 +58,10 @@ final class ServiceDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container): mixed
     {
-        $config = [
+        $config = array_merge($this->calls, [
             ArrayDefinition::CLASS_NAME => $this->class,
             ArrayDefinition::CONSTRUCTOR => $this->constructor,
-            ...$this->calls,
-        ];
+        ]);
         return ArrayDefinition::fromConfig($config)->resolve($container);
     }
 
