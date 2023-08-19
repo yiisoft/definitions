@@ -15,7 +15,7 @@ final class LazyDefinition implements DefinitionInterface
     public function __construct(
         private mixed $definition,
         /**
-         * @var class-string
+         * @psalm-var class-string
          */
         private string $class,
     ) {
