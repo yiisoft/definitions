@@ -9,14 +9,23 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 
 final class ServiceDefinition implements DefinitionInterface
 {
+    /**
+     * @psalm-var array<string, mixed>
+     */
     private array $calls = [];
 
     private function __construct(
+        /**
+         * @psalm-var class-string
+         */
         private string $class,
         private array $constructor = [],
     ) {
     }
 
+    /**
+     * @psalm-param class-string $class
+     */
     public static function for(string $class, array $constructor = []): self
     {
         return new self($class, $constructor);
@@ -34,6 +43,9 @@ final class ServiceDefinition implements DefinitionInterface
         return $this;
     }
 
+    /**
+     * @psalm-param array<string, array> $methods
+     */
     public function calls(array $methods): self
     {
         foreach ($methods as $method => $arguments) {
@@ -48,6 +60,9 @@ final class ServiceDefinition implements DefinitionInterface
         return $this;
     }
 
+    /**
+     * @psalm-param array<string, mixed> $properties
+     */
     public function sets(array $properties): self
     {
         foreach ($properties as $property => $value) {
@@ -63,10 +78,5 @@ final class ServiceDefinition implements DefinitionInterface
             ArrayDefinition::CONSTRUCTOR => $this->constructor,
         ]);
         return ArrayDefinition::fromConfig($config)->resolve($container);
-    }
-
-    public function merge(self $other)
-    {
-        // TBD
     }
 }
