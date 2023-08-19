@@ -91,7 +91,6 @@ final class ArrayDefinition implements DefinitionInterface
     {
         $methodsAndProperties = [];
 
-        /** @var mixed $value */
         foreach ($config as $key => $value) {
             if ($key === self::CONSTRUCTOR) {
                 continue;
@@ -147,7 +146,6 @@ final class ArrayDefinition implements DefinitionInterface
         $object = new $class(...$resolvedConstructorArguments);
 
         foreach ($this->getMethodsAndProperties() as $item) {
-            /** @var mixed $value */
             [$type, $name, $value] = $item;
             if ($type === self::TYPE_METHOD) {
                 /** @var array $value */
@@ -160,7 +158,6 @@ final class ArrayDefinition implements DefinitionInterface
                 } else {
                     $resolvedMethodArguments = $value;
                 }
-                /** @var mixed $setter */
                 $setter = call_user_func_array([$object, $name], $resolvedMethodArguments);
                 if ($setter instanceof $object) {
                     /** @var object $object */
@@ -206,7 +203,6 @@ final class ArrayDefinition implements DefinitionInterface
         if ($variadicKey !== null) {
             if (!$isIntegerIndexed && isset($arguments[$variadicKey])) {
                 if ($arguments[$variadicKey] instanceof ReferenceInterface) {
-                    /** @var mixed */
                     $arguments[$variadicKey] = DefinitionResolver::resolve(
                         $container,
                         $this->referenceContainer,
@@ -226,7 +222,6 @@ final class ArrayDefinition implements DefinitionInterface
                     );
                 }
             } else {
-                /** @var mixed $value */
                 foreach ($arguments as $index => $value) {
                     if (!isset($usedArguments[$index])) {
                         $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
@@ -289,7 +284,7 @@ final class ArrayDefinition implements DefinitionInterface
             if ($item[0] === self::TYPE_PROPERTY) {
                 $methodsAndProperties[$key] = $item;
             } elseif ($item[0] === self::TYPE_METHOD) {
-                /** @psalm-suppress MixedArgument, MixedAssignment */
+                /** @psalm-suppress MixedArgument */
                 $arguments = isset($methodsAndProperties[$key])
                     ? ArrayDefinitionHelper::mergeArguments($methodsAndProperties[$key][2], $item[2])
                     : $item[2];

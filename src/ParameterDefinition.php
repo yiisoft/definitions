@@ -71,7 +71,6 @@ final class ParameterDefinition implements DefinitionInterface
             }
 
             try {
-                /** @var mixed */
                 $result = $container->get($typeName);
             } catch (Throwable $t) {
                 if (
@@ -168,7 +167,6 @@ final class ParameterDefinition implements DefinitionInterface
                 }
 
                 try {
-                    /** @var mixed */
                     $result = $container->get($typeName);
                     $resolved = true;
                 } catch (Throwable $t) {
