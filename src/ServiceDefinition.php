@@ -6,6 +6,7 @@ namespace Yiisoft\Definitions;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
+use Yiisoft\Definitions\Helpers\ArrayDefinitionHelper;
 
 final class ServiceDefinition implements DefinitionInterface
 {
@@ -78,5 +79,43 @@ final class ServiceDefinition implements DefinitionInterface
             ArrayDefinition::CONSTRUCTOR => $this->constructor,
         ]);
         return ArrayDefinition::fromConfig($config)->resolve($container);
+    }
+
+    public function merge(self $other): self
+    {
+        $new = clone $this;
+        $new->class = $other->class;
+        $new->constructor = ArrayDefinitionHelper::mergeArguments($this->constructor, $other->constructor);
+
+        $calls = $this->calls;
+        foreach ($other->calls as $key => $item) {
+            if (str_starts_with($key, '$')) {
+                $calls[$key] = $item;
+            } elseif (str_ends_with($key, '()')) {
+                /** @psalm-suppress MixedArgument */
+                $arguments = isset($calls[$key])
+                    ? ArrayDefinitionHelper::mergeArguments($calls[$key], $item)
+                    : $item;
+                $calls[$key] = $arguments;
+            }
+        }
+        $new->calls = $calls;
+
+        return $new;
+    }
+
+    public function getClass(): string
+    {
+        return $this->class;
+    }
+
+    public function getConstructor(): array
+    {
+        return $this->constructor;
+    }
+
+    public function getCalls(): array
+    {
+        return $this->calls;
     }
 }

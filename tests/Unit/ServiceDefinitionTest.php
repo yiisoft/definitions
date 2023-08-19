@@ -6,13 +6,9 @@ namespace Yiisoft\Definitions\Tests\Unit;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\ServiceDefinition;
-use Yiisoft\Definitions\Tests\Support\Car;
-use Yiisoft\Definitions\Tests\Support\ColorInterface;
-use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\EngineInterface;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\EngineMarkTwo;
@@ -415,15 +411,13 @@ final class ServiceDefinitionTest extends TestCase
 
     public function testMerge(): void
     {
-        $this->markTestSkipped('TBD');
-
         $a = ServiceDefinition::for(Phone::class)
-            ->constructor(['version' => '2.0'])
+            ->constructor(['name' => 'Retro', 'version' => '1.0'])
             ->set('codeName', 'a')
-            ->call('setColors', ['red', 'green'], );
+            ->call('setColors', ['red', 'green']);
 
         $b = ServiceDefinition::for(Phone::class)
-            ->constructor(['name' => 'Retro', 'version' => '1.0'])
+            ->constructor(['version' => '2.0'])
             ->set('dev', true)
             ->set('codeName', 'b')
             ->call('setId', [42])
@@ -432,21 +426,20 @@ final class ServiceDefinitionTest extends TestCase
         $c = $a->merge($b);
 
         $this->assertSame(Phone::class, $c->getClass());
-        $this->assertSame(['name' => 'Retro', 'version' => '2.0'], $c->getConstructorArguments());
+        $this->assertSame(['name' => 'Retro', 'version' => '2.0'], $c->getConstructor());
         $this->assertSame(
             [
-                'codeName' => [ArrayDefinition::TYPE_PROPERTY, 'codeName', 'b'],
-                'setColors' => [ArrayDefinition::TYPE_METHOD, 'setColors', ['yellow', 'green']],
-                'dev' => [ArrayDefinition::TYPE_PROPERTY, 'dev', true],
-                'setId' => [ArrayDefinition::TYPE_METHOD, 'setId', [42]],
+                '$codeName' => 'b',
+                'setColors()' => ['yellow', 'green'],
+                '$dev' => true,
+                'setId()' => [42],
             ],
-            $c->getMethodsAndProperties(),
+            $c->getCalls(),
         );
     }
 
     public function testMergeImmutability(): void
     {
-        $this->markTestSkipped('TBD');
         $a = ServiceDefinition::for(Phone::class);
         $b = ServiceDefinition::for(Phone::class);
         $c = $a->merge($b);
@@ -465,30 +458,6 @@ final class ServiceDefinitionTest extends TestCase
             'Arguments indexed both by name and by position are not allowed in the same array.'
         );
         $definition->resolve($container);
-    }
-
-    public function testReferenceContainer(): void
-    {
-        $this->markTestSkipped('TBD');
-        $container = new SimpleContainer([
-            EngineInterface::class => new EngineMarkOne(),
-        ]);
-        $referenceContainer = new SimpleContainer([
-            ColorInterface::class => new ColorPink(),
-            EngineInterface::class => new EngineMarkTwo(),
-        ]);
-
-        $definition = ServiceDefinition::for(Car::class)
-            ->call('setColor', [Reference::to(ColorInterface::class)]);
-
-        $newDefinition = $definition->withReferenceContainer($referenceContainer);
-
-        /** @var Car $object */
-        $object = $newDefinition->resolve($container);
-
-        $this->assertNotSame($definition, $newDefinition);
-        $this->assertInstanceOf(Car::class, $object);
-        $this->assertInstanceOf(EngineMarkOne::class, $object->getEngine());
     }
 
     public function testMagicMethods(): void
