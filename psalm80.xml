@@ -15,7 +15,6 @@
     </projectFiles>
     <issueHandlers>
         <MixedAssignment errorLevel="suppress" />
-        <RiskyTruthyFalsyComparison errorLevel="suppress" />
         <InvalidThrow>
             <errorLevel type="suppress">
                 <referencedClass name="Psr\Container\ContainerExceptionInterface" />
