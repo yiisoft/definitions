@@ -53,6 +53,10 @@ final class Normalizer
             return $definition;
         }
 
+        if ($definition instanceof DefinitionInterface) {
+            return $definition;
+        }
+
         if (is_string($definition)) {
             // Current class
             if (

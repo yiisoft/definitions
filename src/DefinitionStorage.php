@@ -96,9 +96,30 @@ final class DefinitionStorage
      *
      * @throws CircularReferenceException
      */
-    private function isResolvable(string $id, array $building): bool
+    private function isResolvable(string $id, array $building, ?string $parameterName = null): bool
     {
         if (isset($this->definitions[$id])) {
+            return true;
+        }
+
+        if (
+            $parameterName !== null
+            && isset($this->definitions[$id . '$'.$parameterName])
+        ) {
+            $buildingClass = array_key_last($building);
+            $definition = $this->definitions[$buildingClass] ?? null;
+            $temporaryDefinition = ArrayDefinition::fromConfig([
+                \Yiisoft\Definitions\ArrayDefinition::CLASS_NAME => $buildingClass,
+                \Yiisoft\Definitions\ArrayDefinition::CONSTRUCTOR => [
+                    $parameterName => Reference::to($this->definitions[$id . '$' . $parameterName])
+                ]
+            ]);
+            if ($definition instanceof ArrayDefinition) {
+                $this->definitions[$buildingClass] = $definition->merge($temporaryDefinition);
+            } else {
+                $this->definitions[$buildingClass] = $temporaryDefinition;
+            }
+
             return true;
         }
 
@@ -210,7 +231,7 @@ final class DefinitionStorage
                     }
 
                     if (
-                        !$this->isResolvable($typeName, $building)
+                        !$this->isResolvable($typeName, $building, $parameter->getName())
                         && ($this->delegateContainer === null || !$this->delegateContainer->has($typeName))
                     ) {
                         $isResolvable = false;
@@ -222,7 +243,7 @@ final class DefinitionStorage
             $this->buildStack += $building;
         }
 
-        if ($isResolvable) {
+        if ($isResolvable && !isset($this->definitions[$id])) {
             $this->definitions[$id] = $id;
         }
 
