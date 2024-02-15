@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Tests\Php8_1;
+namespace Yiisoft\Definitions\Tests\Php8_2;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\DefinitionStorage;

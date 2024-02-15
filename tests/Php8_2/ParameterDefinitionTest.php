@@ -2,29 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Definitions\Tests\Php8_1;
+namespace Yiisoft\Definitions\Tests\Php8_2;
 
 use Closure;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionParameter;
-use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
+use Yiisoft\Definitions\Tests\Support\Bike;
+use Yiisoft\Definitions\Tests\Support\Chair;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
 {
-    public function testNotResolveIntersectionType(): void
+    public function testResolveUnionTypeWithIntersectionType(): void
     {
-        $container = new SimpleContainer();
+        $container = new SimpleContainer([
+            Chair::class => new Chair(),
+        ]);
 
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(fn (GearBox&stdClass $class) => true)
+            $this->getFirstParameter(fn (Bike|(GearBox&stdClass)|Chair $class) => true)
         );
 
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage('Can not determine value of the "class" parameter of type ');
-        $definition->resolve($container);
+        $result = $definition->resolve($container);
+
+        $this->assertInstanceOf(Chair::class, $result);
     }
 
     /**
