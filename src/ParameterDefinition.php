@@ -47,7 +47,10 @@ final class ParameterDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container): mixed
     {
-        /** @var ReflectionIntersectionType|ReflectionNamedType|ReflectionUnionType|null $type */
+        /**
+         * @psalm-suppress UndefinedDocblockClass Need for PHP 8.0 only
+         * @var ReflectionIntersectionType|ReflectionNamedType|ReflectionUnionType|null $type
+         */
         $type = $this->parameter->getType();
 
         if ($type instanceof ReflectionUnionType) {
@@ -147,6 +150,7 @@ final class ParameterDefinition implements DefinitionInterface
         $parameterType = $this->parameter->getType();
 
         /**
+         * @psalm-suppress UndefinedDocblockClass Need for PHP 8.0 only
          * @var ReflectionIntersectionType[]|ReflectionNamedType[] $types
          */
         $types = $parameterType->getTypes();
