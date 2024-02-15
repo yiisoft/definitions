@@ -47,7 +47,7 @@ final class ParameterDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container): mixed
     {
-        /** @var ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type */
+        /** @var ReflectionIntersectionType|ReflectionNamedType|ReflectionUnionType|null $type */
         $type = $this->parameter->getType();
 
         if ($type instanceof ReflectionUnionType) {
@@ -147,7 +147,7 @@ final class ParameterDefinition implements DefinitionInterface
         $parameterType = $this->parameter->getType();
 
         /**
-         * @var ReflectionNamedType[]|ReflectionIntersectionType[] $types
+         * @var ReflectionIntersectionType[]|ReflectionNamedType[] $types
          */
         $types = $parameterType->getTypes();
         $class = implode('|', $types);
