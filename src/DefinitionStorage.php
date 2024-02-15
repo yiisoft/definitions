@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions;
 
 use Psr\Container\ContainerInterface;
+use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionUnionType;
 use RuntimeException;
@@ -155,22 +156,24 @@ final class DefinitionStorage
                     $isUnionTypeResolvable = false;
                     $unionTypes = [];
                     foreach ($type->getTypes() as $unionType) {
-                        if (!$unionType->isBuiltin()) {
-                            $typeName = $unionType->getName();
-                            /**
-                             * @psalm-suppress TypeDoesNotContainType
-                             *
-                             * @link https://github.com/vimeo/psalm/issues/6756
-                             */
-                            if ($typeName === 'self') {
-                                continue;
-                            }
-                            $unionTypes[] = $typeName;
-                            if ($this->isResolvable($typeName, $building)) {
-                                $isUnionTypeResolvable = true;
-                                /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
-                                break;
-                            }
+                        if ($unionType instanceof ReflectionIntersectionType || $unionType->isBuiltin()) {
+                            continue;
+                        }
+
+                        $typeName = $unionType->getName();
+                        /**
+                         * @psalm-suppress TypeDoesNotContainType
+                         *
+                         * @link https://github.com/vimeo/psalm/issues/6756
+                         */
+                        if ($typeName === 'self') {
+                            continue;
+                        }
+                        $unionTypes[] = $typeName;
+                        if ($this->isResolvable($typeName, $building)) {
+                            $isUnionTypeResolvable = true;
+                            /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
+                            break;
                         }
                     }
 
