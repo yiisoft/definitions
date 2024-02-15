@@ -104,15 +104,18 @@ final class DefinitionStorage
 
         if (
             $parameterName !== null
-            && isset($this->definitions[$id . '$'.$parameterName])
+            && (
+                isset($this->definitions[$typedParameterName = $id . ' $' . $parameterName])
+                || isset($this->definitions[$typedParameterName = '$' . $parameterName])
+            )
         ) {
             $buildingClass = array_key_last($building);
             $definition = $this->definitions[$buildingClass] ?? null;
             $temporaryDefinition = ArrayDefinition::fromConfig([
-                \Yiisoft\Definitions\ArrayDefinition::CLASS_NAME => $buildingClass,
-                \Yiisoft\Definitions\ArrayDefinition::CONSTRUCTOR => [
-                    $parameterName => Reference::to($this->definitions[$id . '$' . $parameterName])
-                ]
+                ArrayDefinition::CLASS_NAME => $buildingClass,
+                ArrayDefinition::CONSTRUCTOR => [
+                    $parameterName => Reference::to($this->definitions[$typedParameterName]),
+                ],
             ]);
             if ($definition instanceof ArrayDefinition) {
                 $this->definitions[$buildingClass] = $definition->merge($temporaryDefinition);
@@ -187,7 +190,7 @@ final class DefinitionStorage
                                 continue;
                             }
                             $unionTypes[] = $typeName;
-                            if ($this->isResolvable($typeName, $building)) {
+                            if ($this->isResolvable($typeName, $building, $parameter->getName())) {
                                 $isUnionTypeResolvable = true;
                                 /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                                 break;
