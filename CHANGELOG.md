@@ -2,7 +2,7 @@
 
 ## 3.2.1 under development
 
-- Bug #86: Fix crush when intersection types used (@vjik)
+- Bug #86: Fix crash when intersection types are used (@vjik)
 
 ## 3.2.0 February 12, 2023
 
