@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions;
 
 use Psr\Container\ContainerInterface;
-use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
@@ -47,18 +46,14 @@ final class ParameterDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container): mixed
     {
-        /**
-         * @psalm-suppress UndefinedDocblockClass Need for PHP 8.0 only
-         * @var ReflectionIntersectionType|ReflectionNamedType|ReflectionUnionType|null $type
-         */
         $type = $this->parameter->getType();
 
         if ($type instanceof ReflectionUnionType) {
-            return $this->resolveUnionType($container);
+            return $this->resolveUnionType($type, $container);
         }
 
         if ($type === null
-            || $type instanceof ReflectionIntersectionType
+            || !$type instanceof ReflectionNamedType
             || $this->isVariadic()
             || $type->isBuiltin()
         ) {
@@ -142,22 +137,16 @@ final class ParameterDefinition implements DefinitionInterface
      *
      * @return mixed Ready to use object or null if definition can not be resolved and is marked as optional.
      */
-    private function resolveUnionType(ContainerInterface $container): mixed
+    private function resolveUnionType(ReflectionUnionType $parameterType, ContainerInterface $container): mixed
     {
-        /**
-         * @var ReflectionUnionType $parameterType
-         */
-        $parameterType = $this->parameter->getType();
-
-        /**
-         * @psalm-suppress UndefinedDocblockClass Need for PHP 8.0 only
-         * @var ReflectionIntersectionType[]|ReflectionNamedType[] $types
-         */
         $types = $parameterType->getTypes();
         $class = implode('|', $types);
 
         foreach ($types as $type) {
-            if ($type instanceof ReflectionIntersectionType || $type->isBuiltin()) {
+            /**
+             * @psalm-suppress DocblockTypeContradiction Need for PHP 8.0 and 8.1 only
+             */
+            if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
                 continue;
             }
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions;
 
 use Psr\Container\ContainerInterface;
-use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionUnionType;
 use RuntimeException;
@@ -156,7 +155,10 @@ final class DefinitionStorage
                     $isUnionTypeResolvable = false;
                     $unionTypes = [];
                     foreach ($type->getTypes() as $unionType) {
-                        if ($unionType instanceof ReflectionIntersectionType || $unionType->isBuiltin()) {
+                        /**
+                         * @psalm-suppress DocblockTypeContradiction Need for PHP 8.0 and 8.1 only
+                         */
+                        if (!$unionType instanceof ReflectionNamedType || $unionType->isBuiltin()) {
                             continue;
                         }
 

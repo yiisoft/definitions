@@ -15,11 +15,6 @@
     </projectFiles>
     <issueHandlers>
         <MixedAssignment errorLevel="suppress" />
-        <UndefinedClass>
-            <errorLevel type="suppress">
-                <referencedClass name="ReflectionIntersectionType" />
-            </errorLevel>
-        </UndefinedClass>
         <InvalidThrow>
             <errorLevel type="suppress">
                 <referencedClass name="Psr\Container\ContainerExceptionInterface" />
