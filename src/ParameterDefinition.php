@@ -48,59 +48,58 @@ final class ParameterDefinition implements DefinitionInterface
     {
         $type = $this->parameter->getType();
 
-        if ($type === null || $this->isVariadic()) {
-            return $this->resolveVariadicOrBuiltinOrNonTyped();
+        if ($type instanceof ReflectionUnionType) {
+            return $this->resolveUnionType($type, $container);
         }
 
-        if ($this->isUnionType()) {
-            return $this->resolveUnionType($container);
+        if ($type === null
+            || !$type instanceof ReflectionNamedType
+            || $this->isVariadic()
+            || $type->isBuiltin()
+        ) {
+            return $this->resolveVariadicOrBuiltinOrIntersectionOrNonTyped();
         }
 
-        /** @var ReflectionNamedType|null $type */
-        $type = $this->parameter->getType();
-        $isBuiltin = $type !== null && $type->isBuiltin();
-
-        if (!$isBuiltin) {
-            /** @var ReflectionNamedType $type */
-            $typeName = $type->getName();
-            if ($typeName === 'self') {
-                // If type name is "self", it means that called class and
-                // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
-                /** @psalm-suppress PossiblyNullReference */
-                $typeName = $this->parameter->getDeclaringClass()->getName();
-            }
-
-            try {
-                $result = $container->get($typeName);
-            } catch (Throwable $t) {
-                if (
-                    $this->parameter->isOptional()
-                    && (
-                        $t instanceof CircularReferenceException
-                        || !$container->has($typeName)
-                    )
-                ) {
-                    return $this->parameter->getDefaultValue();
-                }
-                throw $t;
-            }
-
-            if (!$result instanceof $typeName) {
-                $actualType = get_debug_type($result);
-                throw new InvalidConfigException(
-                    "Container returned incorrect type \"$actualType\" for service \"{$type->getName()}\"."
-                );
-            }
-            return $result;
+        $typeName = $type->getName();
+        /**
+         * @psalm-suppress TypeDoesNotContainType
+         * @see https://github.com/vimeo/psalm/issues/6756
+         */
+        if ($typeName === 'self') {
+            // If type name is "self", it means that called class and
+            // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
+            /** @psalm-suppress PossiblyNullReference */
+            $typeName = $this->parameter->getDeclaringClass()->getName();
         }
 
-        return $this->resolveVariadicOrBuiltinOrNonTyped();
+        try {
+            $result = $container->get($typeName);
+        } catch (Throwable $t) {
+            if (
+                $this->parameter->isOptional()
+                && (
+                    $t instanceof CircularReferenceException
+                    || !$container->has($typeName)
+                )
+            ) {
+                return $this->parameter->getDefaultValue();
+            }
+            throw $t;
+        }
+
+        if (!$result instanceof $typeName) {
+            $actualType = get_debug_type($result);
+            throw new InvalidConfigException(
+                "Container returned incorrect type \"$actualType\" for service \"{$type->getName()}\"."
+            );
+        }
+        return $result;
     }
 
     /**
      * @throws NotInstantiableException
      */
-    private function resolveVariadicOrBuiltinOrNonTyped(): mixed
+    private function resolveVariadicOrBuiltinOrIntersectionOrNonTyped(): mixed
     {
         if ($this->parameter->isDefaultValueAvailable()) {
             return $this->parameter->getDefaultValue();
@@ -138,60 +137,57 @@ final class ParameterDefinition implements DefinitionInterface
      *
      * @return mixed Ready to use object or null if definition can not be resolved and is marked as optional.
      */
-    private function resolveUnionType(ContainerInterface $container): mixed
+    private function resolveUnionType(ReflectionUnionType $parameterType, ContainerInterface $container): mixed
     {
-        /**
-         * @var ReflectionUnionType $parameterType
-         */
-        $parameterType = $this->parameter->getType();
-
-        /**
-         * @var ReflectionNamedType[] $types
-         */
         $types = $parameterType->getTypes();
         $class = implode('|', $types);
 
         foreach ($types as $type) {
-            if (!$type->isBuiltin()) {
-                $typeName = $type->getName();
-                /**
-                 * @psalm-suppress TypeDoesNotContainType
-                 *
-                 * @link https://github.com/vimeo/psalm/issues/6756
-                 */
-                if ($typeName === 'self') {
-                    // If type name is "self", it means that called class and
-                    // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
-                    /** @psalm-suppress PossiblyNullReference */
-                    $typeName = $this->parameter->getDeclaringClass()->getName();
-                }
+            /**
+             * @psalm-suppress DocblockTypeContradiction Need for PHP 8.0 and 8.1 only
+             */
+            if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
+                continue;
+            }
 
-                try {
-                    $result = $container->get($typeName);
-                    $resolved = true;
-                } catch (Throwable $t) {
-                    $error = $t;
-                    $resolved = false;
-                }
+            $typeName = $type->getName();
+            /**
+             * @psalm-suppress TypeDoesNotContainType
+             *
+             * @link https://github.com/vimeo/psalm/issues/6756
+             */
+            if ($typeName === 'self') {
+                // If type name is "self", it means that called class and
+                // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
+                /** @psalm-suppress PossiblyNullReference */
+                $typeName = $this->parameter->getDeclaringClass()->getName();
+            }
 
-                if ($resolved) {
-                    /** @var mixed $result Exist, because $resolved is true */
-                    if (!$result instanceof $typeName) {
-                        $actualType = get_debug_type($result);
-                        throw new InvalidConfigException(
-                            "Container returned incorrect type \"$actualType\" for service \"$class\"."
-                        );
-                    }
-                    return $result;
-                }
+            try {
+                $result = $container->get($typeName);
+                $resolved = true;
+            } catch (Throwable $t) {
+                $error = $t;
+                $resolved = false;
+            }
 
-                /** @var Throwable $error Exist, because $resolved is false */
-                if (
-                    !$error instanceof CircularReferenceException
-                    && $container->has($typeName)
-                ) {
-                    throw $error;
+            if ($resolved) {
+                /** @var mixed $result Exist, because $resolved is true */
+                if (!$result instanceof $typeName) {
+                    $actualType = get_debug_type($result);
+                    throw new InvalidConfigException(
+                        "Container returned incorrect type \"$actualType\" for service \"$class\"."
+                    );
                 }
+                return $result;
+            }
+
+            /** @var Throwable $error Exist, because $resolved is false */
+            if (
+                !$error instanceof CircularReferenceException
+                && $container->has($typeName)
+            ) {
+                throw $error;
             }
         }
 
@@ -200,36 +196,16 @@ final class ParameterDefinition implements DefinitionInterface
         }
 
         if (!isset($error)) {
-            return $this->resolveVariadicOrBuiltinOrNonTyped();
+            return $this->resolveVariadicOrBuiltinOrIntersectionOrNonTyped();
         }
 
         throw $error;
     }
 
-    private function isUnionType(): bool
-    {
-        return $this->parameter->getType() instanceof ReflectionUnionType;
-    }
-
     private function getType(): ?string
     {
         $type = $this->parameter->getType();
-
-        if ($type instanceof ReflectionUnionType) {
-            $namedTypes = $type->getTypes();
-            /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
-            $names = array_map(
-                static fn (ReflectionNamedType $t) => $t->getName(),
-                $namedTypes
-            );
-            return implode('|', $names);
-        }
-
-        if ($type instanceof ReflectionNamedType) {
-            return $type->getName();
-        }
-
-        return null;
+        return $type === null ? null : (string) $type;
     }
 
     private function getCallable(): string

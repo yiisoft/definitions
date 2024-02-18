@@ -14,6 +14,7 @@ use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\CarFactory;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\GearBox;
+use Yiisoft\Definitions\Tests\Support\MagicCall;
 use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Definitions\Tests\Support\Recorder;
 use Yiisoft\Definitions\Tests\Support\UTF8User;
@@ -268,6 +269,7 @@ final class DefinitionValidatorTest extends TestCase
             'callable' => [[CarFactory::class, 'create']],
             'array-definition' => [['class' => ColorPink::class]],
             'magic method reference' => [['class' => Recorder::class, 'add()' => ['test magic method']]],
+            'magic only call reference' => [['class' => MagicCall::class, 'add()' => ['test magic method']]],
             'magic property reference' => [['class' => Recorder::class, '$add' => ['test magic property']]],
         ];
     }
@@ -309,9 +311,10 @@ final class DefinitionValidatorTest extends TestCase
     public function testDefinitionInArguments(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage(
-            'Only references are allowed in constructor arguments, a definition object was provided: ' .
-            ValueDefinition::class
+        $this->expectExceptionMessageMatches(
+            '/^Only references are allowed in constructor arguments, a definition object was provided: (\\\\|)' .
+            preg_quote(ValueDefinition::class) .
+            '.*/'
         );
         DefinitionValidator::validate([
             'class' => GearBox::class,
