@@ -179,22 +179,27 @@ final class DefinitionStorage
                     $isUnionTypeResolvable = false;
                     $unionTypes = [];
                     foreach ($type->getTypes() as $unionType) {
-                        if (!$unionType->isBuiltin()) {
-                            $typeName = $unionType->getName();
-                            /**
-                             * @psalm-suppress TypeDoesNotContainType
-                             *
-                             * @link https://github.com/vimeo/psalm/issues/6756
-                             */
-                            if ($typeName === 'self') {
-                                continue;
-                            }
-                            $unionTypes[] = $typeName;
-                            if ($this->isResolvable($typeName, $building, $parameter->getName())) {
-                                $isUnionTypeResolvable = true;
-                                /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
-                                break;
-                            }
+                        /**
+                         * @psalm-suppress DocblockTypeContradiction Need for PHP 8.0 and 8.1 only
+                         */
+                        if (!$unionType instanceof ReflectionNamedType || $unionType->isBuiltin()) {
+                            continue;
+                        }
+
+                        $typeName = $unionType->getName();
+                        /**
+                         * @psalm-suppress TypeDoesNotContainType
+                         *
+                         * @link https://github.com/vimeo/psalm/issues/6756
+                         */
+                        if ($typeName === 'self') {
+                            continue;
+                        }
+                        $unionTypes[] = $typeName;
+                        if ($this->isResolvable($typeName, $building, $parameter->getName())) {
+                            $isUnionTypeResolvable = true;
+                            /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
+                            break;
                         }
                     }
 

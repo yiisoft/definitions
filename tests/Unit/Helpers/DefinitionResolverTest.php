@@ -43,9 +43,10 @@ final class DefinitionResolverTest extends TestCase
     public function testEnsureResolvableDefinition(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage(
-            'Only references are allowed in constructor arguments, a definition object was provided: ' .
-            ValueDefinition::class
+        $this->expectExceptionMessageMatches(
+            '/^Only references are allowed in constructor arguments, a definition object was provided: (\\\\|)' .
+            preg_quote(ValueDefinition::class) .
+            '.*/'
         );
         DefinitionResolver::ensureResolvable(new ValueDefinition(7));
     }
