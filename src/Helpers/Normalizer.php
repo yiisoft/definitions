@@ -92,7 +92,7 @@ final class Normalizer
         }
 
         // Ready object
-        if (is_object($definition) && !($definition instanceof DefinitionInterface)) {
+        if (is_object($definition)) {
             return new ValueDefinition($definition);
         }
 

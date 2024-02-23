@@ -108,8 +108,8 @@ final class DefinitionStorage
                 isset($this->definitions[$typedParameterName = $id . ' $' . $parameterName])
                 || isset($this->definitions[$typedParameterName = '$' . $parameterName])
             )
+            && (!empty($buildingClass = array_key_last($building))) && class_exists($buildingClass)
         ) {
-            $buildingClass = array_key_last($building);
             $definition = $this->definitions[$buildingClass] ?? null;
             $temporaryDefinition = ArrayDefinition::fromConfig([
                 ArrayDefinition::CLASS_NAME => $buildingClass,
