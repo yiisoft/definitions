@@ -114,7 +114,9 @@ final class DefinitionStorage
             $temporaryDefinition = ArrayDefinition::fromConfig([
                 ArrayDefinition::CLASS_NAME => $buildingClass,
                 ArrayDefinition::CONSTRUCTOR => [
-                    $parameterName => Reference::to($this->definitions[$typedParameterName]),
+                    $parameterName => is_string($this->definitions[$typedParameterName])
+                        ? Reference::to($this->definitions[$typedParameterName])
+                        : $this->definitions[$typedParameterName],
                 ],
             ]);
             if ($definition instanceof ArrayDefinition) {

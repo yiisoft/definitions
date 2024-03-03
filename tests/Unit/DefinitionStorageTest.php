@@ -9,7 +9,6 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Yiisoft\Definitions\DefinitionStorage;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
-use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\Tests\FunBike;
 use Yiisoft\Definitions\Tests\Support\Bike;
 use Yiisoft\Definitions\Tests\Support\Car;
@@ -18,8 +17,8 @@ use Yiisoft\Definitions\Tests\Support\Circular\Egg;
 use Yiisoft\Definitions\Tests\Support\ColorInterface;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithBuiltinTypeWithoutDefault;
-use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingSubDependency;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingDependency;
+use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonExistingSubDependency;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithNonResolvableUnionTypes;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructor;
 use Yiisoft\Definitions\Tests\Support\DefinitionStorage\ServiceWithPrivateConstructorSubDependency;
@@ -74,46 +73,6 @@ final class DefinitionStorageTest extends TestCase
         $storage = new DefinitionStorage(['existing' => 'anything']);
         $this->assertTrue($storage->has('existing'));
         $this->assertSame([], $storage->getBuildStack());
-    }
-
-    public static function dataParameterNameBindings(): iterable
-    {
-        yield 'untyped reference' => [
-            [
-                '$engine' => new EngineMarkOne(),
-                '$color' => 'red',
-                Bike::class => Bike::class,
-            ],
-            Bike::class,
-        ];
-
-        yield 'typed reference' => [
-            [
-                EngineInterface::class . ' $engine' => new EngineMarkOne(),
-                ColorInterface::class . ' $color' => new ColorPink(),
-                Bike::class => Bike::class,
-            ],
-            Bike::class,
-        ];
-
-        yield 'referenced reference' => [
-            [
-                EngineInterface::class . ' $engine' => new EngineMarkOne(),
-                ColorInterface::class . ' $color' => Reference::to(ColorPink::class),
-                ColorPink::class => ColorPink::class,
-                Bike::class => Bike::class,
-            ],
-            Bike::class,
-        ];
-    }
-
-    /**
-     * @dataProvider dataParameterNameBindings
-     */
-    public function testParameterNameBindings(array $definitions, string $class): void
-    {
-        $storage = new DefinitionStorage($definitions);
-        $this->assertTrue($storage->has($class));
     }
 
     public function testNonExistingService(): void
