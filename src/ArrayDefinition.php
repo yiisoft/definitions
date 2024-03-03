@@ -66,10 +66,14 @@ final class ArrayDefinition implements DefinitionInterface
      */
     public static function fromConfig(array $config): self
     {
+        /**
+         * @psalm-suppress MixedArgument
+         */
         return new self(
             $config[self::CLASS_NAME],
             $config[self::CONSTRUCTOR] ?? [],
-            self::getMethodsAndPropertiesFromConfig($config)
+            // Already normalized config. Ignore all the rest parameters
+            $config['methodsAndProperties'] ?? self::getMethodsAndPropertiesFromConfig($config),
         );
     }
 

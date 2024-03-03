@@ -25,6 +25,7 @@ final class CallableDefinition implements DefinitionInterface
 {
     /**
      * @var array|callable
+     *
      * @psalm-var callable|array{0:class-string,1:string}
      */
     private $callable;
