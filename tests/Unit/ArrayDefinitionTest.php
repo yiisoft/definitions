@@ -7,14 +7,17 @@ namespace Yiisoft\Definitions\Tests\Unit;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ArrayDefinition;
+use Yiisoft\Definitions\DefinitionStorage;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Reference;
+use Yiisoft\Definitions\Tests\Support\Bike;
 use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\ColorInterface;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\EngineInterface;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\EngineMarkTwo;
+use Yiisoft\Definitions\Tests\Support\Helper\ReferenceResolver;
 use Yiisoft\Definitions\Tests\Support\Mouse;
 use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Definitions\Tests\Support\Recorder;
@@ -522,5 +525,112 @@ final class ArrayDefinitionTest extends TestCase
             ],
             $object->getEvents()
         );
+    }
+
+    public static function dataParameterNameBindings(): iterable
+    {
+        yield 'untyped reference' => [
+            [
+                '$engine' => EngineMarkOne::class,
+                '$color' => 'red',
+            ],
+            Bike::class,
+        ];
+
+        yield 'typed reference' => [
+            [
+                EngineInterface::class . ' $engine' => EngineMarkOne::class,
+                ColorInterface::class . ' $color' => ColorPink::class,
+            ],
+            Bike::class,
+        ];
+
+        yield 'referenced reference' => [
+            [
+                EngineInterface::class . ' $engine' => EngineMarkOne::class,
+                ColorInterface::class . ' $color' => Reference::to(ColorPink::class),
+                ColorPink::class => ColorPink::class,
+            ],
+            Bike::class,
+        ];
+    }
+
+    /**
+     * @dataProvider dataParameterNameBindings
+     */
+    public function testParameterNameBindingsFormat(array $definitions, string $class): void
+    {
+        $storage = new DefinitionStorage($definitions);
+        $this->assertInstanceOf(ArrayDefinition::class, $storage->get($class));
+    }
+
+    public function testParameterNameBindings(): void
+    {
+        $storage = new DefinitionStorage([
+            '$engine' => EngineMarkOne::class,
+            ColorInterface::class . ' $color' => ColorPink::class,
+        ]);
+
+        $object = $storage->get(Bike::class);
+
+        $this->assertInstanceOf(ArrayDefinition::class, $object);
+        $this->assertEmpty($object->getMethodsAndProperties());
+        $this->assertCount(2, $object->getConstructorArguments());
+        $this->assertArrayHasKey('engine', $object->getConstructorArguments());
+        $this->assertArrayHasKey('color', $object->getConstructorArguments());
+
+        $this->assertInstanceOf(Reference::class, $object->getConstructorArguments()['engine']);
+        $this->assertInstanceOf(Reference::class, $object->getConstructorArguments()['color']);
+
+        $resolver = new ReferenceResolver();
+        $object->getConstructorArguments()['engine']->resolve($resolver);
+
+        $this->assertSame(EngineMarkOne::class, $resolver->getReference());
+
+        $object->getConstructorArguments()['color']->resolve($resolver);
+        $this->assertSame(ColorPink::class, $resolver->getReference());
+    }
+
+    public static function dataWrongParameterNameBindingsFormat(): iterable
+    {
+        yield 'reference without dollar' => [
+            [
+                'engine' => EngineMarkOne::class,
+                '$color' => 'red',
+            ],
+            Bike::class,
+        ];
+
+        yield 'missing whitespace between class and variable' => [
+            [
+                EngineInterface::class . '$engine' => EngineMarkOne::class,
+                ColorInterface::class . ' $color' => ColorPink::class,
+            ],
+            Bike::class,
+        ];
+
+        yield 'missing definition' => [
+            [
+                EngineInterface::class . ' $engine' => EngineMarkOne::class,
+                ColorPink::class => ColorPink::class,
+            ],
+            Bike::class,
+        ];
+    }
+
+    /**
+     * @dataProvider dataWrongParameterNameBindingsFormat
+     */
+    public function testWrongParameterNameBindingsFormat(array $definitions, string $class): void
+    {
+        $storage = new DefinitionStorage($definitions);
+
+        $this->expectExceptionMessage(
+            sprintf(
+                'Service %s doesn\'t exist in DefinitionStorage.',
+                $class,
+            )
+        );
+        $storage->get($class);
     }
 }
