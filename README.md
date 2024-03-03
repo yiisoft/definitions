@@ -48,7 +48,7 @@ at the moment of obtaining a service instance or creating an object.
 
 #### `ArrayDefinition`
 
-`ArrayDefinition` describes a class declarative:
+`ArrayDefinition` describes a class declaratively:
 
 ```php
 use \Yiisoft\Definitions\ArrayDefinition;
