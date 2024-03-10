@@ -198,6 +198,7 @@ final class DefinitionValidatorTest extends TestCase
         return [
             ['dev', true, 'Invalid definition: key "dev" is not allowed. Did you mean "$dev"?'],
             ['setId', [42], 'Invalid definition: key "setId" is not allowed. Did you mean "setId()"?'],
+            ['()setId', [42], 'Invalid definition: key "()setId" is not allowed. Did you mean "setId()"?'],
             [
                 'set()Id',
                 [42],
