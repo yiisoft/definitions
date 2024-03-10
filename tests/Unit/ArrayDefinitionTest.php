@@ -523,4 +523,25 @@ final class ArrayDefinitionTest extends TestCase
             $object->getEvents()
         );
     }
+
+    public function testMultipleCall()
+    {
+        $definition = ArrayDefinition::fromConfig([
+            'class' => Recorder::class,
+            'test()' => [1],
+            'test()_2' => [2],
+            'test()_3' => [3],
+        ]);
+
+        $object = $definition->resolve(new SimpleContainer());
+
+        $this->assertSame(
+            [
+                'Call test(int)',
+                'Call test(int)',
+                'Call test(int)',
+            ],
+            $object->getEvents(),
+        );
+    }
 }

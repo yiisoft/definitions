@@ -198,8 +198,22 @@ final class DefinitionValidatorTest extends TestCase
         return [
             ['dev', true, 'Invalid definition: key "dev" is not allowed. Did you mean "$dev"?'],
             ['setId', [42], 'Invalid definition: key "setId" is not allowed. Did you mean "setId()"?'],
-            ['set()Id', [42], 'Invalid definition: key "set()Id" is not allowed. Did you mean "setId()"?'],
-            [' set()Id', [42], 'Invalid definition: key " set()Id" is not allowed. Did you mean "setId()"?'],
+            [
+                'set()Id',
+                [42],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "set". Possible methods to call: "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
+                    Phone::class
+                ),
+            ],
+            [
+                ' set()Id',
+                [42],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name " set". Possible methods to call: "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
+                    Phone::class
+                ),
+            ],
             [
                 'getCountryPrivate',
                 [42],
@@ -271,6 +285,14 @@ final class DefinitionValidatorTest extends TestCase
             'magic method reference' => [['class' => Recorder::class, 'add()' => ['test magic method']]],
             'magic only call reference' => [['class' => MagicCall::class, 'add()' => ['test magic method']]],
             'magic property reference' => [['class' => Recorder::class, '$add' => ['test magic property']]],
+            'multiple call methods' => [
+                [
+                    'class' => Recorder::class,
+                    'test()' => [1],
+                    'test()_2' => [2],
+                    'test()_3' => [3],
+                ],
+            ],
         ];
     }
 
@@ -332,20 +354,14 @@ final class DefinitionValidatorTest extends TestCase
                     'class' => Phone::class,
                     'addApp()hm()' => ['name' => 'hello'],
                 ],
-                sprintf(
-                    'Invalid definition: class "%s" does not have the public method with name "addApp()hm".',
-                    Phone::class,
-                ),
+                'Invalid definition: key "addApp()hm()" is not allowed. The key may be a call of a method or a setting of a property.',
             ],
             [
                 [
                     'class' => UTF8User::class,
                     'имя()aa()' => ['значение'],
                 ],
-                sprintf(
-                    'Invalid definition: class "%s" does not have the public method with name "имя()aa".',
-                    UTF8User::class,
-                ),
+                'Invalid definition: key "имя()aa()" is not allowed. The key may be a call of a method or a setting of a property.',
             ],
         ];
     }
