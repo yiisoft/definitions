@@ -503,7 +503,7 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testMagicMethods(): void
     {
-        $definiton = ArrayDefinition::fromConfig([
+        $definition = ArrayDefinition::fromConfig([
             'class' => Recorder::class,
             'first()' => [],
             '$second' => null,
@@ -511,7 +511,7 @@ final class ArrayDefinitionTest extends TestCase
             '$fourth' => 'hello',
         ]);
 
-        $object = $definiton->resolve(new SimpleContainer());
+        $object = $definition->resolve(new SimpleContainer());
 
         $this->assertSame(
             [
