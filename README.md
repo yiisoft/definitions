@@ -69,6 +69,16 @@ In the above:
   and method calls, postfixed with `()`. They are set/called
   in the order they appear in the array.
 
+For multiple method call postfix key with unique string, for example:
+
+```php
+[
+    'class' => Collector::class,
+    'add()' => ['Alex'],
+    'add()2' => ['Mike'],
+]
+```
+
 #### `CallableDefinition`
 
 Callable definition builds an object by executing a callable injecting

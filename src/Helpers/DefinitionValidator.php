@@ -105,8 +105,8 @@ final class DefinitionValidator
             }
 
             // Methods and properties
-            if (str_ends_with($key, '()')) {
-                self::validateMethod($key, $classReflection, $classPublicMethods, $className, $value);
+            if ((count($methodArray = explode('()', $key)) === 2) && !empty($methodArray[0])) {
+                self::validateMethod($methodArray[0], $classReflection, $classPublicMethods, $className, $value);
                 continue;
             }
             if (str_starts_with($key, '$')) {
@@ -183,14 +183,13 @@ final class DefinitionValidator
      * @throws InvalidConfigException
      */
     private static function validateMethod(
-        string $key,
+        string $methodName,
         ReflectionClass $classReflection,
         array $classPublicMethods,
         string $className,
         mixed $value
     ): void {
-        $parsedKey = substr($key, 0, -2);
-        if (!$classReflection->hasMethod($parsedKey)) {
+        if (!$classReflection->hasMethod($methodName)) {
             if ($classReflection->hasMethod('__call') || $classReflection->hasMethod('__callStatic')) {
                 /**
                  * Magic method may intercept the call, but reflection does not know about it.
@@ -207,20 +206,20 @@ final class DefinitionValidator
                 sprintf(
                     'Invalid definition: class "%s" does not have the public method with name "%s". ' . $possiblePropertiesMessage,
                     $className,
-                    $parsedKey,
+                    $methodName,
                 )
             );
         }
-        if (!in_array($parsedKey, $classPublicMethods, true)) {
+        if (!in_array($methodName, $classPublicMethods, true)) {
             throw new InvalidConfigException(
                 sprintf(
                     'Invalid definition: method "%s" must be public.',
-                    $className . '::' . $key,
+                    $className . '::' . $methodName . '()',
                 )
             );
         }
         if (!is_array($value)) {
-            throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($key, $value);
+            throw ExceptionHelper::incorrectArrayDefinitionMethodArguments($methodName . '()', $value);
         }
     }
 
