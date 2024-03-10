@@ -231,6 +231,14 @@ final class DefinitionValidatorTest extends TestCase
                 ),
             ],
             [
+                ' country',
+                [42],
+                sprintf(
+                    'Invalid definition: key " country" is not allowed. Property "%s" must be public to be able to be called.',
+                    Phone::class . '::$country',
+                ),
+            ],
+            [
                 '()test',
                 [42],
                 'Invalid definition: key "()test" is not allowed. The key may be a call of a method or a setting of a property.',
