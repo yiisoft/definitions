@@ -1,5 +1,9 @@
 # Yii Definitions Change Log
 
+## 3.3.1 under development
+
+- no changes in this release.
+
 ## 3.3.0 March 16, 2024
 
 - New #90: Allow multiple method call in array definition (@vjik)
