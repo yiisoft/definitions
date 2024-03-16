@@ -1,9 +1,9 @@
 # Yii Definitions Change Log
 
-## 3.2.1 under development
+## 3.3.0 March 16, 2024
 
-- Bug #86: Fix crash when intersection types are used (@vjik)
 - New #90: Allow multiple method call in array definition (@vjik)
+- Bug #86: Fix crash when intersection types are used (@vjik)
 
 ## 3.2.0 February 12, 2023
 
