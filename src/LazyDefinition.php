@@ -25,19 +25,12 @@ final class LazyDefinition implements DefinitionInterface
     {
         /** @var LazyLoadingValueHolderFactory $factory */
         $factory = $container->get(LazyLoadingValueHolderFactory::class);
-        /**
-         * @var mixed $definition
-         */
         $definition = $this->definition;
-        $class = $this->class;
 
         return $factory->createProxy(
-            $class,
-            static function (mixed &$wrappedObject) use ($container, $class, $definition) {
-                $definition = Normalizer::normalize($definition, $class);
-                /**
-                 * @var mixed $wrappedObject
-                 */
+            $this->class,
+            static function (mixed &$wrappedObject) use ($container, $definition) {
+                $definition = Normalizer::normalize($definition);
                 $wrappedObject = $definition->resolve($container);
                 return true;
             }
