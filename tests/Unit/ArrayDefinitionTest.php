@@ -525,7 +525,6 @@ final class ArrayDefinitionTest extends TestCase
         );
     }
 
-
     public function testNonArrayMethodArguments(): void
     {
         $definition = ArrayDefinition::fromConfig([
