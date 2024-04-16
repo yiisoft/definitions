@@ -504,7 +504,7 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testMagicMethods(): void
     {
-        $definiton = ArrayDefinition::fromConfig([
+        $definition = ArrayDefinition::fromConfig([
             'class' => Recorder::class,
             'first()' => [],
             '$second' => null,
@@ -512,7 +512,7 @@ final class ArrayDefinitionTest extends TestCase
             '$fourth' => 'hello',
         ]);
 
-        $object = $definiton->resolve(new SimpleContainer());
+        $object = $definition->resolve(new SimpleContainer());
 
         $this->assertSame(
             [
@@ -524,6 +524,7 @@ final class ArrayDefinitionTest extends TestCase
             $object->getEvents()
         );
     }
+
 
     public function testNonArrayMethodArguments(): void
     {
@@ -538,5 +539,26 @@ final class ArrayDefinitionTest extends TestCase
             'Yiisoft\Definitions\ArrayDefinition::resolveFunctionArguments(): Argument #3 ($arguments) must be of type array, string given'
         );
         $definition->resolve($container);
+    }
+
+    public function testMultipleCall()
+    {
+        $definition = ArrayDefinition::fromConfig([
+            'class' => Recorder::class,
+            'test()' => [1],
+            'test()_2' => [2],
+            'test()_3' => [3],
+        ]);
+
+        $object = $definition->resolve(new SimpleContainer());
+
+        $this->assertSame(
+            [
+                'Call test(int)',
+                'Call test(int)',
+                'Call test(int)',
+            ],
+            $object->getEvents(),
+        );
     }
 }
