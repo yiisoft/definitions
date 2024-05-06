@@ -29,7 +29,7 @@ The following are provided:
 
 ## Installation
 
-The package could be installed with [composer](https://getcomposer.org/download/)
+The package could be installed with [Composer](https://getcomposer.org):
 
 ```shell
 composer require yiisoft/definitions
