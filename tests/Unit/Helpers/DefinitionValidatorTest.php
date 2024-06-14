@@ -342,10 +342,9 @@ final class DefinitionValidatorTest extends TestCase
     public function testDefinitionInArguments(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessageMatches(
-            '/^Only references are allowed in constructor arguments, a definition object was provided: (\\\\|)' .
-            preg_quote(ValueDefinition::class) .
-            '.*/'
+        $this->expectExceptionMessage(
+            'Only references are allowed in constructor arguments, a definition object was provided: ' .
+            var_export(new ValueDefinition(56), true)
         );
         DefinitionValidator::validate([
             'class' => GearBox::class,
