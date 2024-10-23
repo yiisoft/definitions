@@ -8,6 +8,7 @@
 
 - New #90: Allow multiple method call in array definition (@vjik)
 - Bug #86: Fix crash when intersection types are used (@vjik)
+- Enh #87: Support parameter name bindings (@xepozz)
 
 ## 3.2.0 February 12, 2023
 

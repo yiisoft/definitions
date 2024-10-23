@@ -53,6 +53,10 @@ final class Normalizer
             return $definition;
         }
 
+        if ($definition instanceof DefinitionInterface) {
+            return $definition;
+        }
+
         if (is_string($definition)) {
             // Current class
             if (
@@ -88,7 +92,7 @@ final class Normalizer
         }
 
         // Ready object
-        if (is_object($definition) && !($definition instanceof DefinitionInterface)) {
+        if (is_object($definition)) {
             return new ValueDefinition($definition);
         }
 

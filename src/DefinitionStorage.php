@@ -96,9 +96,35 @@ final class DefinitionStorage
      *
      * @throws CircularReferenceException
      */
-    private function isResolvable(string $id, array $building): bool
+    private function isResolvable(string $id, array $building, ?string $parameterName = null): bool
     {
         if (isset($this->definitions[$id])) {
+            return true;
+        }
+
+        if (
+            $parameterName !== null
+            && (
+                isset($this->definitions[$typedParameterName = $id . ' $' . $parameterName])
+                || isset($this->definitions[$typedParameterName = '$' . $parameterName])
+            )
+            && (!empty($buildingClass = array_key_last($building))) && class_exists($buildingClass)
+        ) {
+            $definition = $this->definitions[$buildingClass] ?? null;
+            $temporaryDefinition = ArrayDefinition::fromConfig([
+                ArrayDefinition::CLASS_NAME => $buildingClass,
+                ArrayDefinition::CONSTRUCTOR => [
+                    $parameterName => is_string($this->definitions[$typedParameterName])
+                        ? Reference::to($this->definitions[$typedParameterName])
+                        : $this->definitions[$typedParameterName],
+                ],
+            ]);
+            if ($definition instanceof ArrayDefinition) {
+                $this->definitions[$buildingClass] = $definition->merge($temporaryDefinition);
+            } else {
+                $this->definitions[$buildingClass] = $temporaryDefinition;
+            }
+
             return true;
         }
 
@@ -172,7 +198,7 @@ final class DefinitionStorage
                             continue;
                         }
                         $unionTypes[] = $typeName;
-                        if ($this->isResolvable($typeName, $building)) {
+                        if ($this->isResolvable($typeName, $building, $parameter->getName())) {
                             $isUnionTypeResolvable = true;
                             /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                             break;
@@ -215,7 +241,7 @@ final class DefinitionStorage
                     }
 
                     if (
-                        !$this->isResolvable($typeName, $building)
+                        !$this->isResolvable($typeName, $building, $parameter->getName())
                         && ($this->delegateContainer === null || !$this->delegateContainer->has($typeName))
                     ) {
                         $isResolvable = false;
@@ -227,7 +253,7 @@ final class DefinitionStorage
             $this->buildStack += $building;
         }
 
-        if ($isResolvable) {
+        if ($isResolvable && !isset($this->definitions[$id])) {
             $this->definitions[$id] = $id;
         }
 

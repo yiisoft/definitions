@@ -47,7 +47,7 @@ at the moment of obtaining a service instance or creating an object.
 
 #### `ArrayDefinition`
 
-Array definition allows describing a service or an object declaratively:
+`ArrayDefinition` describes a class declaratively:
 
 ```php
 use \Yiisoft\Definitions\ArrayDefinition;
@@ -204,6 +204,38 @@ ContentNegotiator::class => [
         'contentFormatters' => ReferencesArray::from($params['yiisoft/data-response']['contentFormatters']),
     ],
 ],
+```
+
+### Name binding
+
+Name binding is a way to bind a name to a definition. It is used to resolve a definition not by its class name but by a name.
+
+Set a definitions with a specific name. It may be typed or untyped reference like:
+1. `'$serviceName' => $definition`
+2. `Service::class . ' $serviceName' => $definition`
+
+```php
+return [
+   '$fileCache' => FileCache::class, // implements CacheInterface
+   '$redisCache' => RedisCache::class, // implements CacheInterface
+   CacheInterface::class . ' $memCache' => MemCache::class, // also implements CacheInterface
+]
+```
+
+So now you can resolve a definition by its name:
+
+```php
+class MyService
+{
+    public function __construct(
+        CacheInterface $memCache, // typed reference
+        $fileCache, // untyped reference
+        CacheInterface $redisCache, // typed reference to untyped definition
+    ) {
+        // ...
+    }
+   
+}
 ```
 
 ### Definition storage
