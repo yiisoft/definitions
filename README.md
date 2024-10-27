@@ -220,18 +220,6 @@ return [
 ];
 ```
 
-It could be then conveniently used by type-hinting:
-
-```php
-final class MyService
-{
-    public function __construct(MyPgSql $myPgSql)
-    {
-        // ...    
-    }
-} 
-```
-
 ### Definition storage
 
 Definition storage could be used to hold and get definitions and check if a certain definition could be instantiated.
