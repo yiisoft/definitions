@@ -14,7 +14,8 @@
 [![static analysis](https://github.com/yiisoft/definitions/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/definitions/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/definitions/coverage.svg)](https://shepherd.dev/github/yiisoft/definitions)
 
-The package provides syntax constructs describing a way to create and configure a service or an object. It is used by [yiisoft/di](https://github.com/yiisoft/di) and [yiisoft/factory](https://github.com/yiisoft/factory)
+The package provides syntax constructs describing a way to create and configure a service or an object.
+It is used by [yiisoft/di](https://github.com/yiisoft/di) and [yiisoft/factory](https://github.com/yiisoft/factory)
 but could be used in other [PSR-11](https://www.php-fig.org/psr/psr-11/) compatible packages as well.
 
 The following are provided:
@@ -42,8 +43,8 @@ composer require yiisoft/definitions
 Definition is describing a way to create and configure a service, an object
 or return any other value. It must implement `Yiisoft\Definitions\Contract\DefinitionInterface`
 that has a single method `resolve(ContainerInterface $container)`. References are
-typically stored in the container or a factory and are resolved into object
-at the moment of obtaining a service instance or creating an object.
+typically stored in the container or a factory and are resolved into an object
+at the moment of getting a service instance or creating an object.
 
 #### `ArrayDefinition`
 
@@ -65,7 +66,7 @@ In the above:
 
 - `class` contains the name of the class to be instantiated.
 - `__construct()` holds an array of constructor arguments.
-- The rest of the config are property values (prefixed with `$`)
+- The rests of the config are property values (prefixed with `$`)
   and method calls, postfixed with `()`. They are set/called
   in the order they appear in the array.
 
@@ -107,8 +108,8 @@ $definition = new CallableDefinition(
 $object = $definition->resolve($container);
 ```
 
-In the above we use a closure, a static call and a static
-method passed as array-callable. In each case we determine
+In the above, we use a closure, a static call and a static
+method passed as array-callable. In each case, we determine
 and pass dependencies based on the types of arguments in
 the callable signature.
 
@@ -138,7 +139,7 @@ $value = $definition->resolve($container); // 42
 
 ### References
 
-References point to other definitions so when defining a definition you can use other definitions as its
+References point to other definitions, so when defining a definition, you can use other definitions as its
 dependencies:
 
 ```php
@@ -159,7 +160,7 @@ Optional reference returns `null` when there's no corresponding definition in co
 [
     MyService::class => [
         '__construct()' => [
-            // If container doesn't have definition for `EventDispatcherInterface` reference returns `null`
+            // If a container doesn't have definition for `EventDispatcherInterface` reference returns `null`
             // when resolving dependencies
             Reference::optional(EventDispatcherInterface::class), 
         ],
@@ -182,7 +183,7 @@ The `DynamicReference` defines a dependency to a service not defined in the cont
 ]
 ```
 
-In order to pass an array of IDs as references to a property or an argument, `Yiisoft\Definitions\ReferencesArray` or
+To pass an array of IDs as references to a property or an argument, `Yiisoft\Definitions\ReferencesArray` or
 `Yiisoft\Definitions\DynamicReferencesArray` could be used:
 
 ```php
@@ -206,9 +207,22 @@ ContentNegotiator::class => [
 ],
 ```
 
+### Class aliases
+
+To define another instance of a class with specific configuration, you can
+use native PHP `class_alias()`:
+
+```php
+class_alias(Yiisoft\Db\Pgsql\Connection::class, 'MyPgSql');
+
+return [
+    MyPgSql::class => [ ... ]
+];
+```
+
 ### Definition storage
 
-Definition storage could be used to hold and obtain definitions and check if a certain definition could be instantiated.
+Definition storage could be used to hold and get definitions and check if a certain definition could be instantiated.
 Usually it is used by an implementation using the definitions:
 
 ```php
