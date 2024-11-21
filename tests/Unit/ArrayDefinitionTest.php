@@ -6,6 +6,7 @@ namespace Yiisoft\Definitions\Tests\Unit;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Reference;
@@ -522,6 +523,21 @@ final class ArrayDefinitionTest extends TestCase
             ],
             $object->getEvents()
         );
+    }
+
+    public function testNonArrayMethodArguments(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Mouse::class,
+            'setNameAndEngine()' => 'kitty',
+        ]);
+        $container = new SimpleContainer();
+
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'Yiisoft\Definitions\ArrayDefinition::resolveFunctionArguments(): Argument #3 ($arguments) must be of type array, string given'
+        );
+        $definition->resolve($container);
     }
 
     public function testMultipleCall()

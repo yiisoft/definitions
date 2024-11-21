@@ -51,6 +51,23 @@ final class NormalizerTest extends TestCase
         $this->assertSame([], $definition->getMethodsAndProperties());
     }
 
+    public function testNullClass(): void
+    {
+        /** @var ArrayDefinition $definition */
+        $definition = Normalizer::normalize(
+            [
+                'class' => null,
+                '__construct()' => [42],
+            ],
+            GearBox::class
+        );
+
+        $this->assertInstanceOf(ArrayDefinition::class, $definition);
+        $this->assertSame(GearBox::class, $definition->getClass());
+        $this->assertSame([42], $definition->getConstructorArguments());
+        $this->assertSame([], $definition->getMethodsAndProperties());
+    }
+
     public function testReadyObject(): void
     {
         $container = new SimpleContainer();

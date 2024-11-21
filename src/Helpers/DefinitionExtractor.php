@@ -32,6 +32,7 @@ final class DefinitionExtractor
      * @throws NotInstantiableException
      *
      * @return ParameterDefinition[]
+     *
      * @psalm-return array<string, ParameterDefinition>
      */
     public static function fromClassName(string $class): array
@@ -61,6 +62,7 @@ final class DefinitionExtractor
      * Extract dependency definitions from type hints of a function.
      *
      * @return ParameterDefinition[]
+     *
      * @psalm-return array<string, ParameterDefinition>
      */
     public static function fromFunction(ReflectionFunctionAbstract $reflectionFunction): array
