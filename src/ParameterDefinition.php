@@ -192,7 +192,7 @@ final class ParameterDefinition implements DefinitionInterface
         }
 
         if ($this->parameter->isOptional()) {
-            return null;
+            return $this->parameter->getDefaultValue();
         }
 
         if (!isset($error)) {

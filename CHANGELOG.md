@@ -2,7 +2,7 @@
 
 ## 3.3.1 under development
 
-- no changes in this release.
+- Bug #100: Fix resolving `ParameterDefinition` for optional parameters with union types (@vjik)
 
 ## 3.3.0 March 16, 2024
 
