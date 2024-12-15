@@ -135,7 +135,8 @@ final class DefinitionStorage
                 $parameter = $dependency->getReflection();
                 $type = $parameter->getType();
 
-                if ($parameter->isVariadic() || $parameter->isOptional()) {
+                // This condition covers variadic parameters, because variadic parameter is optional
+                if ($parameter->isOptional()) {
                     /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                     break;
                 }
