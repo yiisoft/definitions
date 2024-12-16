@@ -25,7 +25,7 @@ name: yiisoft-di
 
 jobs:
   phpunit:
-    name: Yii DI / PHP ${{ matrix.php }}-${{ matrix.os }}
+    name: PHP ${{ matrix.php }}-${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
 
@@ -43,7 +43,7 @@ jobs:
       - name: Checkout Yii DI
         uses: actions/checkout@v4
         with:
-          repository: 'https://github.com/yiisoft/di.git'
+          repository: 'yiisoft/di'
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
