@@ -2,6 +2,7 @@
 
 ## 3.3.1 under development
 
+- Bug #100: Fix resolving `ParameterDefinition` for optional parameters with union types (@vjik)
 - Enh #101: Minor performance improvement by removing unnecessary code in `DefinitionStorage` (@vjik)
 
 ## 3.3.0 March 16, 2024
