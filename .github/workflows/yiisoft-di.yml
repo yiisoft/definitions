@@ -48,25 +48,27 @@ jobs:
       - name: Checkout Yii DI
         uses: actions/checkout@v4
         with:
+          path: di-repo
           repository: 'yiisoft/di'
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
+        working-directory: ${{ github.workspace }}/di-repo
         with:
           php-version: 8.2
           tools: composer:v2
           coverage: none
 
       - name: Install Composer dependencies
+        working-directory: ${{ github.workspace }}/di-repo
         uses: "ramsey/composer-install@v3"
 
-      - name: Debug workspace structure
-        run: ls -R ${{ github.workspace }}
-
       - name: Configure Yii Definitions usage
+        working-directory: ${{ github.workspace }}/di-repo
         run: |
-          composer config repositories.local path ${{ github.workspace }}/definitions-repo
+          composer config repositories.local path ../definitions-repo
           composer require yiisoft/definitions:@dev
 
       - name: Run tests with PhpUnit
+        working-directory: ${{ github.workspace }}/di-repo
         run: vendor/bin/phpunit --colors=always
