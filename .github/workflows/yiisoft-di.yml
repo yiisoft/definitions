@@ -59,8 +59,9 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        working-directory: ${{ github.workspace }}/di-repo
         uses: "ramsey/composer-install@v3"
+        with:
+          working-directory: di-repo
 
       - name: Configure Yii Definitions usage
         working-directory: ${{ github.workspace }}/di-repo
