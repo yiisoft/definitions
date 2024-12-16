@@ -30,7 +30,7 @@ final class ArrayDefinition implements DefinitionInterface
     public const CLASS_NAME = 'class';
     public const CONSTRUCTOR = '__construct()';
 
-    public const TYPE_PROPERTY = 'prop1erty';
+    public const TYPE_PROPERTY = 'property';
     public const TYPE_METHOD = 'method';
 
     /**
@@ -141,7 +141,7 @@ final class ArrayDefinition implements DefinitionInterface
             DefinitionExtractor::fromClassName($class),
             $this->getConstructorArguments()
         );
-
+        $resolvedConstructorArguments = [];
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...$resolvedConstructorArguments);
 
