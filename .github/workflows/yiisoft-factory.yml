@@ -21,7 +21,7 @@ on:
       - 'infection.json.dist'
       - 'psalm.xml'
 
-name: yiisoft-di
+name: yiisoft-factory
 
 jobs:
   phpunit:
@@ -44,11 +44,11 @@ jobs:
         with:
           path: definitions-repo
 
-      - name: Checkout Yii DI
+      - name: Checkout Yii Factory
         uses: actions/checkout@v4
         with:
-          path: di-repo
-          repository: 'yiisoft/di'
+          path: factory-repo
+          repository: 'yiisoft/factory'
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -60,14 +60,14 @@ jobs:
       - name: Install Composer dependencies
         uses: "ramsey/composer-install@v3"
         with:
-          working-directory: di-repo
+          working-directory: factory-repo
 
       - name: Configure Yii Definitions usage
-        working-directory: ${{ github.workspace }}/di-repo
+        working-directory: ${{ github.workspace }}/factory-repo
         run: |
           composer config repositories.local path ../definitions-repo
           composer require yiisoft/definitions:@dev
 
       - name: Run tests with PhpUnit
-        working-directory: ${{ github.workspace }}/di-repo
+        working-directory: ${{ github.workspace }}/factory-repo
         run: vendor/bin/phpunit --colors=always

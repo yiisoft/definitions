@@ -141,7 +141,7 @@ final class ArrayDefinition implements DefinitionInterface
             DefinitionExtractor::fromClassName($class),
             $this->getConstructorArguments()
         );
-        $resolvedConstructorArguments = [];
+
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...$resolvedConstructorArguments);
 
