@@ -1,0 +1,73 @@
+on:
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'infection.json.dist'
+      - 'psalm.xml'
+
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'infection.json.dist'
+      - 'psalm.xml'
+
+name: yiisoft-factory
+
+jobs:
+  phpunit:
+    name: PHP ${{ matrix.php }}-${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        php:
+          - "8.1"
+          - "8.2"
+          - "8.3"
+
+    steps:
+      - name: Checkout Yii Definitions
+        uses: actions/checkout@v4
+        with:
+          path: definitions-repo
+
+      - name: Checkout Yii Factory
+        uses: actions/checkout@v4
+        with:
+          path: factory-repo
+          repository: 'yiisoft/factory'
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
+        with:
+          working-directory: factory-repo
+
+      - name: Configure Yii Definitions usage
+        working-directory: ${{ github.workspace }}/factory-repo
+        run: |
+          composer config repositories.local path ../definitions-repo
+          composer require yiisoft/definitions:@dev
+
+      - name: Run tests with PhpUnit
+        working-directory: ${{ github.workspace }}/factory-repo
+        run: vendor/bin/phpunit --colors=always
