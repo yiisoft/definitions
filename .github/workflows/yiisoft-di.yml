@@ -40,6 +40,11 @@ jobs:
           - "8.3"
 
     steps:
+      - name: Checkout Yii Definitions
+        uses: actions/checkout@v4
+        with:
+          path: definitions-repo
+
       - name: Checkout Yii DI
         uses: actions/checkout@v4
         with:
@@ -55,10 +60,10 @@ jobs:
       - name: Install Composer dependencies
         uses: "ramsey/composer-install@v3"
 
-      - name: Install Yii Definitions
-        shell: bash
+      - name: Configure Yii Definitions usage
         run: |
-          composer require yiisoft/definitions:dev-${{ github.ref_name }} --no-progress --no-suggest --no-interaction
+          composer config repositories.local path ./definitions-repo
+          composer require yiisoft/definitions:@dev
 
       - name: Run tests with PhpUnit
         run: vendor/bin/phpunit --colors=always
