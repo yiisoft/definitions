@@ -62,7 +62,7 @@ jobs:
 
       - name: Configure Yii Definitions usage
         run: |
-          composer config repositories.local path ./definitions-repo
+          composer config repositories.local path ${{ github.workspace }}/definitions-repo
           composer require yiisoft/definitions:@dev
 
       - name: Run tests with PhpUnit
