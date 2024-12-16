@@ -2,7 +2,7 @@
 
 ## 3.3.1 under development
 
-- Enh #101: Minor performance improvement by remove unnecessary code in `DefinitionStorage` (@vjik)
+- Enh #101: Minor performance improvement by removing unnecessary code in `DefinitionStorage` (@vjik)
 
 ## 3.3.0 March 16, 2024
 
