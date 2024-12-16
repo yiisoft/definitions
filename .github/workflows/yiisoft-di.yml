@@ -1,0 +1,64 @@
+on:
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'infection.json.dist'
+      - 'psalm.xml'
+
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'infection.json.dist'
+      - 'psalm.xml'
+
+name: yiisoft-di
+
+jobs:
+  phpunit:
+    name: Yii DI / PHP ${{ matrix.php }}-${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+#          - windows-latest
+        php:
+#          - "8.1"
+#          - "8.2"
+          - "8.3"
+
+    steps:
+      - name: Checkout Yii DI
+        uses: actions/checkout@v4
+        with:
+          repository: 'https://github.com/yiisoft/di.git'
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
+
+      - name: Install Yii Definitions
+        shell: bash
+        run: |
+          composer require yiisoft/definitions:dev-${{ env.BRANCH_NAME }} --no-progress --no-suggest --no-interaction
+
+      - name: Run tests with PhpUnit
+        run: vendor/bin/phpunit --colors=always
