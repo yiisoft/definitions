@@ -60,6 +60,9 @@ jobs:
       - name: Install Composer dependencies
         uses: "ramsey/composer-install@v3"
 
+      - name: Debug workspace structure
+        run: ls -R ${{ github.workspace }}
+
       - name: Configure Yii Definitions usage
         run: |
           composer config repositories.local path ${{ github.workspace }}/definitions-repo
