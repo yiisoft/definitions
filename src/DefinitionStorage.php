@@ -175,7 +175,7 @@ final class DefinitionStorage
                             continue;
                         }
 
-                        if ($this->isResolvable($typeName, $building) || 
+                        if ($this->isResolvable($typeName, $building) ||
                             ($this->delegateContainer !== null && $this->delegateContainer->has($typeName))) {
                             $isUnionTypeResolvable = true;
                             /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */

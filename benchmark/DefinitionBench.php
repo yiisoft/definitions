@@ -18,6 +18,7 @@ use Yiisoft\Definitions\DefinitionStorage;
 class TestClass
 {
     private string $property;
+
     public function __construct(string $param1, string $param2)
     {
         $this->property = $param1 . $param2;
@@ -34,16 +35,19 @@ final class DefinitionBench
     {
         $this->storage = new DefinitionStorage();
         // Create a simple container implementation for testing
-        $this->container = new class implements ContainerInterface {
+        $this->container = new class () implements ContainerInterface {
             private array $entries = [];
+
             public function get(string $id): mixed
             {
                 return $this->entries[$id] ?? null;
             }
+
             public function has(string $id): bool
             {
                 return isset($this->entries[$id]);
             }
+
             public function set(string $id, mixed $value): void
             {
                 $this->entries[$id] = $value;
