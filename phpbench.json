@@ -1,0 +1,17 @@
+{
+    "$schema": "./vendor/phpbench/phpbench/phpbench.schema.json",
+    "runner.bootstrap": "vendor/autoload.php",
+    "runner.path": "benchmark",
+    "runner.retry_threshold": 5,
+    "runner.iterations": 10,
+    "runner.revs": 1000,
+    "runner.warmup": 2,
+    "report.outputs": {
+        "my_output": {
+            "extends": "console",
+            "components": {
+                "console_table_style": "default"
+            }
+        }
+    }
+}

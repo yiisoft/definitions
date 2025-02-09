@@ -31,6 +31,7 @@
     },
     "require-dev": {
         "maglnet/composer-require-checker": "^4.2",
+        "phpbench/phpbench": "^1.4",
         "phpunit/phpunit": "^9.5",
         "rector/rector": "^1.0.0",
         "roave/infection-static-analysis-plugin": "^1.18",
