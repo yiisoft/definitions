@@ -157,7 +157,6 @@ final class DefinitionStorage
                 // Union type is used as type hint
                 if ($type instanceof ReflectionUnionType) {
                     $isUnionTypeResolvable = false;
-                    $unionTypes = [];
                     foreach ($type->getTypes() as $unionType) {
                         /**
                          * @psalm-suppress DocblockTypeContradiction Need for PHP 8.0 and 8.1 only
@@ -175,27 +174,18 @@ final class DefinitionStorage
                         if ($typeName === 'self') {
                             continue;
                         }
-                        $unionTypes[] = $typeName;
-                        if ($this->isResolvable($typeName, $building)) {
+
+                        if ($this->isResolvable($typeName, $building) || 
+                            ($this->delegateContainer !== null && $this->delegateContainer->has($typeName))) {
                             $isUnionTypeResolvable = true;
                             /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
                             break;
                         }
                     }
 
-                    if (!$isUnionTypeResolvable) {
-                        foreach ($unionTypes as $typeName) {
-                            if ($this->delegateContainer !== null && $this->delegateContainer->has($typeName)) {
-                                $isUnionTypeResolvable = true;
-                                /** @infection-ignore-all Mutation don't change behaviour, but degrade performance. */
-                                break;
-                            }
-                        }
-
-                        $isResolvable = $isUnionTypeResolvable;
-                        if (!$isResolvable) {
-                            break;
-                        }
+                    $isResolvable = $isUnionTypeResolvable;
+                    if (!$isResolvable) {
+                        break;
                     }
                     continue;
                 }
