@@ -32,7 +32,7 @@ final class DefinitionStorage
      */
     public function __construct(
         private array $definitions = [],
-        private bool $useStrictMode = false
+        private readonly bool $useStrictMode = false
     ) {
     }
 

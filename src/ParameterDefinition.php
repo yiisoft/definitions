@@ -22,7 +22,7 @@ use function sprintf;
 final class ParameterDefinition implements DefinitionInterface
 {
     public function __construct(
-        private ReflectionParameter $parameter
+        private readonly ReflectionParameter $parameter
     ) {
     }
 
@@ -54,8 +54,7 @@ final class ParameterDefinition implements DefinitionInterface
             return $this->resolveUnionType($type, $container);
         }
 
-        if ($type === null
-            || !$type instanceof ReflectionNamedType
+        if (!$type instanceof ReflectionNamedType
             || $this->isVariadic()
             || $type->isBuiltin()
         ) {
