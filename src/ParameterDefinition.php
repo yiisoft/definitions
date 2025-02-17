@@ -14,6 +14,8 @@ use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
+use function sprintf;
+
 /**
  * Parameter definition resolves an object based on information from `ReflectionParameter` instance.
  */

@@ -12,6 +12,8 @@ use Throwable;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 
+use function sprintf;
+
 /**
  * Stores service definitions and checks if a definition could be instantiated.
  */

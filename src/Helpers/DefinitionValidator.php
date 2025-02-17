@@ -11,10 +11,12 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
+use function in_array;
 use function is_array;
 use function is_callable;
 use function is_object;
 use function is_string;
+use function sprintf;
 
 /**
  * Definition validator checks if definition is valid.
@@ -43,7 +45,7 @@ final class DefinitionValidator
         }
 
         // Callable definition
-        if ($definition !== '' && is_callable($definition, true)) {
+        if (is_callable($definition, true)) {
             return;
         }
 

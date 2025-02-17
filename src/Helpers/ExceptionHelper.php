@@ -6,6 +6,8 @@ namespace Yiisoft\Definitions\Helpers;
 
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
+use function sprintf;
+
 /**
  * @internal
  */

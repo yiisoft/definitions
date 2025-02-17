@@ -17,7 +17,9 @@ use Yiisoft\Definitions\Helpers\DefinitionResolver;
 use function array_key_exists;
 use function call_user_func_array;
 use function count;
+use function is_array;
 use function is_string;
+use function sprintf;
 
 /**
  * Builds an object by array config.
