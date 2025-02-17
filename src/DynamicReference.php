@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use Override;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
@@ -51,11 +52,13 @@ final class DynamicReference implements ReferenceInterface
      *
      * @throws InvalidConfigException If definition is not valid.
      */
+    #[Override]
     public static function to(mixed $id): self
     {
         return new self($id);
     }
 
+    #[Override]
     public function resolve(ContainerInterface $container): mixed
     {
         return $this->definition->resolve($container);

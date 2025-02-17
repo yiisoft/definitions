@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions;
 
 use Closure;
+use Override;
 use Psr\Container\ContainerInterface;
 use ReflectionException;
 use ReflectionFunction;
@@ -41,6 +42,7 @@ final class CallableDefinition implements DefinitionInterface
         $this->callable = $callable;
     }
 
+    #[Override]
     public function resolve(ContainerInterface $container): mixed
     {
         try {

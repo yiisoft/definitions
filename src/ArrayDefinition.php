@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions;
 
 use InvalidArgumentException;
+use Override;
 use Psr\Container\ContainerInterface;
 use ReflectionMethod;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
@@ -132,6 +133,7 @@ final class ArrayDefinition implements DefinitionInterface
         return $this->methodsAndProperties;
     }
 
+    #[Override]
     public function resolve(ContainerInterface $container): object
     {
         $class = $this->class;

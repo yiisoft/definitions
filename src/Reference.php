@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
+use Override;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
@@ -45,6 +46,7 @@ final class Reference implements ReferenceInterface
     /**
      * @throws InvalidConfigException If ID is not string.
      */
+    #[Override]
     public static function to(mixed $id): self
     {
         return new self($id, false);
@@ -62,6 +64,7 @@ final class Reference implements ReferenceInterface
         return new self($id, true);
     }
 
+    #[Override]
     public function resolve(ContainerInterface $container): mixed
     {
         return (!$this->optional || $container->has($this->id)) ? $container->get($this->id) : null;
