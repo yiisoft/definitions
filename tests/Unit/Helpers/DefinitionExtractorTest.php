@@ -13,6 +13,7 @@ use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\ParameterDefinition;
 use Yiisoft\Definitions\Tests\Support\Car;
+use Yiisoft\Definitions\Tests\Support\Chair;
 use Yiisoft\Definitions\Tests\Support\ColorInterface;
 use Yiisoft\Definitions\Tests\Support\EngineInterface;
 use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
@@ -23,6 +24,7 @@ use Yiisoft\Definitions\Tests\Support\OptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\OptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Support\NullableOptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\NullableOptionalInterfaceDependency;
+use Yiisoft\Definitions\Tests\Support\RedChair;
 use Yiisoft\Definitions\Tests\Support\SelfDependency;
 use Yiisoft\Definitions\Tests\Support\UnionCar;
 use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
@@ -183,5 +185,53 @@ final class DefinitionExtractorTest extends TestCase
                 ->getType()
                 ->getName(),
         );
+    }
+
+    public function testResolvableDependencyWithDefaultObject(): void
+    {
+        $container = new SimpleContainer([
+            Chair::class => new Chair(),
+        ]);
+
+        $definitions = DefinitionExtractor::fromFunction(
+            new ReflectionFunction(static fn (Chair $chair = new RedChair()) => true)
+        );
+
+        $this->assertInstanceOf(Chair::class, $definitions['chair']->resolve($container));
+    }
+
+    public function testResolvableNullableDependencyWithDefaultObject(): void
+    {
+        $container = new SimpleContainer([
+            Chair::class => new Chair(),
+        ]);
+
+        $definitions = DefinitionExtractor::fromFunction(
+            new ReflectionFunction(static fn (?Chair $chair = new RedChair()) => true)
+        );
+
+        $this->assertInstanceOf(Chair::class, $definitions['chair']->resolve($container));
+    }
+
+    public function testUnresolvableDependencyWithDefaultObject(): void
+    {
+        $container = new SimpleContainer();
+
+        $definitions = DefinitionExtractor::fromFunction(
+            new ReflectionFunction(static fn (Chair $chair = new RedChair()) => true)
+        );
+
+        $this->assertInstanceOf(RedChair::class, $definitions['chair']->resolve($container));
+    }
+
+    public function testUnresolvablNullableDependencyWithDefaultObject(): void
+    {
+        $container = new SimpleContainer();
+
+        $definitions = DefinitionExtractor::fromFunction(
+            new ReflectionFunction(static fn (?Chair $chair = new RedChair()) => true)
+        );
+
+        $this->assertInstanceOf(RedChair::class, $definitions['chair']->resolve($container));
     }
 }

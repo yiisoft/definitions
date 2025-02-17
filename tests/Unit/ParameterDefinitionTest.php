@@ -412,6 +412,19 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testNotResolveIntersectionType(): void
+    {
+        $container = new SimpleContainer();
+
+        $definition = new ParameterDefinition(
+            self::getFirstParameter(fn (GearBox&stdClass $class) => true)
+        );
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage('Can not determine value of the "class" parameter of type ');
+        $definition->resolve($container);
+    }
+
     /**
      * @return ReflectionParameter[]
      */
