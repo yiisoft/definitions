@@ -12,7 +12,6 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\ValueDefinition;
 
-use function array_key_exists;
 use function is_array;
 use function is_callable;
 use function is_object;
@@ -49,7 +48,7 @@ final class Normalizer
     public static function normalize(mixed $definition, ?string $class = null): DefinitionInterface
     {
         // Reference
-        if ($definition instanceof ReferenceInterface) {
+        if ($definition instanceof DefinitionInterface) {
             return $definition;
         }
 
@@ -75,7 +74,7 @@ final class Normalizer
         // Array definition
         if (is_array($definition)) {
             $config = $definition;
-            if (!array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
+            if (!isset($config[ArrayDefinition::CLASS_NAME])) {
                 if ($class === null) {
                     throw new InvalidConfigException(
                         'Array definition should contain the key "class": ' . var_export($definition, true)
@@ -88,7 +87,7 @@ final class Normalizer
         }
 
         // Ready object
-        if (is_object($definition) && !($definition instanceof DefinitionInterface)) {
+        if (is_object($definition)) {
             return new ValueDefinition($definition);
         }
 
