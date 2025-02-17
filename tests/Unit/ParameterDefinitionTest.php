@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Tests\Unit;
 
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
@@ -31,9 +32,9 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ParameterDefinitionTest extends TestCase
 {
-    public function dataIsVariadic(): array
+    public static function dataIsVariadic(): array
     {
-        $parameters = $this->getParameters(
+        $parameters = self::getParameters(
             static fn (
                 string $a,
                 string ...$b
@@ -46,9 +47,7 @@ final class ParameterDefinitionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataIsVariadic
-     */
+    #[DataProvider('dataIsVariadic')]
     public function testIsVariadic(bool $expected, ReflectionParameter $parameter): void
     {
         $definition = new ParameterDefinition($parameter);
@@ -56,9 +55,9 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertSame($expected, $definition->isVariadic());
     }
 
-    public function dataIsOptional(): array
+    public static function dataIsOptional(): array
     {
-        $parameters = $this->getParameters(
+        $parameters = self::getParameters(
             static fn (
                 string $a,
                 string $b = 'b'
@@ -71,9 +70,7 @@ final class ParameterDefinitionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataIsOptional
-     */
+    #[DataProvider('dataIsOptional')]
     public function testIsOptional(bool $expected, ReflectionParameter $parameter): void
     {
         $definition = new ParameterDefinition($parameter);
@@ -81,9 +78,9 @@ final class ParameterDefinitionTest extends TestCase
         $this->assertSame($expected, $definition->isOptional());
     }
 
-    public function dataHasValue(): array
+    public static function dataHasValue(): array
     {
-        $parameters = $this->getParameters(
+        $parameters = self::getParameters(
             static fn (
                 string $a,
                 ?string $b,
@@ -100,9 +97,7 @@ final class ParameterDefinitionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataHasValue
-     */
+    #[DataProvider('dataHasValue')]
     public function testHasValue(bool $expected, ReflectionParameter $parameter): void
     {
         $definition = new ParameterDefinition($parameter);
@@ -112,7 +107,7 @@ final class ParameterDefinitionTest extends TestCase
 
     public function testResolveWithIncorrectTypeInContainer(): void
     {
-        $definition = new ParameterDefinition($this->getFirstParameter(fn (stdClass $class) => true));
+        $definition = new ParameterDefinition(self::getFirstParameter(fn (stdClass $class) => true));
 
         $container = new SimpleContainer([stdClass::class => 42]);
 
@@ -136,27 +131,25 @@ final class ParameterDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
-    public function dataResolve(): array
+    public static function dataResolve(): array
     {
         return [
             'defaultValue' => [
                 7,
-                $this->getFirstParameter(static fn (int $n = 7) => true),
+                self::getFirstParameter(static fn (int $n = 7) => true),
             ],
             'defaultNull' => [
                 null,
-                $this->getFirstParameter(static fn (int $n = null) => true),
+                self::getFirstParameter(static fn (int $n = null) => true),
             ],
             'nullableAndDefaultNull' => [
                 null,
-                $this->getFirstParameter(static fn (?int $n = null) => true),
+                self::getFirstParameter(static fn (?int $n = null) => true),
             ],
         ];
     }
 
-    /**
-     * @dataProvider dataResolve
-     */
+    #[DataProvider('dataResolve')]
     public function testResolve($expected, ReflectionParameter $parameter): void
     {
         $definition = new ParameterDefinition($parameter);
@@ -168,7 +161,7 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveNonTypedParameter(): void
     {
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(
+            self::getFirstParameter(
                 static fn ($x) => true,
             )
         );
@@ -186,7 +179,7 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveBuiltinParameter(): void
     {
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(
+            self::getFirstParameter(
                 static fn (int $n) => true,
             )
         );
@@ -251,7 +244,7 @@ final class ParameterDefinitionTest extends TestCase
             static fn (string $id): bool => $id === RuntimeExceptionDependency::class
         );
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(static fn (?RuntimeExceptionDependency $d = null) => 42),
+            self::getFirstParameter(static fn (?RuntimeExceptionDependency $d = null) => 42),
         );
 
         $this->expectException(RuntimeException::class);
@@ -272,7 +265,7 @@ final class ParameterDefinitionTest extends TestCase
             static fn (string $id): bool => $id === CircularReferenceExceptionDependency::class
         );
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(static fn (?CircularReferenceExceptionDependency $d = null) => 42),
+            self::getFirstParameter(static fn (?CircularReferenceExceptionDependency $d = null) => 42),
         );
 
         $result = $definition->resolve($container);
@@ -287,7 +280,7 @@ final class ParameterDefinitionTest extends TestCase
         ]);
 
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(fn (GearBox|stdClass $class) => true)
+            self::getFirstParameter(fn (GearBox|stdClass $class) => true)
         );
         $result = $definition->resolve($container);
 
@@ -299,7 +292,7 @@ final class ParameterDefinitionTest extends TestCase
         $class = GearBox::class . '|' . stdClass::class;
 
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(fn (GearBox|stdClass $class) => true)
+            self::getFirstParameter(fn (GearBox|stdClass $class) => true)
         );
 
         $container = new SimpleContainer([
@@ -314,13 +307,13 @@ final class ParameterDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
-    public function testResolveOptionalUnionTypeWithIncorrectTypeInContainer(): void
+    public function testResolveOptionalUnionTypeWithIncorrectTypeInContainer(): never
     {
         $this->markTestSkipped(
             'Is there a real case?'
         );
 
-        $definition = new ParameterDefinition($this->getFirstParameter(fn (stdClass|GearBox $class) => true));
+        $definition = new ParameterDefinition(self::getFirstParameter(fn (stdClass|GearBox $class) => true));
 
         $container = new SimpleContainer([
             stdClass::class => 42,
@@ -335,7 +328,7 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveOptionalUnionType(): void
     {
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(static fn (string|ColorInterface $value = 'test') => true)
+            self::getFirstParameter(static fn (string|ColorInterface $value = 'test') => true)
         );
         $container = new SimpleContainer();
 
@@ -390,7 +383,7 @@ final class ParameterDefinitionTest extends TestCase
             static fn (string $id): bool => $id === RuntimeExceptionDependency::class
         );
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(static fn (RuntimeExceptionDependency|string|null $d = null) => 42),
+            self::getFirstParameter(static fn (RuntimeExceptionDependency|string|null $d = null) => 42),
         );
 
         $this->expectException(RuntimeException::class);
@@ -411,7 +404,7 @@ final class ParameterDefinitionTest extends TestCase
             static fn (string $id): bool => $id === CircularReferenceExceptionDependency::class
         );
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(static fn (CircularReferenceExceptionDependency|string|null $d = null) => 42),
+            self::getFirstParameter(static fn (CircularReferenceExceptionDependency|string|null $d = null) => 42),
         );
 
         $result = $definition->resolve($container);
@@ -422,15 +415,15 @@ final class ParameterDefinitionTest extends TestCase
     /**
      * @return ReflectionParameter[]
      */
-    private function getParameters(callable $callable): array
+    private static function getParameters(callable $callable): array
     {
         $closure = $callable instanceof Closure ? $callable : Closure::fromCallable($callable);
         return (new ReflectionFunction($closure))->getParameters();
     }
 
-    private function getFirstParameter(Closure $closure): ReflectionParameter
+    private static function getFirstParameter(Closure $closure): ReflectionParameter
     {
-        return $this->getParameters($closure)[0];
+        return self::getParameters($closure)[0];
     }
 
     private function getFirstConstructorParameter(string $class): ReflectionParameter

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Tests\Unit;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
@@ -35,7 +36,7 @@ final class ArrayDefinitionTest extends TestCase
         self::assertInstanceOf(Phone::class, $definition->resolve($container));
     }
 
-    public function dataConstructor(): array
+    public static function dataConstructor(): array
     {
         return [
             [null, null, []],
@@ -46,9 +47,7 @@ final class ArrayDefinitionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataConstructor
-     */
+    #[DataProvider('dataConstructor')]
     public function testConstructor(?string $name, ?string $version, array $constructorArguments): void
     {
         $container = new SimpleContainer();
@@ -148,7 +147,7 @@ final class ArrayDefinitionTest extends TestCase
         $definition->resolve($container);
     }
 
-    public function dataSetProperties(): array
+    public static function dataSetProperties(): array
     {
         return [
             [false, null, []],
@@ -157,9 +156,7 @@ final class ArrayDefinitionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataSetProperties
-     */
+    #[DataProvider('dataSetProperties')]
     public function testSetProperties(bool $dev, ?string $codeName, array $setProperties): void
     {
         $container = new SimpleContainer();
@@ -175,7 +172,7 @@ final class ArrayDefinitionTest extends TestCase
         self::assertSame($codeName, $phone->codeName);
     }
 
-    public function dataCallMethods(): array
+    public static function dataCallMethods(): array
     {
         return [
             [null, [], []],
@@ -207,9 +204,7 @@ final class ArrayDefinitionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataCallMethods
-     */
+    #[DataProvider('dataCallMethods')]
     public function testCallMethods(?string $id, array $apps, array $callMethods): void
     {
         $container = new SimpleContainer();
@@ -247,7 +242,7 @@ final class ArrayDefinitionTest extends TestCase
         self::assertSame($country, $phone->getCountry());
     }
 
-    public function dataMethodAutowiring(): array
+    public static function dataMethodAutowiring(): array
     {
         return [
             [
@@ -278,9 +273,7 @@ final class ArrayDefinitionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataMethodAutowiring
-     */
+    #[DataProvider('dataMethodAutowiring')]
     public function testMethodAutowiring(?string $expectedName, ?string $expectedEngine, array $data): void
     {
         $container = new SimpleContainer([
@@ -300,7 +293,7 @@ final class ArrayDefinitionTest extends TestCase
         self::assertInstanceOf($expectedEngine, $mouse->getEngine());
     }
 
-    public function dataMethodVariadic(): array
+    public static function dataMethodVariadic(): array
     {
         return [
             [
@@ -348,9 +341,7 @@ final class ArrayDefinitionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataMethodVariadic
-     */
+    #[DataProvider('dataMethodVariadic')]
     public function testMethodVariadic(
         ?string $expectedName,
         array $expectedColors,

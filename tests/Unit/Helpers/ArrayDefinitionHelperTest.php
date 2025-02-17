@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Helpers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Helpers\ArrayDefinitionHelper;
 
 final class ArrayDefinitionHelperTest extends TestCase
 {
-    public function dataBase(): array
+    public static function dataBase(): array
     {
         return [
             'without configs' => [
@@ -89,16 +90,14 @@ final class ArrayDefinitionHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataBase
-     */
+    #[DataProvider('dataBase')]
     public function testBase(array $expected, array $configs): void
     {
         $result = ArrayDefinitionHelper::merge(...$configs);
         $this->assertSame($expected, $result);
     }
 
-    public function dataInvalidConfigException(): array
+    public static function dataInvalidConfigException(): array
     {
         return [
             'non-string key' => [
@@ -139,9 +138,7 @@ final class ArrayDefinitionHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataInvalidConfigException
-     */
+    #[DataProvider('dataInvalidConfigException')]
     public function testInvalidConfigException(string $expectedMessage, array $configs): void
     {
         $this->expectException(InvalidConfigException::class);
