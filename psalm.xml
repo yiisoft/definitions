@@ -16,11 +16,5 @@
     <issueHandlers>
         <MixedAssignment errorLevel="suppress" />
         <RiskyTruthyFalsyComparison errorLevel="suppress" />
-        <InvalidThrow>
-            <errorLevel type="suppress">
-                <referencedClass name="Psr\Container\ContainerExceptionInterface" />
-                <referencedClass name="Psr\Container\NotFoundExceptionInterface" />
-            </errorLevel>
-        </InvalidThrow>
     </issueHandlers>
 </psalm>

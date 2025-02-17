@@ -15,11 +15,5 @@
     </projectFiles>
     <issueHandlers>
         <MixedAssignment errorLevel="suppress" />
-        <InvalidThrow>
-            <errorLevel type="suppress">
-                <referencedClass name="Psr\Container\ContainerExceptionInterface" />
-                <referencedClass name="Psr\Container\NotFoundExceptionInterface" />
-            </errorLevel>
-        </InvalidThrow>
     </issueHandlers>
 </psalm>
