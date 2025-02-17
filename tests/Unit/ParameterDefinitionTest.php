@@ -179,6 +179,7 @@ final class ParameterDefinitionTest extends TestCase
             'Can not determine value of the "x" parameter without type when instantiating '
             . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::'
         );
+        $this->expectExceptionMessage('Please specify argument explicitly.');
         $definition->resolve($container);
     }
 
@@ -196,6 +197,7 @@ final class ParameterDefinitionTest extends TestCase
             'Can not determine value of the "n" parameter of type "int" when instantiating '
             . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::'
         );
+        $this->expectExceptionMessage('Please specify argument explicitly.');
         $definition->resolve($container);
     }
 
