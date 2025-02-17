@@ -144,7 +144,7 @@ final class ParameterDefinition implements DefinitionInterface
 
         foreach ($types as $type) {
             /**
-             * @psalm-suppress DocblockTypeContradiction Need for PHP 8.0 and 8.1 only
+             * @psalm-suppress DocblockTypeContradiction Need for PHP 8.1 only
              */
             if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
                 continue;

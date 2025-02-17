@@ -157,7 +157,7 @@ final class DefinitionStorage
                     $unionTypes = [];
                     foreach ($type->getTypes() as $unionType) {
                         /**
-                         * @psalm-suppress DocblockTypeContradiction Need for PHP 8.0 and 8.1 only
+                         * @psalm-suppress DocblockTypeContradiction Need for PHP 8.1 only
                          */
                         if (!$unionType instanceof ReflectionNamedType || $unionType->isBuiltin()) {
                             continue;
