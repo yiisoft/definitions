@@ -58,7 +58,7 @@
         }
     },
     "scripts": {
-        "php-cs-fixer": "php-cs-fixer fix",
+        "php-cs-fixer": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
         "rector": "rector",
         "test": "phpunit --testdox --no-interaction",
         "test-watch": "phpunit-watcher watch"

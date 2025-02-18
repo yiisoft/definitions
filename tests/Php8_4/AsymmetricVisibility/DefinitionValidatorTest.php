@@ -19,7 +19,7 @@ final class DefinitionValidatorTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Invalid definition: property "Yiisoft\Definitions\Tests\Php8_4\AsymmetricVisibility\PublicGet::$privateVar" must be public and writable.'
+            'Invalid definition: property "Yiisoft\Definitions\Tests\Php8_4\AsymmetricVisibility\PublicGet::$privateVar" must be public and writable.',
         );
         DefinitionValidator::validate($definition);
     }
@@ -33,7 +33,7 @@ final class DefinitionValidatorTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Invalid definition: property "Yiisoft\Definitions\Tests\Php8_4\AsymmetricVisibility\PublicGet::$protectedVar" must be public and writable.'
+            'Invalid definition: property "Yiisoft\Definitions\Tests\Php8_4\AsymmetricVisibility\PublicGet::$protectedVar" must be public and writable.',
         );
         DefinitionValidator::validate($definition);
     }

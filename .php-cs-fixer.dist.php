@@ -6,10 +6,12 @@ use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
-$finder = (new Finder())->in([
-    __DIR__ . '/src',
-    __DIR__ . '/tests',
-]);
+$finder = (new Finder())
+    ->in([
+        __DIR__ . '/src',
+        __DIR__ . '/tests',
+    ])
+    ->exclude('Php8_4/');
 
 return (new Config())
     ->setParallelConfig(ParallelConfigFactory::detect())
