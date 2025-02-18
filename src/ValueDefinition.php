@@ -17,8 +17,8 @@ final class ValueDefinition implements DefinitionInterface
      * @param string|null $type Value type.
      */
     public function __construct(
-        private mixed $value,
-        private ?string $type = null
+        private readonly mixed $value,
+        private readonly ?string $type = null
     ) {
     }
 

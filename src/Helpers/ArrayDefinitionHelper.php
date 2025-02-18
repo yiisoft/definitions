@@ -9,6 +9,7 @@ use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
 use function is_array;
+use function is_string;
 
 final class ArrayDefinitionHelper
 {

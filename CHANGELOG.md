@@ -2,7 +2,9 @@
 
 ## 3.3.2 under development
 
-- no changes in this release.
+- Chg #106: Bump minimal required PHP version to 8.1 (@vjik)
+- Enh #106: Minor performance optimization: use FQN for PHP functions, remove unnecessary conditions (@vjik)
+- Enh #106: Mark readonly properties (@vjik)
 
 ## 3.3.1 December 16, 2024
 
