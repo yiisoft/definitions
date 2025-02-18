@@ -8,6 +8,5 @@ final class Notebook
 {
     public function __construct(
         public \NotExist1|\NotExist2 $notExist,
-    ) {
-    }
+    ) {}
 }

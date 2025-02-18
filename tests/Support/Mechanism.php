@@ -9,6 +9,5 @@ final class Mechanism
     public function __construct(
         public EngineInterface $engine,
         public string|ColorInterface $color,
-    ) {
-    }
+    ) {}
 }

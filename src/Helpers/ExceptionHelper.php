@@ -28,8 +28,8 @@ final class ExceptionHelper
         return new InvalidConfigException(
             sprintf(
                 'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
-                get_debug_type($value)
-            )
+                get_debug_type($value),
+            ),
         );
     }
 
@@ -41,7 +41,7 @@ final class ExceptionHelper
                 'Probably you should wrap them into square brackets.',
                 $key,
                 get_debug_type($value),
-            )
+            ),
         );
     }
 }

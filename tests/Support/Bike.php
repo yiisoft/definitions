@@ -9,6 +9,5 @@ final class Bike
     public function __construct(
         public string|ColorInterface $color,
         public EngineInterface $engine,
-    ) {
-    }
+    ) {}
 }

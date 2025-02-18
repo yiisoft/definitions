@@ -30,6 +30,7 @@
         "psr/container": "^1.0 || ^2.0"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.69",
         "maglnet/composer-require-checker": "^4.7.1",
         "phpunit/phpunit": "^10.5.45",
         "rector/rector": "^2.0.9",
@@ -57,6 +58,8 @@
         }
     },
     "scripts": {
+        "php-cs-fixer": "php-cs-fixer fix",
+        "rector": "rector",
         "test": "phpunit --testdox --no-interaction",
         "test-watch": "phpunit-watcher watch"
     }

@@ -18,7 +18,7 @@ final class Phone
     public function __construct(
         private ?string $name = null,
         private ?string $version = null,
-        ...$colors
+        ...$colors,
     ) {
         $this->colors = $colors;
     }

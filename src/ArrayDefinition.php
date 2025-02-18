@@ -48,9 +48,8 @@ final class ArrayDefinition implements DefinitionInterface
     private function __construct(
         private string $class,
         private array $constructorArguments,
-        private array $methodsAndProperties
-    ) {
-    }
+        private array $methodsAndProperties,
+    ) {}
 
     /**
      * @param ContainerInterface|null $referenceContainer Container to resolve references with.
@@ -72,7 +71,7 @@ final class ArrayDefinition implements DefinitionInterface
         return new self(
             $config[self::CLASS_NAME],
             $config[self::CONSTRUCTOR] ?? [],
-            self::getMethodsAndPropertiesFromConfig($config)
+            self::getMethodsAndPropertiesFromConfig($config),
         );
     }
 
@@ -142,7 +141,7 @@ final class ArrayDefinition implements DefinitionInterface
         $resolvedConstructorArguments = $this->resolveFunctionArguments(
             $container,
             DefinitionExtractor::fromClassName($class),
-            $this->getConstructorArguments()
+            $this->getConstructorArguments(),
         );
 
         /** @psalm-suppress MixedMethodCall */
@@ -182,7 +181,7 @@ final class ArrayDefinition implements DefinitionInterface
     private function resolveFunctionArguments(
         ContainerInterface $container,
         array $dependencies,
-        array $arguments
+        array $arguments,
     ): array {
         $isIntegerIndexed = $this->isIntegerIndexed($arguments);
         $dependencyIndex = 0;
@@ -209,7 +208,7 @@ final class ArrayDefinition implements DefinitionInterface
                     $arguments[$variadicKey] = DefinitionResolver::resolve(
                         $container,
                         $this->referenceContainer,
-                        $arguments[$variadicKey]
+                        $arguments[$variadicKey],
                     );
                 }
 
@@ -220,8 +219,8 @@ final class ArrayDefinition implements DefinitionInterface
                     throw new InvalidArgumentException(
                         sprintf(
                             'Named argument for a variadic parameter should be an array, "%s" given.',
-                            gettype($arguments[$variadicKey])
-                        )
+                            gettype($arguments[$variadicKey]),
+                        ),
                     );
                 }
             } else {
@@ -262,7 +261,7 @@ final class ArrayDefinition implements DefinitionInterface
         }
         if ($hasIntegerIndex && $hasStringIndex) {
             throw new InvalidConfigException(
-                'Arguments indexed both by name and by position are not allowed in the same array.'
+                'Arguments indexed both by name and by position are not allowed in the same array.',
             );
         }
 

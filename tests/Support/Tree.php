@@ -8,7 +8,6 @@ final class Tree
 {
     public function __construct(
         public string $name,
-        public string|ColorInterface $color
-    ) {
-    }
+        public string|ColorInterface $color,
+    ) {}
 }
