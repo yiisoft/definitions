@@ -345,12 +345,12 @@ final class DefinitionValidator
         }
 
         $modifiers = $property->getModifiers();
-        if ($modifiers & ReflectionProperty::IS_PRIVATE_SET
+        return !($modifiers & ReflectionProperty::IS_PRIVATE_SET
             || $modifiers & ReflectionProperty::IS_PROTECTED_SET
-        ) {
-            return false;
-        }
+        )
 
-        return true;
+
+
+         ;
     }
 }

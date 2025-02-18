@@ -20,8 +20,6 @@ use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\NullableInterfaceDependency;
-use Yiisoft\Definitions\Tests\Support\OptionalConcreteDependency;
-use Yiisoft\Definitions\Tests\Support\OptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Support\NullableOptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\NullableOptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Support\RedChair;
