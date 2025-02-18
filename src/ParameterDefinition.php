@@ -216,10 +216,7 @@ final class ParameterDefinition implements DefinitionInterface
         if ($class !== null) {
             $callable[] = $class->getName();
         }
-        $callable[] = $this->parameter
-                ->getDeclaringFunction()
-                ->getName() .
-            '()';
+        $callable[] = $this->parameter->getDeclaringFunction()->getName() . '()';
 
         return implode('::', $callable);
     }

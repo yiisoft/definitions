@@ -26,7 +26,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
         "psr/container": "^1.0 || ^2.0"
     },
     "require-dev": {
@@ -37,7 +37,7 @@
         "roave/infection-static-analysis-plugin": "^1.35",
         "spatie/phpunit-watcher": "^1.24",
         "vimeo/psalm": "^5.26.1 || ^6.7.1",
-        "yiisoft/test-support": "^3.0"
+        "yiisoft/test-support": "^3.0.1"
     },
     "autoload": {
         "psr-4": {
@@ -58,7 +58,7 @@
         }
     },
     "scripts": {
-        "php-cs-fixer": "php-cs-fixer fix",
+        "php-cs-fixer": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
         "rector": "rector",
         "test": "phpunit --testdox --no-interaction",
         "test-watch": "phpunit-watcher watch"
