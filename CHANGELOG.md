@@ -2,7 +2,7 @@
 
 ## 3.3.2 under development
 
-- Chg #105: Change PHP constraint in `composer.json` to `~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0` (@vjik)
+- Chg #105: Change PHP constraint in `composer.json` to `~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0` (@vjik)
 - Chg #106: Bump minimal required PHP version to 8.1 (@vjik)
 - Enh #106: Minor performance optimization: use FQN for PHP functions, remove unnecessary conditions (@vjik)
 - Enh #106: Mark readonly properties (@vjik)
