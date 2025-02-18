@@ -12,6 +12,5 @@ final class FunBike
     public function __construct(
         public string|ColorInterface $color,
         public string|EngineInterface $engine,
-    ) {
-    }
+    ) {}
 }

@@ -29,7 +29,7 @@ final class DynamicReferenceTest extends TestCase
     public function testClosure(): void
     {
         $reference = DynamicReference::to(
-            fn (ContainerInterface $container) => $container->get(EngineInterface::class)
+            fn(ContainerInterface $container) => $container->get(EngineInterface::class),
         );
 
         $container = new SimpleContainer([
@@ -43,7 +43,7 @@ final class DynamicReferenceTest extends TestCase
     public function testStaticClosure(): void
     {
         $reference = DynamicReference::to(
-            static fn (ContainerInterface $container) => $container->get(EngineInterface::class)
+            static fn(ContainerInterface $container) => $container->get(EngineInterface::class),
         );
 
         $container = new SimpleContainer([

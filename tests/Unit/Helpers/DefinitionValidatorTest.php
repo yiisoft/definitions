@@ -28,7 +28,7 @@ final class DefinitionValidatorTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Invalid definition: invalid key in array definition. Only string keys are allowed, got 0.'
+            'Invalid definition: invalid key in array definition. Only string keys are allowed, got 0.',
         );
         DefinitionValidator::validate([
             ArrayDefinition::CLASS_NAME => Phone::class,
@@ -56,7 +56,7 @@ final class DefinitionValidatorTest extends TestCase
 
     public static function dataInvalidProperty(): array
     {
-        $object1 = new class () {
+        $object1 = new class {
             public bool $visible = true;
             private bool $invisible = true;
         };
@@ -67,7 +67,7 @@ final class DefinitionValidatorTest extends TestCase
                 '$1',
                 sprintf(
                     'Invalid definition: class "%s" does not have the public property with name "1". Possible properties to set: "visible".',
-                    $object1::class
+                    $object1::class,
                 ),
             ],
             [
@@ -136,7 +136,7 @@ final class DefinitionValidatorTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Invalid definition: incorrect constructor arguments. Expected array, got string.'
+            'Invalid definition: incorrect constructor arguments. Expected array, got string.',
         );
         DefinitionValidator::validate([
             ArrayDefinition::CLASS_NAME => Phone::class,
@@ -181,7 +181,7 @@ final class DefinitionValidatorTest extends TestCase
         DefinitionValidator::validate(
             array_merge([
                 ArrayDefinition::CLASS_NAME => $class,
-            ], $methodCalls)
+            ], $methodCalls),
         );
     }
 
@@ -196,7 +196,7 @@ final class DefinitionValidatorTest extends TestCase
                 [42],
                 sprintf(
                     'Invalid definition: class "%s" does not have the public method with name "set". Possible methods to call: "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
-                    Phone::class
+                    Phone::class,
                 ),
             ],
             [
@@ -204,7 +204,7 @@ final class DefinitionValidatorTest extends TestCase
                 [42],
                 sprintf(
                     'Invalid definition: class "%s" does not have the public method with name " set". Possible methods to call: "getName", "getVersion", "getColors", "addApp", "getApps", "getId", "setId", "setId777", "withAuthor", "getAuthor", "withCountry", "getCountry"',
-                    Phone::class
+                    Phone::class,
                 ),
             ],
             [
@@ -331,7 +331,7 @@ final class DefinitionValidatorTest extends TestCase
         $this->expectExceptionMessageMatches(
             '/^Only references are allowed in constructor arguments, a definition object was provided: (\\\\|)' .
             preg_quote(ValueDefinition::class) .
-            '.*/'
+            '.*/',
         );
         DefinitionValidator::validate([
             'class' => GearBox::class,

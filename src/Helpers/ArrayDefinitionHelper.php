@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Helpers;
 
 use Yiisoft\Definitions\ArrayDefinition;
-
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
 use function is_array;

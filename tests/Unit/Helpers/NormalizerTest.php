@@ -42,7 +42,7 @@ final class NormalizerTest extends TestCase
             [
                 '__construct()' => [42],
             ],
-            GearBox::class
+            GearBox::class,
         );
 
         $this->assertInstanceOf(ArrayDefinition::class, $definition);

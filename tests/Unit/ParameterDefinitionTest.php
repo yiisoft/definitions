@@ -35,10 +35,10 @@ final class ParameterDefinitionTest extends TestCase
     public static function dataIsVariadic(): array
     {
         $parameters = self::getParameters(
-            static fn (
+            static fn(
                 string $a,
-                string ...$b
-            ): bool => true
+                string ...$b,
+            ): bool => true,
         );
 
         return [
@@ -58,10 +58,10 @@ final class ParameterDefinitionTest extends TestCase
     public static function dataIsOptional(): array
     {
         $parameters = self::getParameters(
-            static fn (
+            static fn(
                 string $a,
-                string $b = 'b'
-            ): bool => true
+                string $b = 'b',
+            ): bool => true,
         );
 
         return [
@@ -81,12 +81,12 @@ final class ParameterDefinitionTest extends TestCase
     public static function dataHasValue(): array
     {
         $parameters = self::getParameters(
-            static fn (
+            static fn(
                 string $a,
                 ?string $b,
                 ?string $c = null,
-                string $d = 'hello'
-            ): bool => true
+                string $d = 'hello',
+            ): bool => true,
         );
 
         return [
@@ -107,13 +107,13 @@ final class ParameterDefinitionTest extends TestCase
 
     public function testResolveWithIncorrectTypeInContainer(): void
     {
-        $definition = new ParameterDefinition(self::getFirstParameter(fn (stdClass $class) => true));
+        $definition = new ParameterDefinition(self::getFirstParameter(fn(stdClass $class) => true));
 
         $container = new SimpleContainer([stdClass::class => 42]);
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '/^Container returned incorrect type "(integer|int)" for service "' . stdClass::class . '"\.$/'
+            '/^Container returned incorrect type "(integer|int)" for service "' . stdClass::class . '"\.$/',
         );
         $definition->resolve($container);
     }
@@ -123,7 +123,7 @@ final class ParameterDefinitionTest extends TestCase
         $definition = new ParameterDefinition(
             (new ReflectionClass(NullableConcreteDependency::class))
                 ->getConstructor()
-                ->getParameters()[0]
+                ->getParameters()[0],
         );
         $container = new SimpleContainer();
 
@@ -136,11 +136,11 @@ final class ParameterDefinitionTest extends TestCase
         return [
             'defaultValue' => [
                 7,
-                self::getFirstParameter(static fn (int $n = 7) => true),
+                self::getFirstParameter(static fn(int $n = 7) => true),
             ],
             'nullableAndDefaultNull' => [
                 null,
-                self::getFirstParameter(static fn (?int $n = null) => true),
+                self::getFirstParameter(static fn(?int $n = null) => true),
             ],
         ];
     }
@@ -158,15 +158,15 @@ final class ParameterDefinitionTest extends TestCase
     {
         $definition = new ParameterDefinition(
             self::getFirstParameter(
-                static fn ($x) => true,
-            )
+                static fn($x) => true,
+            ),
         );
         $container = new SimpleContainer();
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
             'Can not determine value of the "x" parameter without type when instantiating '
-            . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::'
+            . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::',
         );
         $this->expectExceptionMessage('Please specify argument explicitly.');
         $definition->resolve($container);
@@ -176,15 +176,15 @@ final class ParameterDefinitionTest extends TestCase
     {
         $definition = new ParameterDefinition(
             self::getFirstParameter(
-                static fn (int $n) => true,
-            )
+                static fn(int $n) => true,
+            ),
         );
         $container = new SimpleContainer();
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
             'Can not determine value of the "n" parameter of type "int" when instantiating '
-            . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::'
+            . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::',
         );
         $this->expectExceptionMessage('Please specify argument explicitly.');
         $definition->resolve($container);
@@ -193,7 +193,7 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveSelf(): void
     {
         $definition = new ParameterDefinition(
-            $this->getFirstConstructorParameter(SelfDependency::class)
+            $this->getFirstConstructorParameter(SelfDependency::class),
         );
         $container = new SimpleContainer();
 
@@ -206,7 +206,7 @@ final class ParameterDefinitionTest extends TestCase
         $definition = new ParameterDefinition(
             (new ReflectionClass(Car::class))
                 ->getConstructor()
-                ->getParameters()[0]
+                ->getParameters()[0],
         );
         $container = new SimpleContainer();
 
@@ -219,7 +219,7 @@ final class ParameterDefinitionTest extends TestCase
         $definition = new ParameterDefinition(
             (new ReflectionClass(UnionCar::class))
                 ->getConstructor()
-                ->getParameters()[0]
+                ->getParameters()[0],
         );
         $container = new SimpleContainer();
 
@@ -237,10 +237,10 @@ final class ParameterDefinitionTest extends TestCase
                 }
                 throw new NotFoundException($id);
             },
-            static fn (string $id): bool => $id === RuntimeExceptionDependency::class
+            static fn(string $id): bool => $id === RuntimeExceptionDependency::class,
         );
         $definition = new ParameterDefinition(
-            self::getFirstParameter(static fn (?RuntimeExceptionDependency $d = null) => 42),
+            self::getFirstParameter(static fn(?RuntimeExceptionDependency $d = null) => 42),
         );
 
         $this->expectException(RuntimeException::class);
@@ -258,10 +258,10 @@ final class ParameterDefinitionTest extends TestCase
                 }
                 throw new NotFoundException($id);
             },
-            static fn (string $id): bool => $id === CircularReferenceExceptionDependency::class
+            static fn(string $id): bool => $id === CircularReferenceExceptionDependency::class,
         );
         $definition = new ParameterDefinition(
-            self::getFirstParameter(static fn (?CircularReferenceExceptionDependency $d = null) => 42),
+            self::getFirstParameter(static fn(?CircularReferenceExceptionDependency $d = null) => 42),
         );
 
         $result = $definition->resolve($container);
@@ -276,7 +276,7 @@ final class ParameterDefinitionTest extends TestCase
         ]);
 
         $definition = new ParameterDefinition(
-            self::getFirstParameter(fn (GearBox|stdClass $class) => true)
+            self::getFirstParameter(fn(GearBox|stdClass $class) => true),
         );
         $result = $definition->resolve($container);
 
@@ -288,7 +288,7 @@ final class ParameterDefinitionTest extends TestCase
         $class = GearBox::class . '|' . stdClass::class;
 
         $definition = new ParameterDefinition(
-            self::getFirstParameter(fn (GearBox|stdClass $class) => true)
+            self::getFirstParameter(fn(GearBox|stdClass $class) => true),
         );
 
         $container = new SimpleContainer([
@@ -298,7 +298,7 @@ final class ParameterDefinitionTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '/^Container returned incorrect type "(integer|int)" for service "' . preg_quote($class, '/') . '"\.$/'
+            '/^Container returned incorrect type "(integer|int)" for service "' . preg_quote($class, '/') . '"\.$/',
         );
         $definition->resolve($container);
     }
@@ -306,10 +306,10 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveOptionalUnionTypeWithIncorrectTypeInContainer(): never
     {
         $this->markTestSkipped(
-            'Is there a real case?'
+            'Is there a real case?',
         );
 
-        $definition = new ParameterDefinition(self::getFirstParameter(fn (stdClass|GearBox $class) => true));
+        $definition = new ParameterDefinition(self::getFirstParameter(fn(stdClass|GearBox $class) => true));
 
         $container = new SimpleContainer([
             stdClass::class => 42,
@@ -324,7 +324,7 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveOptionalUnionType(): void
     {
         $definition = new ParameterDefinition(
-            self::getFirstParameter(static fn (string|ColorInterface $value = 'test') => true)
+            self::getFirstParameter(static fn(string|ColorInterface $value = 'test') => true),
         );
         $container = new SimpleContainer();
 
@@ -334,7 +334,7 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveOptionalPromotedPropertyUnionType(): void
     {
         $definition = new ParameterDefinition(
-            $this->getFirstConstructorParameter(UnionOptionalDependency::class)
+            $this->getFirstConstructorParameter(UnionOptionalDependency::class),
         );
         $container = new SimpleContainer();
 
@@ -344,13 +344,13 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveUnionBuiltin(): void
     {
         $definition = new ParameterDefinition(
-            $this->getFirstConstructorParameter(UnionBuiltinDependency::class)
+            $this->getFirstConstructorParameter(UnionBuiltinDependency::class),
         );
         $container = new SimpleContainer();
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
-            'Can not determine value of the "value" parameter of type "string|int" when instantiating '
+            'Can not determine value of the "value" parameter of type "string|int" when instantiating ',
         );
         $definition->resolve($container);
     }
@@ -358,7 +358,7 @@ final class ParameterDefinitionTest extends TestCase
     public function testResolveUnionSelf(): void
     {
         $definition = new ParameterDefinition(
-            $this->getFirstConstructorParameter(UnionSelfDependency::class)
+            $this->getFirstConstructorParameter(UnionSelfDependency::class),
         );
         $container = new SimpleContainer();
 
@@ -376,10 +376,10 @@ final class ParameterDefinitionTest extends TestCase
                 }
                 throw new NotFoundException($id);
             },
-            static fn (string $id): bool => $id === RuntimeExceptionDependency::class
+            static fn(string $id): bool => $id === RuntimeExceptionDependency::class,
         );
         $definition = new ParameterDefinition(
-            self::getFirstParameter(static fn (RuntimeExceptionDependency|string|null $d = null) => 42),
+            self::getFirstParameter(static fn(RuntimeExceptionDependency|string|null $d = null) => 42),
         );
 
         $this->expectException(RuntimeException::class);
@@ -397,10 +397,10 @@ final class ParameterDefinitionTest extends TestCase
                 }
                 throw new NotFoundException($id);
             },
-            static fn (string $id): bool => $id === CircularReferenceExceptionDependency::class
+            static fn(string $id): bool => $id === CircularReferenceExceptionDependency::class,
         );
         $definition = new ParameterDefinition(
-            self::getFirstParameter(static fn (CircularReferenceExceptionDependency|string|null $d = null) => 42),
+            self::getFirstParameter(static fn(CircularReferenceExceptionDependency|string|null $d = null) => 42),
         );
 
         $result = $definition->resolve($container);
@@ -413,7 +413,7 @@ final class ParameterDefinitionTest extends TestCase
         $container = new SimpleContainer();
 
         $definition = new ParameterDefinition(
-            self::getFirstParameter(fn (GearBox&stdClass $class) => true)
+            self::getFirstParameter(fn(GearBox&stdClass $class) => true),
         );
 
         $this->expectException(NotInstantiableException::class);

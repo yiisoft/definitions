@@ -6,7 +6,5 @@ namespace Yiisoft\Definitions\Tests\Support\DefinitionStorage;
 
 final class ServiceWithBuiltinTypeWithoutDefault
 {
-    public function __construct(string $test)
-    {
-    }
+    public function __construct(string $test) {}
 }

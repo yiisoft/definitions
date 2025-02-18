@@ -6,7 +6,5 @@ namespace Yiisoft\Definitions\Tests\Support\DefinitionStorage;
 
 final class ServiceWithPrivateConstructorSubDependency
 {
-    public function __construct(ServiceWithPrivateConstructor $serviceWithPrivateConstructor)
-    {
-    }
+    public function __construct(ServiceWithPrivateConstructor $serviceWithPrivateConstructor) {}
 }

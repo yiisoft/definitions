@@ -6,7 +6,5 @@ namespace Yiisoft\Definitions\Tests\Support\Circular;
 
 class Chicken
 {
-    public function __construct(Egg $egg)
-    {
-    }
+    public function __construct(Egg $egg) {}
 }

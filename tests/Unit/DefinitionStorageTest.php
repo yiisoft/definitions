@@ -41,7 +41,7 @@ final class DefinitionStorageTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
-            'Service ' . UnionSelfDependency::class . ' doesn\'t exist in DefinitionStorage.'
+            'Service ' . UnionSelfDependency::class . ' doesn\'t exist in DefinitionStorage.',
         );
         $storage->get(UnionSelfDependency::class);
     }
@@ -92,7 +92,7 @@ final class DefinitionStorageTest extends TestCase
                 ServiceWithNonExistingDependency::class,
                 \NonExisting::class,
             ],
-            $storage->getBuildStack()
+            $storage->getBuildStack(),
         );
     }
 
@@ -106,7 +106,7 @@ final class DefinitionStorageTest extends TestCase
                 ServiceWithNonExistingDependency::class ,
                 \NonExisting::class,
             ],
-            $storage->getBuildStack()
+            $storage->getBuildStack(),
         );
     }
 
@@ -126,7 +126,7 @@ final class DefinitionStorageTest extends TestCase
                 ServiceWithPrivateConstructorSubDependency::class,
                 ServiceWithPrivateConstructor::class,
             ],
-            $storage->getBuildStack()
+            $storage->getBuildStack(),
         );
     }
 
@@ -140,7 +140,7 @@ final class DefinitionStorageTest extends TestCase
                 \NotExist1::class,
                 \NotExist2::class,
             ],
-            $storage->getBuildStack()
+            $storage->getBuildStack(),
         );
     }
 
@@ -171,7 +171,7 @@ final class DefinitionStorageTest extends TestCase
                 \NonExisting::class,
                 ServiceWithPrivateConstructor::class,
             ],
-            $storage->getBuildStack()
+            $storage->getBuildStack(),
         );
     }
 
@@ -212,7 +212,7 @@ final class DefinitionStorageTest extends TestCase
         $this->expectException(CircularReferenceException::class);
         $this->expectExceptionMessage(
             'Circular reference to "' . Chicken::class . '" detected while building: ' .
-            Chicken::class . ', ' . Egg::class
+            Chicken::class . ', ' . Egg::class,
         );
         $storage->get(Chicken::class);
     }
@@ -223,7 +223,7 @@ final class DefinitionStorageTest extends TestCase
 
         $this->expectException(CircularReferenceException::class);
         $this->expectExceptionMessage(
-            'Circular reference to "' . SelfDependency::class . '" detected while building: ' . SelfDependency::class
+            'Circular reference to "' . SelfDependency::class . '" detected while building: ' . SelfDependency::class,
         );
         $storage->get(SelfDependency::class);
     }

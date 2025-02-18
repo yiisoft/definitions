@@ -6,7 +6,5 @@ namespace Yiisoft\Definitions\Tests\Support;
 
 final class SelfDependency
 {
-    public function __construct(self $a)
-    {
-    }
+    public function __construct(self $a) {}
 }

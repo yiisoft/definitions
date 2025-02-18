@@ -22,9 +22,8 @@ use function sprintf;
 final class ParameterDefinition implements DefinitionInterface
 {
     public function __construct(
-        private readonly ReflectionParameter $parameter
-    ) {
-    }
+        private readonly ReflectionParameter $parameter,
+    ) {}
 
     public function getReflection(): ReflectionParameter
     {
@@ -91,7 +90,7 @@ final class ParameterDefinition implements DefinitionInterface
         if (!$result instanceof $typeName) {
             $actualType = get_debug_type($result);
             throw new InvalidConfigException(
-                "Container returned incorrect type \"$actualType\" for service \"{$type->getName()}\"."
+                "Container returned incorrect type \"$actualType\" for service \"{$type->getName()}\".",
             );
         }
         return $result;
@@ -115,7 +114,7 @@ final class ParameterDefinition implements DefinitionInterface
                     'Please specify argument explicitly.',
                     $this->parameter->getName(),
                     $this->getCallable(),
-                )
+                ),
             );
         }
 
@@ -126,7 +125,7 @@ final class ParameterDefinition implements DefinitionInterface
                 $this->parameter->getName(),
                 $type,
                 $this->getCallable(),
-            )
+            ),
         );
     }
 
@@ -177,7 +176,7 @@ final class ParameterDefinition implements DefinitionInterface
                 if (!$result instanceof $typeName) {
                     $actualType = get_debug_type($result);
                     throw new InvalidConfigException(
-                        "Container returned incorrect type \"$actualType\" for service \"$class\"."
+                        "Container returned incorrect type \"$actualType\" for service \"$class\".",
                     );
                 }
                 return $result;

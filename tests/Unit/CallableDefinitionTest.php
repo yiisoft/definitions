@@ -23,7 +23,7 @@ final class CallableDefinitionTest extends TestCase
             [
                 CarFactory::class => new CarFactory(),
                 ColorInterface::class => new ColorPink(),
-            ]
+            ],
         );
 
         /** @var Car $car */

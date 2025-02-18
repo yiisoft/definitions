@@ -59,7 +59,7 @@ final class DefinitionValidator
 
         throw new InvalidConfigException(
             'Invalid definition: '
-            . ($definition === '' ? 'empty string.' : var_export($definition, true))
+            . ($definition === '' ? 'empty string.' : var_export($definition, true)),
         );
     }
 
@@ -75,7 +75,7 @@ final class DefinitionValidator
     {
         /** @var class-string $className */
         $className = $definition[ArrayDefinition::CLASS_NAME] ?? $id ?? throw new InvalidConfigException(
-            'Invalid definition: no class name specified.'
+            'Invalid definition: no class name specified.',
         );
         self::validateString($className);
         $classReflection = new ReflectionClass($className);
@@ -123,7 +123,7 @@ final class DefinitionValidator
                 $classPublicMethods,
                 $classPublicProperties,
                 $classReflection,
-                $className
+                $className,
             );
 
             throw new InvalidConfigException(
@@ -145,13 +145,13 @@ final class DefinitionValidator
         array $classPublicMethods,
         array $classPublicProperties,
         ReflectionClass $classReflection,
-        string $className
+        string $className,
     ): string {
         $parsedKey = trim(
             strtr($key, [
                 '()' => '',
                 '$' => '',
-            ])
+            ]),
         );
         if (in_array($parsedKey, $classPublicMethods, true)) {
             return sprintf(
@@ -191,7 +191,7 @@ final class DefinitionValidator
         ReflectionClass $classReflection,
         array $classPublicMethods,
         string $className,
-        mixed $value
+        mixed $value,
     ): void {
         if (!$classReflection->hasMethod($methodName)) {
             if ($classReflection->hasMethod('__call') || $classReflection->hasMethod('__callStatic')) {
@@ -211,7 +211,7 @@ final class DefinitionValidator
                     'Invalid definition: class "%s" does not have the public method with name "%s". ' . $possiblePropertiesMessage,
                     $className,
                     $methodName,
-                )
+                ),
             );
         }
         if (!in_array($methodName, $classPublicMethods, true)) {
@@ -219,7 +219,7 @@ final class DefinitionValidator
                 sprintf(
                     'Invalid definition: method "%s" must be public.',
                     $className . '::' . $methodName . '()',
-                )
+                ),
             );
         }
         if (!is_array($value)) {
@@ -236,7 +236,7 @@ final class DefinitionValidator
         string $key,
         ReflectionClass $classReflection,
         array $classPublicProperties,
-        string $className
+        string $className,
     ): void {
         $parsedKey = substr($key, 1);
         if (!$classReflection->hasProperty($parsedKey)) {
@@ -265,7 +265,7 @@ final class DefinitionValidator
                 sprintf(
                     'Invalid definition: property "%s" must be public and writable.',
                     $className . '::' . $key,
-                )
+                ),
             );
         }
     }
@@ -283,7 +283,7 @@ final class DefinitionValidator
             if (is_object($argument) && !self::isValidObject($argument)) {
                 throw new InvalidConfigException(
                     'Only references are allowed in constructor arguments, a definition object was provided: ' .
-                    var_export($argument, true)
+                    var_export($argument, true),
                 );
             }
         }
@@ -322,7 +322,7 @@ final class DefinitionValidator
                 sprintf(
                     'Invalid definition: class name must be a non-empty string, got %s.',
                     get_debug_type($class),
-                )
+                ),
             );
         }
         if (trim($class) === '') {
