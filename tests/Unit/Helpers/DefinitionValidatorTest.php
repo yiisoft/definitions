@@ -17,6 +17,7 @@ use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\Tests\Support\MagicCall;
 use Yiisoft\Definitions\Tests\Support\Phone;
+use Yiisoft\Definitions\Tests\Support\ReadonlyProperty;
 use Yiisoft\Definitions\Tests\Support\Recorder;
 use Yiisoft\Definitions\Tests\Support\UTF8User;
 use Yiisoft\Definitions\ValueDefinition;
@@ -73,7 +74,7 @@ final class DefinitionValidatorTest extends TestCase
                 $object1::class,
                 '$invisible',
                 sprintf(
-                    'Invalid definition: property "%s" must be public.',
+                    'Invalid definition: property "%s" must be public and writable.',
                     $object1::class . '::$invisible',
                 ),
             ],
@@ -81,7 +82,7 @@ final class DefinitionValidatorTest extends TestCase
                 UTF8User::class,
                 '$имя',
                 sprintf(
-                    'Invalid definition: property "%s" must be public.',
+                    'Invalid definition: property "%s" must be public and writable.',
                     UTF8User::class . '::$имя',
                 ),
             ],
@@ -366,5 +367,19 @@ final class DefinitionValidatorTest extends TestCase
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
         DefinitionValidator::validate($config);
+    }
+
+    public function testReadonlyProperty(): void
+    {
+        $definition = [
+            'class' => ReadonlyProperty::class,
+            '$var' => 'test',
+        ];
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Invalid definition: property "Yiisoft\Definitions\Tests\Support\ReadonlyProperty::$var" must be public and writable.'
+        );
+        DefinitionValidator::validate($definition);
     }
 }

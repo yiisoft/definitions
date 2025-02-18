@@ -11,6 +11,7 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
+use function count;
 use function in_array;
 use function is_array;
 use function is_callable;
@@ -85,7 +86,7 @@ final class DefinitionValidator
         }
         $classPublicProperties = [];
         foreach ($classReflection->getProperties() as $reflectionProperty) {
-            if ($reflectionProperty->isPublic()) {
+            if ($reflectionProperty->isPublic() && !$reflectionProperty->isReadOnly()) {
                 $classPublicProperties[] = $reflectionProperty->getName();
             }
         }
@@ -261,7 +262,7 @@ final class DefinitionValidator
         } elseif (!in_array($parsedKey, $classPublicProperties, true)) {
             throw new InvalidConfigException(
                 sprintf(
-                    'Invalid definition: property "%s" must be public.',
+                    'Invalid definition: property "%s" must be public and writable.',
                     $className . '::' . $key,
                 )
             );

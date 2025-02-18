@@ -7,6 +7,7 @@
 - Enh #106: Minor performance optimization: use FQN for PHP functions, remove unnecessary conditions (@vjik)
 - Enh #106: Mark readonly properties (@vjik)
 - Bug #105: Explicitly mark nullable parameters (@vjik)
+- Enh #106: Improve definition validation for readonly properties (@vjik)
 
 ## 3.3.1 December 16, 2024
 
