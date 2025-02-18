@@ -441,10 +441,10 @@ final class ParameterDefinitionTest extends TestCase
 
         $this->assertInstanceOf(NotInstantiableException::class, $exception);
         $this->assertStringStartsWith(
-            'Can not determine value of the "class" parameter of type "Yiisoft\Definitions\Tests\Support\GearBox&stdClass" when instantiating "Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::{closure',
+            'Can not determine value of the "class" parameter of type "Yiisoft\Definitions\Tests\Support\GearBox&stdClass" when instantiating "Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::',
             $exception->getMessage(),
         );
-        $this->assertStringEndsWith('()". Please specify argument explicitly.', $exception->getMessage());
+        $this->assertStringEndsWith('}()". Please specify argument explicitly.', $exception->getMessage());
     }
 
     /**
