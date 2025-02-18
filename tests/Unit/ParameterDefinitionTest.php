@@ -84,7 +84,7 @@ final class ParameterDefinitionTest extends TestCase
             static fn (
                 string $a,
                 ?string $b,
-                string $c = null,
+                ?string $c = null,
                 string $d = 'hello'
             ): bool => true
         );
@@ -137,10 +137,6 @@ final class ParameterDefinitionTest extends TestCase
             'defaultValue' => [
                 7,
                 self::getFirstParameter(static fn (int $n = 7) => true),
-            ],
-            'defaultNull' => [
-                null,
-                self::getFirstParameter(static fn (int $n = null) => true),
             ],
             'nullableAndDefaultNull' => [
                 null,
