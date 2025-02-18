@@ -46,7 +46,7 @@ final class DefinitionResolverTest extends TestCase
         $this->expectExceptionMessageMatches(
             '/^Only references are allowed in constructor arguments, a definition object was provided: (\\\\|)' .
             preg_quote(ValueDefinition::class) .
-            '.*/'
+            '.*/',
         );
         DefinitionResolver::ensureResolvable(new ValueDefinition(7));
     }
@@ -61,7 +61,7 @@ final class DefinitionResolverTest extends TestCase
         $engineMarkOne = new EngineMarkOne();
         $definitions['value'] = new ValueDefinition($engineMarkOne);
 
-        $reflection = new ReflectionFunction(static fn (...$a) => true);
+        $reflection = new ReflectionFunction(static fn(...$a) => true);
         $definitions['parameter'] = new ParameterDefinition($reflection->getParameters()[0]);
 
         $definitions['reference'] = Reference::to('int');
@@ -73,7 +73,7 @@ final class DefinitionResolverTest extends TestCase
                 'value' => $engineMarkOne,
                 'reference' => 42,
             ],
-            $result
+            $result,
         );
     }
 }

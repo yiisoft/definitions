@@ -32,9 +32,8 @@ final class DefinitionStorage
      */
     public function __construct(
         private array $definitions = [],
-        private readonly bool $useStrictMode = false
-    ) {
-    }
+        private readonly bool $useStrictMode = false,
+    ) {}
 
     /**
      * @param ContainerInterface $delegateContainer Container to fall back to when dependency is not found.
@@ -113,7 +112,7 @@ final class DefinitionStorage
             throw new CircularReferenceException(sprintf(
                 'Circular reference to "%s" detected while building: %s.',
                 $id,
-                implode(', ', array_keys($building))
+                implode(', ', array_keys($building)),
             ));
         }
 
@@ -212,8 +211,8 @@ final class DefinitionStorage
                             sprintf(
                                 'Circular reference to "%s" detected while building: %s.',
                                 $id,
-                                implode(', ', array_keys($building))
-                            )
+                                implode(', ', array_keys($building)),
+                            ),
                         );
                     }
 

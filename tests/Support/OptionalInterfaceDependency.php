@@ -6,7 +6,5 @@ namespace Yiisoft\Definitions\Tests\Support;
 
 final class OptionalInterfaceDependency
 {
-    public function __construct(EngineInterface $engine = null)
-    {
-    }
+    public function __construct(EngineInterface $engine = null) {}
 }

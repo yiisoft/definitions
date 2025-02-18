@@ -6,7 +6,5 @@ namespace Yiisoft\Definitions\Tests\Support;
 
 final class NullableConcreteDependency
 {
-    public function __construct(?Car $car)
-    {
-    }
+    public function __construct(?Car $car) {}
 }

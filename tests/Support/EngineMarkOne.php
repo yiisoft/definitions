@@ -9,9 +9,8 @@ final class EngineMarkOne implements EngineInterface
     public const NAME = 'Mark One';
 
     public function __construct(
-        private int $number = 0
-    ) {
-    }
+        private int $number = 0,
+    ) {}
 
     public function getName(): string
     {

@@ -213,7 +213,7 @@ final class ArrayDefinitionTest extends TestCase
             [
                 ArrayDefinition::CLASS_NAME => Phone::class,
             ],
-            $callMethods
+            $callMethods,
         ));
 
         /** @var Phone $phone */
@@ -346,7 +346,7 @@ final class ArrayDefinitionTest extends TestCase
         ?string $expectedName,
         array $expectedColors,
         array $data,
-        array $containerDefinitions = []
+        array $containerDefinitions = [],
     ): void {
         $container = new SimpleContainer($containerDefinitions);
 
@@ -372,7 +372,7 @@ final class ArrayDefinitionTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Arguments indexed both by name and by position are not allowed in the same array.'
+            'Arguments indexed both by name and by position are not allowed in the same array.',
         );
         $definition->resolve($container);
     }
@@ -463,7 +463,7 @@ final class ArrayDefinitionTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Arguments indexed both by name and by position are not allowed in the same array.'
+            'Arguments indexed both by name and by position are not allowed in the same array.',
         );
         $definition->resolve($container);
     }
@@ -511,7 +511,7 @@ final class ArrayDefinitionTest extends TestCase
                 'Call third(string, bool)',
                 'Set $fourth to string',
             ],
-            $object->getEvents()
+            $object->getEvents(),
         );
     }
 
