@@ -13,6 +13,7 @@ use ReflectionFunction;
 use ReflectionParameter;
 use RuntimeException;
 use stdClass;
+use Throwable;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\ParameterDefinition;
@@ -163,13 +164,20 @@ final class ParameterDefinitionTest extends TestCase
         );
         $container = new SimpleContainer();
 
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage(
-            'Can not determine value of the "x" parameter without type when instantiating '
-            . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::',
+        $exception = null;
+        try {
+            $definition->resolve($container);
+        } catch (Throwable $exception) {}
+
+        $this->assertInstanceOf(NotInstantiableException::class, $exception);
+        $this->assertStringStartsWith(
+            'Can not determine value of the "x" parameter without type when instantiating "Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::',
+            $exception->getMessage(),
         );
-        $this->expectExceptionMessage('Please specify argument explicitly.');
-        $definition->resolve($container);
+        $this->assertStringEndsWith(
+            'Please specify argument explicitly.',
+            $exception->getMessage(),
+        );
     }
 
     public function testResolveBuiltinParameter(): void
@@ -181,13 +189,20 @@ final class ParameterDefinitionTest extends TestCase
         );
         $container = new SimpleContainer();
 
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage(
-            'Can not determine value of the "n" parameter of type "int" when instantiating '
-            . '"Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::',
+        $exception = null;
+        try {
+            $definition->resolve($container);
+        } catch (Throwable $exception) {}
+
+        $this->assertInstanceOf(NotInstantiableException::class, $exception);
+        $this->assertStringStartsWith(
+            'Can not determine value of the "n" parameter of type "int" when instantiating "Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::',
+            $exception->getMessage(),
         );
-        $this->expectExceptionMessage('Please specify argument explicitly.');
-        $definition->resolve($container);
+        $this->assertStringEndsWith(
+            'Please specify argument explicitly.',
+            $exception->getMessage(),
+        );
     }
 
     public function testResolveSelf(): void
@@ -416,9 +431,18 @@ final class ParameterDefinitionTest extends TestCase
             self::getFirstParameter(fn(GearBox&stdClass $class) => true),
         );
 
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage('Can not determine value of the "class" parameter of type ');
-        $definition->resolve($container);
+        $exception = null;
+        try {
+            $definition->resolve($container);
+        } catch (Throwable $exception) {
+        }
+
+        $this->assertInstanceOf(NotInstantiableException::class, $exception);
+        $this->assertStringStartsWith(
+            'Can not determine value of the "class" parameter of type "Yiisoft\Definitions\Tests\Support\GearBox&stdClass" when instantiating "Yiisoft\Definitions\Tests\Unit\ParameterDefinitionTest::{closure',
+            $exception->getMessage(),
+        );
+        $this->assertStringEndsWith('()". Please specify argument explicitly.', $exception->getMessage());
     }
 
     /**
