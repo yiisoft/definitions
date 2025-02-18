@@ -167,7 +167,8 @@ final class ParameterDefinitionTest extends TestCase
         $exception = null;
         try {
             $definition->resolve($container);
-        } catch (Throwable $exception) {}
+        } catch (Throwable $exception) {
+        }
 
         $this->assertInstanceOf(NotInstantiableException::class, $exception);
         $this->assertStringStartsWith(
@@ -192,7 +193,8 @@ final class ParameterDefinitionTest extends TestCase
         $exception = null;
         try {
             $definition->resolve($container);
-        } catch (Throwable $exception) {}
+        } catch (Throwable $exception) {
+        }
 
         $this->assertInstanceOf(NotInstantiableException::class, $exception);
         $this->assertStringStartsWith(
