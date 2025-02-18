@@ -21,6 +21,7 @@
         <testsuite name="Yii Definitions tests">
             <directory>./tests/Unit</directory>
             <directory phpVersion="8.2" phpVersionOperator=">=">./tests/Php8_2</directory>
+            <directory phpVersion="8.4" phpVersionOperator=">=">./tests/Php8_4</directory>
         </testsuite>
     </testsuites>
 

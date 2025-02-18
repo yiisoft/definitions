@@ -6,6 +6,7 @@ namespace Yiisoft\Definitions\Helpers;
 
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
@@ -86,7 +87,7 @@ final class DefinitionValidator
         }
         $classPublicProperties = [];
         foreach ($classReflection->getProperties() as $reflectionProperty) {
-            if ($reflectionProperty->isPublic() && !$reflectionProperty->isReadOnly()) {
+            if (self::isPublicWritableProperty($reflectionProperty)) {
                 $classPublicProperties[] = $reflectionProperty->getName();
             }
         }
@@ -327,5 +328,29 @@ final class DefinitionValidator
         if (trim($class) === '') {
             throw new InvalidConfigException('Invalid definition: class name must be a non-empty string.');
         }
+    }
+
+    private static function isPublicWritableProperty(ReflectionProperty $property): bool
+    {
+        if (!$property->isPublic()) {
+            return false;
+        }
+
+        if ($property->isReadOnly()) {
+            return false;
+        }
+
+        if (PHP_VERSION_ID < 80400) {
+            return true;
+        }
+
+        $modifiers = $property->getModifiers();
+        if ($modifiers & ReflectionProperty::IS_PRIVATE_SET
+            || $modifiers & ReflectionProperty::IS_PROTECTED_SET
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }
