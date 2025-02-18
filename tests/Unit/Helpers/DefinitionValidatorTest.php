@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Yiisoft\Definitions\ArrayDefinition;
@@ -34,7 +35,7 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function dataInvalidClass(): array
+    public static function dataInvalidClass(): array
     {
         return [
             [42, 'Invalid definition: class name must be a non-empty string, got int.'],
@@ -42,9 +43,7 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataInvalidClass
-     */
+    #[DataProvider('dataInvalidClass')]
     public function testInvalidClass($class, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
@@ -54,7 +53,7 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function dataInvalidProperty(): array
+    public static function dataInvalidProperty(): array
     {
         $object1 = new class () {
             public bool $visible = true;
@@ -89,9 +88,7 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataInvalidProperty
-     */
+    #[DataProvider('dataInvalidProperty')]
     public function testInvalidProperty(string $object, string $property, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
@@ -102,7 +99,7 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function dataInvalidDefinitionWithoutClass(): array
+    public static function dataInvalidDefinitionWithoutClass(): array
     {
         return [
             [[]],
@@ -110,9 +107,7 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataInvalidDefinitionWithoutClass
-     */
+    #[DataProvider('dataInvalidDefinitionWithoutClass')]
     public function testWithoutClass($definition): void
     {
         $this->expectException(InvalidConfigException::class);
@@ -120,7 +115,7 @@ final class DefinitionValidatorTest extends TestCase
         DefinitionValidator::validate($definition);
     }
 
-    public function dataInvalidStringDefinition(): array
+    public static function dataInvalidStringDefinition(): array
     {
         return [
             ['', 'Invalid definition: class name must be a non-empty string.'],
@@ -128,9 +123,7 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataInvalidStringDefinition
-     */
+    #[DataProvider('dataInvalidStringDefinition')]
     public function testInvalidStringDefinition(string $definition, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
@@ -150,7 +143,7 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function dataInvalidMethodCalls(): array
+    public static function dataInvalidMethodCalls(): array
     {
         return [
             [
@@ -179,9 +172,7 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataInvalidMethodCalls
-     */
+    #[DataProvider('dataInvalidMethodCalls')]
     public function testInvalidMethodCalls(string $class, array $methodCalls, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
@@ -193,7 +184,7 @@ final class DefinitionValidatorTest extends TestCase
         );
     }
 
-    public function dataErrorOnPropertyOrMethodTypo(): array
+    public static function dataErrorOnPropertyOrMethodTypo(): array
     {
         return [
             ['dev', true, 'Invalid definition: key "dev" is not allowed. Did you mean "$dev"?'],
@@ -267,9 +258,7 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataErrorOnPropertyOrMethodTypo
-     */
+    #[DataProvider('dataErrorOnPropertyOrMethodTypo')]
     public function testErrorOnPropertyOrMethodTypo(string $key, $value, string $errorMessage): void
     {
         $this->expectException(InvalidConfigException::class);
@@ -283,13 +272,13 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function dataValidate(): array
+    public static function dataValidate(): array
     {
         return [
             'ready-object' => [new stdClass()],
             'reference' => [Reference::to('test')],
             'class-name' => [Car::class],
-            'callable' => [[CarFactory::class, 'create']],
+            'callable' => [CarFactory::create(...)],
             'array-definition' => [['class' => ColorPink::class]],
             'magic method reference' => [['class' => Recorder::class, 'add()' => ['test magic method']]],
             'magic only call reference' => [['class' => MagicCall::class, 'add()' => ['test magic method']]],
@@ -305,16 +294,14 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataValidate
-     */
+    #[DataProvider('dataValidate')]
     public function testValidate($definition, ?string $id = null): void
     {
         DefinitionValidator::validate($definition, $id);
         $this->expectNotToPerformAssertions();
     }
 
-    public function dataValidateArrayDefinition(): array
+    public static function dataValidateArrayDefinition(): array
     {
         return [
             [['class' => ColorPink::class], 'pink_color'],
@@ -323,9 +310,7 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataValidateArrayDefinition
-     */
+    #[DataProvider('dataValidateArrayDefinition')]
     public function testValidateArrayDefinition(array $definition, ?string $id): void
     {
         DefinitionValidator::validateArrayDefinition($definition, $id);
@@ -355,7 +340,7 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
-    public function dataIncorrectMethodName(): array
+    public static function dataIncorrectMethodName(): array
     {
         return [
             [
@@ -375,9 +360,7 @@ final class DefinitionValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataIncorrectMethodName
-     */
+    #[DataProvider('dataIncorrectMethodName')]
     public function testIncorrectMethodName(array $config, string $message): void
     {
         $this->expectException(InvalidConfigException::class);

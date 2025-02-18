@@ -15,13 +15,15 @@ use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
+use function sprintf;
+
 /**
  * Parameter definition resolves an object based on information from `ReflectionParameter` instance.
  */
 final class ParameterDefinition implements DefinitionInterface
 {
     public function __construct(
-        private ReflectionParameter $parameter
+        private readonly ReflectionParameter $parameter
     ) {
     }
 
@@ -54,8 +56,7 @@ final class ParameterDefinition implements DefinitionInterface
             return $this->resolveUnionType($type, $container);
         }
 
-        if ($type === null
-            || !$type instanceof ReflectionNamedType
+        if (!$type instanceof ReflectionNamedType
             || $this->isVariadic()
             || $type->isBuiltin()
         ) {
@@ -146,7 +147,7 @@ final class ParameterDefinition implements DefinitionInterface
 
         foreach ($types as $type) {
             /**
-             * @psalm-suppress DocblockTypeContradiction Need for PHP 8.0 and 8.1 only
+             * @psalm-suppress DocblockTypeContradiction Need for PHP 8.1 only
              */
             if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
                 continue;

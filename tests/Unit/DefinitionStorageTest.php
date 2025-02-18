@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Dfinitions\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -250,7 +251,7 @@ final class DefinitionStorageTest extends TestCase
         $this->assertSame(ColorPink::class, $object);
     }
 
-    public function dataHas(): array
+    public static function dataHas(): array
     {
         return [
             [false, Tree::class, [], new SimpleContainer([ColorInterface::class => new ColorPink()])],
@@ -261,9 +262,7 @@ final class DefinitionStorageTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataHas
-     */
+    #[DataProvider('dataHas')]
     public function testHas(
         bool $expected,
         string $id,
