@@ -27,11 +27,13 @@ The code is statically analyzed with [Psalm](https://psalm.dev/). To run static 
 
 ## Code style
 
-Use [Rector](https://github.com/rectorphp/rector) to make codebase follow some specific rules or
-use either newest or any specific version of PHP:
+Package used [PHP CS Fixer](https://cs.symfony.com/) to maintain [PER CS 2.0](https://www.php-fig.org/per/coding-style/)
+code style and [Rector](https://github.com/rectorphp/rector) to make codebase follow some specific rules or use either
+newest or any specific version of PHP:
 
 ```shell
-./vendor/bin/rector
+composer php-cs-fixer
+composer rector
 ```
 
 ## Dependencies
