@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
-use Override;
 use Psr\Container\ContainerInterface;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -47,7 +46,6 @@ final class ParameterDefinition implements DefinitionInterface
         return $this->parameter->isDefaultValueAvailable();
     }
 
-    #[Override]
     public function resolve(ContainerInterface $container): mixed
     {
         $type = $this->parameter->getType();

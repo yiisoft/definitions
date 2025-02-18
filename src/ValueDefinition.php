@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions;
 
-use Override;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 
@@ -33,7 +32,6 @@ final class ValueDefinition implements DefinitionInterface
         return $this->type;
     }
 
-    #[Override]
     public function resolve(ContainerInterface $container): mixed
     {
         return $this->value;
