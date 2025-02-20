@@ -22,7 +22,7 @@ final class ParameterDefinitionTest extends TestCase
         ]);
 
         $definition = new ParameterDefinition(
-            $this->getFirstParameter(fn (Bike|(GearBox&stdClass)|Chair $class) => true)
+            $this->getFirstParameter(fn(Bike|(GearBox&stdClass)|Chair $class) => true),
         );
 
         $result = $definition->resolve($container);

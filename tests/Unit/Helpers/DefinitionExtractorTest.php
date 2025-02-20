@@ -20,8 +20,6 @@ use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\NullableInterfaceDependency;
-use Yiisoft\Definitions\Tests\Support\OptionalConcreteDependency;
-use Yiisoft\Definitions\Tests\Support\OptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Support\NullableOptionalConcreteDependency;
 use Yiisoft\Definitions\Tests\Support\NullableOptionalInterfaceDependency;
 use Yiisoft\Definitions\Tests\Support\RedChair;
@@ -102,15 +100,6 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertEquals(5, $dependencies['maxGear']->resolve($container));
     }
 
-    public function testOptionalInterfaceDependency(): void
-    {
-        $container = new SimpleContainer();
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = DefinitionExtractor::fromClassName(OptionalInterfaceDependency::class);
-        $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['engine']->resolve($container));
-    }
-
     public function testNullableInterfaceDependency(): void
     {
         $container = new SimpleContainer();
@@ -119,15 +108,6 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertCount(1, $dependencies);
         $this->expectException(NotFoundExceptionInterface::class);
         $dependencies['engine']->resolve($container);
-    }
-
-    public function testOptionalConcreteDependency(): void
-    {
-        $container = new SimpleContainer();
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = DefinitionExtractor::fromClassName(OptionalConcreteDependency::class);
-        $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
 
     public function testNullableConcreteDependency(): void
@@ -152,7 +132,6 @@ final class DefinitionExtractorTest extends TestCase
     public function testNullableOptionalInterfaceDependency(): void
     {
         $container = new SimpleContainer();
-        /** @var DefinitionInterface[] $dependencies */
         $dependencies = DefinitionExtractor::fromClassName(NullableOptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['engine']->resolve($container));

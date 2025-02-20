@@ -6,11 +6,13 @@ namespace Yiisoft\Definitions\Helpers;
 
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
+use function count;
 use function in_array;
 use function is_array;
 use function is_callable;
@@ -85,7 +87,7 @@ final class DefinitionValidator
         }
         $classPublicProperties = [];
         foreach ($classReflection->getProperties() as $reflectionProperty) {
-            if ($reflectionProperty->isPublic()) {
+            if (self::isPublicWritableProperty($reflectionProperty)) {
                 $classPublicProperties[] = $reflectionProperty->getName();
             }
         }
@@ -261,7 +263,7 @@ final class DefinitionValidator
         } elseif (!in_array($parsedKey, $classPublicProperties, true)) {
             throw new InvalidConfigException(
                 sprintf(
-                    'Invalid definition: property "%s" must be public.',
+                    'Invalid definition: property "%s" must be public and writable.',
                     $className . '::' . $key,
                 ),
             );
@@ -326,5 +328,27 @@ final class DefinitionValidator
         if (trim($class) === '') {
             throw new InvalidConfigException('Invalid definition: class name must be a non-empty string.');
         }
+    }
+
+    private static function isPublicWritableProperty(ReflectionProperty $property): bool
+    {
+        if (!$property->isPublic()) {
+            return false;
+        }
+
+        if ($property->isReadOnly()) {
+            return false;
+        }
+
+        if (PHP_VERSION_ID < 80400) {
+            return true;
+        }
+
+        $modifiers = $property->getModifiers();
+
+        /**
+         * @psalm-suppress UndefinedConstant, MixedOperand Needs for PHP 8.3 or lower
+         */
+        return ($modifiers & (ReflectionProperty::IS_PRIVATE_SET | ReflectionProperty::IS_PROTECTED_SET)) === 0;
     }
 }
