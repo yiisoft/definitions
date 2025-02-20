@@ -349,9 +349,6 @@ final class DefinitionValidator
         /**
          * @psalm-suppress UndefinedConstant, MixedOperand Needs for PHP 8.3 or lower
          */
-        return !(
-            $modifiers & ReflectionProperty::IS_PRIVATE_SET
-            || $modifiers & ReflectionProperty::IS_PROTECTED_SET
-        );
+        return ($modifiers & (ReflectionProperty::IS_PRIVATE_SET | ReflectionProperty::IS_PROTECTED_SET)) === 0;
     }
 }
