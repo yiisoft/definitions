@@ -163,7 +163,7 @@ final class DefinitionExtractorTest extends TestCase
 
         $this->assertInstanceOf(ParameterDefinition::class, $definition);
         $this->assertSame(
-            PHP_VERSION_ID > 80500 ? 'self' : SelfDependency::class,
+            PHP_VERSION_ID < 80500 ? 'self' : SelfDependency::class,
             $definition->getReflection()->getType()->getName(),
         );
     }
