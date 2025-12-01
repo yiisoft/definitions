@@ -12,7 +12,7 @@ final class Recorder
     public function __call($name, $arguments)
     {
         $arguments = array_map(
-            static fn($argument) => get_debug_type($argument),
+            get_debug_type(...),
             $arguments,
         );
 
@@ -22,7 +22,7 @@ final class Recorder
     public static function __callStatic($name, $arguments)
     {
         $arguments = array_map(
-            static fn($argument) => get_debug_type($argument),
+            get_debug_type(...),
             $arguments,
         );
 
