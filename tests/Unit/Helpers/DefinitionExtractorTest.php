@@ -69,12 +69,18 @@ final class DefinitionExtractorTest extends TestCase
     {
         $definition = DefinitionExtractor::fromClassName(UnionSelfDependency::class)['a'];
 
-        $actualType = implode('|', $definition
-            ->getReflection()
-            ->getType()
-            ->getTypes());
+        $actualType = implode(
+            '|',
+            $definition->getReflection()->getType()->getTypes(),
+        );
+
+        $self = PHP_VERSION_ID < 80500 ? 'self' : UnionSelfDependency::class;
+
         $this->assertInstanceOf(ParameterDefinition::class, $definition);
-        $this->assertSame('self|' . ColorInterface::class, $actualType);
+        $this->assertSame(
+            $self . '|' . ColorInterface::class,
+            $actualType,
+        );
     }
 
     public function testResolveCarConstructor(): void
@@ -153,16 +159,12 @@ final class DefinitionExtractorTest extends TestCase
 
     public function testFromClassWithSelfDependency(): void
     {
-        /** @var ParameterDefinition $definition */
         $definition = DefinitionExtractor::fromClassName(SelfDependency::class)['a'];
 
         $this->assertInstanceOf(ParameterDefinition::class, $definition);
         $this->assertSame(
-            'self',
-            $definition
-                ->getReflection()
-                ->getType()
-                ->getName(),
+            PHP_VERSION_ID < 80500 ? 'self' : SelfDependency::class,
+            $definition->getReflection()->getType()->getName(),
         );
     }
 
