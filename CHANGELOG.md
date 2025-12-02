@@ -1,5 +1,9 @@
 # Yii Definitions Change Log
 
+## 3.4.2 under development
+
+- no changes in this release.
+
 ## 3.4.1 December 02, 2025
 
 - Enh #110: Add PHP 8.5 support (@vjik)
