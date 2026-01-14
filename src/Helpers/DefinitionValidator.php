@@ -20,6 +20,8 @@ use function is_object;
 use function is_string;
 use function sprintf;
 
+use const PHP_VERSION_ID;
+
 /**
  * Definition validator checks if definition is valid.
  */
@@ -282,8 +284,8 @@ final class DefinitionValidator
         foreach ($value as $argument) {
             if (is_object($argument) && !self::isValidObject($argument)) {
                 throw new InvalidConfigException(
-                    'Only references are allowed in constructor arguments, a definition object was provided: ' .
-                    var_export($argument, true),
+                    'Only references are allowed in constructor arguments, a definition object was provided: '
+                    . var_export($argument, true),
                 );
             }
         }

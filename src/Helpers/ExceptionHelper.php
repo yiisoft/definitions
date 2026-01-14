@@ -37,8 +37,8 @@ final class ExceptionHelper
     {
         return new InvalidConfigException(
             sprintf(
-                'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". ' .
-                'Probably you should wrap them into square brackets.',
+                'Invalid definition: incorrect method "%s" arguments. Expected array, got "%s". '
+                . 'Probably you should wrap them into square brackets.',
                 $key,
                 get_debug_type($value),
             ),

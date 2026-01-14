@@ -22,6 +22,8 @@ use Yiisoft\Definitions\Tests\Support\Recorder;
 use Yiisoft\Definitions\Tests\Support\UTF8User;
 use Yiisoft\Definitions\ValueDefinition;
 
+use function sprintf;
+
 final class DefinitionValidatorTest extends TestCase
 {
     public function testIntegerKeyOfArray(): void
@@ -329,9 +331,9 @@ final class DefinitionValidatorTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '/^Only references are allowed in constructor arguments, a definition object was provided: (\\\\|)' .
-            preg_quote(ValueDefinition::class) .
-            '.*/',
+            '/^Only references are allowed in constructor arguments, a definition object was provided: (\\\\|)'
+            . preg_quote(ValueDefinition::class)
+            . '.*/',
         );
         DefinitionValidator::validate([
             'class' => GearBox::class,

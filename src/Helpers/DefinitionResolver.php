@@ -78,8 +78,8 @@ final class DefinitionResolver
 
         if ($value instanceof DefinitionInterface) {
             throw new InvalidConfigException(
-                'Only references are allowed in constructor arguments, a definition object was provided: ' .
-                var_export($value, true),
+                'Only references are allowed in constructor arguments, a definition object was provided: '
+                . var_export($value, true),
             );
         }
 
