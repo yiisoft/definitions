@@ -2,7 +2,7 @@
 
 ## 3.4.2 under development
 
-- no changes in this release.
+- Enh #112: Explicitly import constants in "use" section (@mspirkov)
 
 ## 3.4.1 December 02, 2025
 
