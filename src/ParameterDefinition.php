@@ -110,8 +110,8 @@ final class ParameterDefinition implements DefinitionInterface
         if ($type === null) {
             throw new NotInstantiableException(
                 sprintf(
-                    'Can not determine value of the "%s" parameter without type when instantiating "%s". ' .
-                    'Please specify argument explicitly.',
+                    'Can not determine value of the "%s" parameter without type when instantiating "%s". '
+                    . 'Please specify argument explicitly.',
                     $this->parameter->getName(),
                     $this->getCallable(),
                 ),
@@ -120,8 +120,8 @@ final class ParameterDefinition implements DefinitionInterface
 
         throw new NotInstantiableException(
             sprintf(
-                'Can not determine value of the "%s" parameter of type "%s" when instantiating "%s". ' .
-                'Please specify argument explicitly.',
+                'Can not determine value of the "%s" parameter of type "%s" when instantiating "%s". '
+                . 'Please specify argument explicitly.',
                 $this->parameter->getName(),
                 $type,
                 $this->getCallable(),

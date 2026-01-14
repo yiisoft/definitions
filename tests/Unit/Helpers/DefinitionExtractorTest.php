@@ -28,6 +28,8 @@ use Yiisoft\Definitions\Tests\Support\UnionCar;
 use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
+use const PHP_VERSION_ID;
+
 final class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void

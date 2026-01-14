@@ -56,8 +56,8 @@ final class Normalizer
         if (is_string($definition)) {
             // Current class
             if (
-                $class === $definition ||
-                ($class === null && class_exists($definition))
+                $class === $definition
+                || ($class === null && class_exists($definition))
             ) {
                 /** @psalm-var class-string $definition */
                 return ArrayDefinition::fromPreparedData($definition);

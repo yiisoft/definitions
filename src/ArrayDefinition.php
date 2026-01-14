@@ -85,35 +85,6 @@ final class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array<string, mixed> $config
-     *
-     * @psalm-return array<string, MethodOrPropertyItem>
-     */
-    private static function getMethodsAndPropertiesFromConfig(array $config): array
-    {
-        $methodsAndProperties = [];
-
-        foreach ($config as $key => $value) {
-            if ($key === self::CONSTRUCTOR) {
-                continue;
-            }
-
-            /**
-             * @infection-ignore-all Explode limit does not affect the result.
-             *
-             * @see \Yiisoft\Definitions\Tests\Unit\Helpers\DefinitionValidatorTest::testIncorrectMethodName()
-             */
-            if (count($methodArray = explode('()', $key, 2)) === 2) {
-                $methodsAndProperties[$key] = [self::TYPE_METHOD, $methodArray[0], $value];
-            } elseif (count($propertyArray = explode('$', $key)) === 2) {
-                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, $propertyArray[1], $value];
-            }
-        }
-
-        return $methodsAndProperties;
-    }
-
-    /**
      * @psalm-return class-string
      */
     public function getClass(): string
@@ -171,6 +142,65 @@ final class ArrayDefinition implements DefinitionInterface
         }
 
         return $object;
+    }
+
+    /**
+     * Create a new definition that is merged from this definition and another definition.
+     *
+     * @param ArrayDefinition $other Definition to merge with.
+     *
+     * @return self New definition that is merged from this definition and another definition.
+     */
+    public function merge(self $other): self
+    {
+        $new = clone $this;
+        $new->class = $other->class;
+        $new->constructorArguments = ArrayDefinitionHelper::mergeArguments($this->constructorArguments, $other->constructorArguments);
+
+        $methodsAndProperties = $this->methodsAndProperties;
+        foreach ($other->methodsAndProperties as $key => $item) {
+            if ($item[0] === self::TYPE_PROPERTY) {
+                $methodsAndProperties[$key] = $item;
+            } elseif ($item[0] === self::TYPE_METHOD) {
+                /** @psalm-suppress MixedArgument */
+                $arguments = isset($methodsAndProperties[$key])
+                    ? ArrayDefinitionHelper::mergeArguments($methodsAndProperties[$key][2], $item[2])
+                    : $item[2];
+                $methodsAndProperties[$key] = [$item[0], $item[1], $arguments];
+            }
+        }
+        $new->methodsAndProperties = $methodsAndProperties;
+
+        return $new;
+    }
+
+    /**
+     * @psalm-param array<string, mixed> $config
+     *
+     * @psalm-return array<string, MethodOrPropertyItem>
+     */
+    private static function getMethodsAndPropertiesFromConfig(array $config): array
+    {
+        $methodsAndProperties = [];
+
+        foreach ($config as $key => $value) {
+            if ($key === self::CONSTRUCTOR) {
+                continue;
+            }
+
+            /**
+             * @infection-ignore-all Explode limit does not affect the result.
+             *
+             * @see \Yiisoft\Definitions\Tests\Unit\Helpers\DefinitionValidatorTest::testIncorrectMethodName()
+             */
+            if (count($methodArray = explode('()', $key, 2)) === 2) {
+                $methodsAndProperties[$key] = [self::TYPE_METHOD, $methodArray[0], $value];
+            } elseif (count($propertyArray = explode('$', $key)) === 2) {
+                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, $propertyArray[1], $value];
+            }
+        }
+
+        return $methodsAndProperties;
     }
 
     /**
@@ -266,35 +296,5 @@ final class ArrayDefinition implements DefinitionInterface
         }
 
         return $hasIntegerIndex;
-    }
-
-    /**
-     * Create a new definition that is merged from this definition and another definition.
-     *
-     * @param ArrayDefinition $other Definition to merge with.
-     *
-     * @return self New definition that is merged from this definition and another definition.
-     */
-    public function merge(self $other): self
-    {
-        $new = clone $this;
-        $new->class = $other->class;
-        $new->constructorArguments = ArrayDefinitionHelper::mergeArguments($this->constructorArguments, $other->constructorArguments);
-
-        $methodsAndProperties = $this->methodsAndProperties;
-        foreach ($other->methodsAndProperties as $key => $item) {
-            if ($item[0] === self::TYPE_PROPERTY) {
-                $methodsAndProperties[$key] = $item;
-            } elseif ($item[0] === self::TYPE_METHOD) {
-                /** @psalm-suppress MixedArgument */
-                $arguments = isset($methodsAndProperties[$key])
-                    ? ArrayDefinitionHelper::mergeArguments($methodsAndProperties[$key][2], $item[2])
-                    : $item[2];
-                $methodsAndProperties[$key] = [$item[0], $item[1], $arguments];
-            }
-        }
-        $new->methodsAndProperties = $methodsAndProperties;
-
-        return $new;
     }
 }

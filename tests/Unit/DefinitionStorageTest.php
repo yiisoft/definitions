@@ -32,6 +32,9 @@ use Yiisoft\Definitions\Tests\Support\Tree;
 use Yiisoft\Definitions\Tests\Support\UnionCar;
 use Yiisoft\Definitions\Tests\Support\UnionSelfDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
+use NonExisting;
+use NotExist1;
+use NotExist2;
 
 final class DefinitionStorageTest extends TestCase
 {
@@ -90,7 +93,7 @@ final class DefinitionStorageTest extends TestCase
         $this->assertSame(
             [
                 ServiceWithNonExistingDependency::class,
-                \NonExisting::class,
+                NonExisting::class,
             ],
             $storage->getBuildStack(),
         );
@@ -104,7 +107,7 @@ final class DefinitionStorageTest extends TestCase
             [
                 ServiceWithNonExistingSubDependency::class,
                 ServiceWithNonExistingDependency::class ,
-                \NonExisting::class,
+                NonExisting::class,
             ],
             $storage->getBuildStack(),
         );
@@ -137,8 +140,8 @@ final class DefinitionStorageTest extends TestCase
         $this->assertSame(
             [
                 Notebook::class,
-                \NotExist1::class,
-                \NotExist2::class,
+                NotExist1::class,
+                NotExist2::class,
             ],
             $storage->getBuildStack(),
         );
@@ -168,7 +171,7 @@ final class DefinitionStorageTest extends TestCase
             [
                 ServiceWithNonResolvableUnionTypes::class,
                 ServiceWithNonExistingDependency::class,
-                \NonExisting::class,
+                NonExisting::class,
                 ServiceWithPrivateConstructor::class,
             ],
             $storage->getBuildStack(),
@@ -211,8 +214,8 @@ final class DefinitionStorageTest extends TestCase
 
         $this->expectException(CircularReferenceException::class);
         $this->expectExceptionMessage(
-            'Circular reference to "' . Chicken::class . '" detected while building: ' .
-            Chicken::class . ', ' . Egg::class,
+            'Circular reference to "' . Chicken::class . '" detected while building: '
+            . Chicken::class . ', ' . Egg::class,
         );
         $storage->get(Chicken::class);
     }
