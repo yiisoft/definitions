@@ -3,6 +3,7 @@
 ## 3.4.2 under development
 
 - Enh #112: Explicitly import constants in "use" section (@mspirkov)
+- Enh #113: Remove unnecessary files from Composer package (@mspirkov)
 
 ## 3.4.1 December 02, 2025
 
