@@ -22,6 +22,8 @@ return RectorConfig::configure()
         StaticDataProviderClassMethodRector::class,
     ])
     ->withSkip([
+        __DIR__ . '/tests/Php8_2/*',
+        __DIR__ . '/tests/Php8_4/*',
         ClosureToArrowFunctionRector::class,
         ReadOnlyPropertyRector::class,
         NullToStrictStringFuncCallArgRector::class,
