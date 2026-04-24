@@ -4,6 +4,7 @@
 
 - Enh #112: Explicitly import constants in "use" section (@mspirkov)
 - Enh #113: Remove unnecessary files from Composer package (@mspirkov)
+- Enh #114: Performance optimizations (@samdark)
 
 ## 3.4.1 December 02, 2025
 
