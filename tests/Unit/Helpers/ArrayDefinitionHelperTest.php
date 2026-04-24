@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helpers;
+namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
