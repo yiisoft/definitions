@@ -61,7 +61,7 @@ final class TypicalUsageBench
             'setId()' => ['42'],
         ]);
 
-        $this->staticFactoryDefinition = new CallableDefinition([CarFactory::class, 'create']);
+        $this->staticFactoryDefinition = new CallableDefinition(CarFactory::create(...));
         $this->serviceFactoryDefinition = new CallableDefinition([CarFactory::class, 'createWithColor']);
         $this->reference = Reference::to(EngineInterface::class);
     }

@@ -219,7 +219,7 @@ final class ArrayDefinition implements DefinitionInterface
             }
 
             $position = strpos($key, '$');
-            if ($position !== false && strpos($key, '$', $position + 1) === false) {
+            if ($position !== false && !str_contains(substr($key, $position + 1), '$')) {
                 $methodsAndProperties[$key] = [self::TYPE_PROPERTY, substr($key, $position + 1), $value];
                 self::$configKeyCache[$key] = [self::TYPE_PROPERTY, $methodsAndProperties[$key][1]];
                 continue;

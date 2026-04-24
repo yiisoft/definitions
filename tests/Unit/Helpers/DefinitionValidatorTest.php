@@ -40,7 +40,7 @@ final class DefinitionValidatorTest extends TestCase
 
     public function testCallable(): void
     {
-        DefinitionValidator::validate([CarFactory::class, 'create']);
+        DefinitionValidator::validate(CarFactory::create(...));
 
         $this->expectNotToPerformAssertions();
     }

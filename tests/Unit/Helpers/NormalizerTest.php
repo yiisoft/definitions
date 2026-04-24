@@ -107,7 +107,7 @@ final class NormalizerTest extends TestCase
 
     public function testStaticCallableArray(): void
     {
-        $definition = Normalizer::normalize([CarFactory::class, 'create']);
+        $definition = Normalizer::normalize(CarFactory::create(...));
 
         $this->assertInstanceOf(CallableDefinition::class, $definition);
     }

@@ -69,7 +69,7 @@ final class NormalizerBench
                 '__construct()' => [Reference::to(EngineInterface::class)],
                 'setColor()' => [Reference::to(ColorInterface::class)],
             ];
-            $this->callableDefinitions[] = [CarFactory::class, 'create'];
+            $this->callableDefinitions[] = CarFactory::create(...);
             $this->objectDefinitions[] = new stdClass();
         }
     }
