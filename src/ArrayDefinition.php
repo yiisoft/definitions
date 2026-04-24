@@ -20,6 +20,7 @@ use function gettype;
 use function is_array;
 use function is_string;
 use function sprintf;
+use function str_contains;
 use function strpos;
 use function substr;
 
@@ -41,6 +42,11 @@ final class ArrayDefinition implements DefinitionInterface
      * Container used to resolve references.
      */
     private ?ContainerInterface $referenceContainer = null;
+
+    /**
+     * @var array<string,array<string,ParameterDefinition>>
+     */
+    private array $methodDependencies = [];
 
     /**
      * @psalm-param class-string $class
@@ -126,7 +132,8 @@ final class ArrayDefinition implements DefinitionInterface
                 if (method_exists($object, $name)) {
                     $resolvedMethodArguments = $this->resolveFunctionArguments(
                         $container,
-                        DefinitionExtractor::fromFunction(new ReflectionMethod($object, $name)),
+                        $this->methodDependencies[$name]
+                            ??= DefinitionExtractor::fromFunction(new ReflectionMethod($object, $name)),
                         $value,
                     );
                 } else {
@@ -171,6 +178,7 @@ final class ArrayDefinition implements DefinitionInterface
             }
         }
         $new->methodsAndProperties = $methodsAndProperties;
+        $new->methodDependencies = [];
 
         return $new;
     }

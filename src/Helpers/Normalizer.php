@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Helpers;
 
+use Closure;
 use WeakMap;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\CallableDefinition;
@@ -113,6 +114,10 @@ final class Normalizer
 
             // Reference to another class or alias
             return self::$references[$definition] ??= Reference::to($definition);
+        }
+
+        if ($definition instanceof Closure) {
+            return new CallableDefinition($definition);
         }
 
         // Callable array definition
