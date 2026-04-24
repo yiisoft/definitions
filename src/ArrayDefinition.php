@@ -38,6 +38,11 @@ final class ArrayDefinition implements DefinitionInterface
     public const TYPE_METHOD = 'method';
 
     /**
+     * @var array<class-string, self>
+     */
+    private static array $preparedDataCache = [];
+
+    /**
      * Container used to resolve references.
      */
     private ?ContainerInterface $referenceContainer = null;
@@ -82,6 +87,10 @@ final class ArrayDefinition implements DefinitionInterface
      */
     public static function fromPreparedData(string $class, array $constructorArguments = [], array $methodsAndProperties = []): self
     {
+        if ($constructorArguments === [] && $methodsAndProperties === []) {
+            return self::$preparedDataCache[$class] ??= new self($class, [], []);
+        }
+
         return new self($class, $constructorArguments, $methodsAndProperties);
     }
 
