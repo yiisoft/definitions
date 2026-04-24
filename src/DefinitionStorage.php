@@ -53,6 +53,11 @@ final class DefinitionStorage
     public function has(string $id): bool
     {
         $this->buildStack = [];
+
+        if (isset($this->definitions[$id])) {
+            return true;
+        }
+
         return $this->isResolvable($id, []);
     }
 
