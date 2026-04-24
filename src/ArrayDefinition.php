@@ -127,13 +127,13 @@ final class ArrayDefinition implements DefinitionInterface
         $resolvedConstructorArguments = $this->resolveFunctionArguments(
             $container,
             DefinitionExtractor::fromClassName($class),
-            $this->getConstructorArguments(),
+            $this->constructorArguments,
         );
 
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...$resolvedConstructorArguments);
 
-        foreach ($this->getMethodsAndProperties() as $item) {
+        foreach ($this->methodsAndProperties as $item) {
             [$type, $name, $value] = $item;
             if ($type === self::TYPE_METHOD) {
                 /** @var array $value */
