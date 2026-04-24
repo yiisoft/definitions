@@ -133,7 +133,7 @@ final class NormalizerTest extends TestCase
         $this->assertSame([], $definition->getMethodsAndProperties());
     }
 
-    public function testStaticCallableArray(): void
+    public function testFirstClassCallable(): void
     {
         $definition = Normalizer::normalize(CarFactory::create(...));
 
