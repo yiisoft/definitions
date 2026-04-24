@@ -43,6 +43,11 @@ final class ArrayDefinition implements DefinitionInterface
     private static array $preparedDataCache = [];
 
     /**
+     * @var array<string, array{0:string,1:string}|null>
+     */
+    private static array $configKeyCache = [];
+
+    /**
      * Container used to resolve references.
      */
     private ?ContainerInterface $referenceContainer = null;
@@ -198,16 +203,29 @@ final class ArrayDefinition implements DefinitionInterface
                 continue;
             }
 
+            if (array_key_exists($key, self::$configKeyCache)) {
+                $item = self::$configKeyCache[$key];
+                if ($item !== null) {
+                    $methodsAndProperties[$key] = [$item[0], $item[1], $value];
+                }
+                continue;
+            }
+
             $position = strpos($key, '()');
             if ($position !== false) {
                 $methodsAndProperties[$key] = [self::TYPE_METHOD, substr($key, 0, $position), $value];
+                self::$configKeyCache[$key] = [self::TYPE_METHOD, $methodsAndProperties[$key][1]];
                 continue;
             }
 
             $position = strpos($key, '$');
             if ($position !== false && strpos($key, '$', $position + 1) === false) {
                 $methodsAndProperties[$key] = [self::TYPE_PROPERTY, substr($key, $position + 1), $value];
+                self::$configKeyCache[$key] = [self::TYPE_PROPERTY, $methodsAndProperties[$key][1]];
+                continue;
             }
+
+            self::$configKeyCache[$key] = null;
         }
 
         return $methodsAndProperties;
