@@ -44,6 +44,11 @@ final class Normalizer
     private static array $references = [];
 
     /**
+     * @var array<string, true>
+     */
+    private static array $plainReferences = [];
+
+    /**
      * @var array<string, CallableDefinition>
      */
     private static array $callables = [];
@@ -93,6 +98,10 @@ final class Normalizer
                 return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
             }
 
+            if ($class === null && isset(self::$plainReferences[$definition])) {
+                return self::$references[$definition];
+            }
+
             if ($class === null && $definition !== '') {
                 $firstCharacter = $definition[0];
                 $isClassLike = ($firstCharacter >= 'A' && $firstCharacter <= 'Z')
@@ -110,6 +119,10 @@ final class Normalizer
                     self::$classNames[$definition] = true;
                     /** @psalm-var class-string $definition */
                     return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
+                }
+
+                if (!$isClassLike) {
+                    self::$plainReferences[$definition] = true;
                 }
             }
 
