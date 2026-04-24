@@ -17,6 +17,7 @@ use function is_array;
 use function is_callable;
 use function is_object;
 use function is_string;
+use function str_contains;
 
 /**
  * Normalizer definition from configuration to an instance of {@see DefinitionInterface}.
@@ -25,6 +26,11 @@ use function is_string;
  */
 final class Normalizer
 {
+    /**
+     * @var array<string, true>
+     */
+    private static array $classNames = [];
+
     /**
      * Normalize definition to an instance of {@see DefinitionInterface}.
      * Definition may be defined multiple ways:
@@ -55,12 +61,30 @@ final class Normalizer
 
         if (is_string($definition)) {
             // Current class
-            if (
-                $class === $definition
-                || ($class === null && class_exists($definition))
-            ) {
+            if ($class === $definition) {
                 /** @psalm-var class-string $definition */
                 return ArrayDefinition::fromPreparedData($definition);
+            }
+
+            if ($class === null && isset(self::$classNames[$definition])) {
+                /** @psalm-var class-string $definition */
+                return ArrayDefinition::fromPreparedData($definition);
+            }
+
+            if ($class === null && $definition !== '') {
+                $firstCharacter = $definition[0];
+                if (
+                    (
+                        ($firstCharacter >= 'A' && $firstCharacter <= 'Z')
+                        || str_contains($definition, '\\')
+                    )
+                    ? class_exists($definition)
+                    : class_exists($definition, false)
+                ) {
+                    self::$classNames[$definition] = true;
+                    /** @psalm-var class-string $definition */
+                    return ArrayDefinition::fromPreparedData($definition);
+                }
             }
 
             // Reference to another class or alias

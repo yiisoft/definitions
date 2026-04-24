@@ -35,6 +35,24 @@ final class NormalizerTest extends TestCase
         $this->assertSame([], $definition->getMethodsAndProperties());
     }
 
+    public function testReferenceDoesNotTriggerAutoload(): void
+    {
+        $autoloadedClasses = [];
+        $autoload = static function (string $class) use (&$autoloadedClasses): void {
+            $autoloadedClasses[] = $class;
+        };
+
+        spl_autoload_register($autoload);
+        try {
+            $definition = Normalizer::normalize('engine');
+        } finally {
+            spl_autoload_unregister($autoload);
+        }
+
+        $this->assertInstanceOf(Reference::class, $definition);
+        $this->assertSame([], $autoloadedClasses);
+    }
+
     public function testArray(): void
     {
         /** @var ArrayDefinition $definition */
