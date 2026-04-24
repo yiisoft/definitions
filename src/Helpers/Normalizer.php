@@ -38,6 +38,11 @@ final class Normalizer
     private static array $references = [];
 
     /**
+     * @var array<string, CallableDefinition>
+     */
+    private static array $callables = [];
+
+    /**
      * Normalize definition to an instance of {@see DefinitionInterface}.
      * Definition may be defined multiple ways:
      *  - class name,
@@ -109,6 +114,11 @@ final class Normalizer
             && is_string($definition[1])
             && (is_string($definition[0]) || is_object($definition[0]))
         ) {
+            if (is_string($definition[0])) {
+                return self::$callables[$definition[0] . "\0" . $definition[1]]
+                    ??= new CallableDefinition($definition);
+            }
+
             return new CallableDefinition($definition);
         }
 
