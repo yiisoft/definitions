@@ -30,6 +30,11 @@ final class CallableDefinition implements DefinitionInterface
     private $callable;
 
     /**
+     * @var array<string,ParameterDefinition>|null
+     */
+    private ?array $dependencies = null;
+
+    /**
      * @param array|callable $callable Callable to be used for building
      * an object. Dependencies are determined and passed based
      * on the types of arguments in the callable signature.
@@ -44,19 +49,17 @@ final class CallableDefinition implements DefinitionInterface
     public function resolve(ContainerInterface $container): mixed
     {
         try {
-            $reflection = new ReflectionFunction(
-                $this->prepareClosure($this->callable, $container),
-            );
+            $closure = $this->prepareClosure($this->callable, $container);
+            $this->dependencies ??= DefinitionExtractor::fromFunction(new ReflectionFunction($closure));
         } catch (ReflectionException) {
             throw new NotInstantiableException(
                 'Can not instantiate callable definition. Got ' . var_export($this->callable, true),
             );
         }
 
-        $dependencies = DefinitionExtractor::fromFunction($reflection);
-        $arguments = DefinitionResolver::resolveArray($container, null, $dependencies);
+        $arguments = DefinitionResolver::resolveArray($container, null, $this->dependencies);
 
-        return $reflection->invokeArgs($arguments);
+        return $closure(...$arguments);
     }
 
     /**
