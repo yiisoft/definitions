@@ -175,8 +175,22 @@ final class Normalizer
 
         // Ready object
         if (is_object($definition) && !($definition instanceof DefinitionInterface)) {
-            $values = self::$values ??= new WeakMap();
-            return $values[$definition] ??= new ValueDefinition($definition);
+            if (self::$values === null) {
+                /** @var WeakMap<object, ValueDefinition> $values */
+                $values = new WeakMap();
+                self::$values = $values;
+            } else {
+                $values = self::$values;
+            }
+
+            $value = $values[$definition] ?? null;
+            if ($value instanceof ValueDefinition) {
+                return $value;
+            }
+
+            $value = new ValueDefinition($definition);
+            $values[$definition] = $value;
+            return $value;
         }
 
         throw new InvalidConfigException('Invalid definition: ' . var_export($definition, true));

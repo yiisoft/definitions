@@ -79,6 +79,17 @@ final class DefinitionStorageTest extends TestCase
         $this->assertSame([], $storage->getBuildStack());
     }
 
+    public function testExplicitDefinitionClearsPreviousBuildStack(): void
+    {
+        $storage = new DefinitionStorage(['existing' => 'anything']);
+
+        $this->assertFalse($storage->has(NonExisitng::class));
+        $this->assertNotSame([], $storage->getBuildStack());
+
+        $this->assertTrue($storage->has('existing'));
+        $this->assertSame([], $storage->getBuildStack());
+    }
+
     public function testNonExistingService(): void
     {
         $storage = new DefinitionStorage([]);

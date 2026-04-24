@@ -346,11 +346,13 @@ final class DefinitionValidator
             return true;
         }
 
+        // @codeCoverageIgnoreStart
         $modifiers = $property->getModifiers();
 
         /**
          * @psalm-suppress UndefinedConstant, MixedOperand Needs for PHP 8.3 or lower
          */
         return ($modifiers & (ReflectionProperty::IS_PRIVATE_SET | ReflectionProperty::IS_PROTECTED_SET)) === 0;
+        // @codeCoverageIgnoreEnd
     }
 }

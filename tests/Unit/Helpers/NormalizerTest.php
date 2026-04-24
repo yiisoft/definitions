@@ -7,9 +7,11 @@ namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Yiisoft\Definitions\ArrayDefinition;
+use Yiisoft\Definitions\CallableDefinition;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Helpers\Normalizer;
 use Yiisoft\Definitions\Reference;
+use Yiisoft\Definitions\Tests\Support\CarFactory;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\ValueDefinition;
@@ -35,6 +37,26 @@ final class NormalizerTest extends TestCase
         $this->assertSame([], $definition->getMethodsAndProperties());
     }
 
+    public function testSameClass(): void
+    {
+        /** @var ArrayDefinition $definition */
+        $definition = Normalizer::normalize(ColorPink::class, ColorPink::class);
+
+        $this->assertInstanceOf(ArrayDefinition::class, $definition);
+        $this->assertSame(ColorPink::class, $definition->getClass());
+    }
+
+    public function testCachedClass(): void
+    {
+        Normalizer::normalize(GearBox::class);
+
+        /** @var ArrayDefinition $definition */
+        $definition = Normalizer::normalize(GearBox::class);
+
+        $this->assertInstanceOf(ArrayDefinition::class, $definition);
+        $this->assertSame(GearBox::class, $definition->getClass());
+    }
+
     public function testReferenceDoesNotTriggerAutoload(): void
     {
         $autoloadedClasses = [];
@@ -53,6 +75,20 @@ final class NormalizerTest extends TestCase
         $this->assertSame([], $autoloadedClasses);
     }
 
+    public function testCachedReference(): void
+    {
+        Normalizer::normalize('engine');
+
+        $this->assertInstanceOf(Reference::class, Normalizer::normalize('engine'));
+    }
+
+    public function testCachedReferenceWithoutPlainReferenceFastPath(): void
+    {
+        Normalizer::normalize('engine-with-class', GearBox::class);
+
+        $this->assertInstanceOf(Reference::class, Normalizer::normalize('engine-with-class'));
+    }
+
     public function testArray(): void
     {
         /** @var ArrayDefinition $definition */
@@ -69,6 +105,20 @@ final class NormalizerTest extends TestCase
         $this->assertSame([], $definition->getMethodsAndProperties());
     }
 
+    public function testStaticCallableArray(): void
+    {
+        $definition = Normalizer::normalize([CarFactory::class, 'create']);
+
+        $this->assertInstanceOf(CallableDefinition::class, $definition);
+    }
+
+    public function testObjectCallableArray(): void
+    {
+        $definition = Normalizer::normalize([new CarFactory(), 'createWithColor']);
+
+        $this->assertInstanceOf(CallableDefinition::class, $definition);
+    }
+
     public function testReadyObject(): void
     {
         $container = new SimpleContainer();
@@ -80,6 +130,14 @@ final class NormalizerTest extends TestCase
 
         $this->assertInstanceOf(ValueDefinition::class, $definition);
         $this->assertSame($object, $definition->resolve($container));
+    }
+
+    public function testCachedReadyObject(): void
+    {
+        $object = new stdClass();
+        $definition = Normalizer::normalize($object);
+
+        $this->assertSame($definition, Normalizer::normalize($object));
     }
 
     public function testInteger(): void
