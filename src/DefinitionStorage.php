@@ -59,6 +59,11 @@ final class DefinitionStorage
             return true;
         }
 
+        if ($this->useStrictMode) {
+            $this->buildStack = [$id => 1];
+            return false;
+        }
+
         $this->buildStack = [];
 
         return $this->isResolvable($id, []);
