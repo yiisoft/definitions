@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Helpers;
 
+use WeakMap;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\CallableDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
@@ -41,6 +42,11 @@ final class Normalizer
      * @var array<string, CallableDefinition>
      */
     private static array $callables = [];
+
+    /**
+     * @var WeakMap<object, ValueDefinition>|null
+     */
+    private static ?WeakMap $values = null;
 
     /**
      * Normalize definition to an instance of {@see DefinitionInterface}.
@@ -151,7 +157,8 @@ final class Normalizer
 
         // Ready object
         if (is_object($definition) && !($definition instanceof DefinitionInterface)) {
-            return new ValueDefinition($definition);
+            $values = self::$values ??= new WeakMap();
+            return $values[$definition] ??= new ValueDefinition($definition);
         }
 
         throw new InvalidConfigException('Invalid definition: ' . var_export($definition, true));
