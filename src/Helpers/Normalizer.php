@@ -32,6 +32,11 @@ final class Normalizer
     private static array $classNames = [];
 
     /**
+     * @var array<string, Reference>
+     */
+    private static array $references = [];
+
+    /**
      * Normalize definition to an instance of {@see DefinitionInterface}.
      * Definition may be defined multiple ways:
      *  - class name,
@@ -88,7 +93,7 @@ final class Normalizer
             }
 
             // Reference to another class or alias
-            return Reference::to($definition);
+            return self::$references[$definition] ??= Reference::to($definition);
         }
 
         // Callable definition
