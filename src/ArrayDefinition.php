@@ -38,16 +38,6 @@ final class ArrayDefinition implements DefinitionInterface
     public const TYPE_METHOD = 'method';
 
     /**
-     * @var array<class-string, self>
-     */
-    private static array $preparedDataCache = [];
-
-    /**
-     * @var array<string, array{0:string,1:string}|null>
-     */
-    private static array $configKeyCache = [];
-
-    /**
      * Container used to resolve references.
      */
     private ?ContainerInterface $referenceContainer = null;
@@ -92,10 +82,6 @@ final class ArrayDefinition implements DefinitionInterface
      */
     public static function fromPreparedData(string $class, array $constructorArguments = [], array $methodsAndProperties = []): self
     {
-        if ($constructorArguments === [] && $methodsAndProperties === []) {
-            return self::$preparedDataCache[$class] ??= new self($class, [], []);
-        }
-
         return new self($class, $constructorArguments, $methodsAndProperties);
     }
 
@@ -199,33 +185,20 @@ final class ArrayDefinition implements DefinitionInterface
         $methodsAndProperties = [];
 
         foreach ($config as $key => $value) {
-            if ($key === self::CLASS_NAME || $key === self::CONSTRUCTOR) {
-                continue;
-            }
-
-            if (array_key_exists($key, self::$configKeyCache)) {
-                $item = self::$configKeyCache[$key];
-                if ($item !== null) {
-                    $methodsAndProperties[$key] = [$item[0], $item[1], $value];
-                }
+            if ($key === self::CONSTRUCTOR || $key === self::CLASS_NAME) {
                 continue;
             }
 
             $position = strpos($key, '()');
             if ($position !== false) {
                 $methodsAndProperties[$key] = [self::TYPE_METHOD, substr($key, 0, $position), $value];
-                self::$configKeyCache[$key] = [self::TYPE_METHOD, $methodsAndProperties[$key][1]];
                 continue;
             }
 
             $position = strpos($key, '$');
             if ($position !== false && !str_contains(substr($key, $position + 1), '$')) {
                 $methodsAndProperties[$key] = [self::TYPE_PROPERTY, substr($key, $position + 1), $value];
-                self::$configKeyCache[$key] = [self::TYPE_PROPERTY, $methodsAndProperties[$key][1]];
-                continue;
             }
-
-            self::$configKeyCache[$key] = null;
         }
 
         return $methodsAndProperties;

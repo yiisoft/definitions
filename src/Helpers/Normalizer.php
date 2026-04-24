@@ -19,7 +19,6 @@ use function is_array;
 use function is_callable;
 use function is_object;
 use function is_string;
-use function str_contains;
 
 /**
  * Normalizer definition from configuration to an instance of {@see DefinitionInterface}.
@@ -28,11 +27,6 @@ use function str_contains;
  */
 final class Normalizer
 {
-    /**
-     * @var array<string, true>
-     */
-    private static array $classNames = [];
-
     /**
      * @var array<class-string, ArrayDefinition>
      */
@@ -44,11 +38,6 @@ final class Normalizer
     private static array $references = [];
 
     /**
-     * @var array<string, true>
-     */
-    private static array $plainReferences = [];
-
-    /**
      * @var array<string, CallableDefinition>
      */
     private static array $callables = [];
@@ -57,6 +46,19 @@ final class Normalizer
      * @var WeakMap<object, ValueDefinition>|null
      */
     private static ?WeakMap $values = null;
+
+    /**
+     * Clear internal normalization caches.
+     *
+     * This is useful for long-running processes that normalize dynamically generated service IDs.
+     */
+    public static function clearCache(): void
+    {
+        self::$classDefinitions = [];
+        self::$references = [];
+        self::$callables = [];
+        self::$values = null;
+    }
 
     /**
      * Normalize definition to an instance of {@see DefinitionInterface}.
@@ -93,36 +95,19 @@ final class Normalizer
                 return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
             }
 
-            if ($class === null && isset(self::$classNames[$definition])) {
+            if ($class === null && isset(self::$classDefinitions[$definition])) {
                 /** @psalm-var class-string $definition */
-                return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
+                return self::$classDefinitions[$definition];
             }
 
-            if ($class === null && isset(self::$plainReferences[$definition])) {
+            if ($class === null && isset(self::$references[$definition])) {
                 return self::$references[$definition];
             }
 
             if ($class === null && $definition !== '') {
-                $firstCharacter = $definition[0];
-                $isClassLike = ($firstCharacter >= 'A' && $firstCharacter <= 'Z')
-                    || str_contains($definition, '\\');
-
-                if (!$isClassLike && isset(self::$references[$definition])) {
-                    return self::$references[$definition];
-                }
-
-                if (
-                    $isClassLike
-                    ? class_exists($definition)
-                    : class_exists($definition, false)
-                ) {
-                    self::$classNames[$definition] = true;
+                if (class_exists($definition)) {
                     /** @psalm-var class-string $definition */
                     return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
-                }
-
-                if (!$isClassLike) {
-                    self::$plainReferences[$definition] = true;
                 }
             }
 

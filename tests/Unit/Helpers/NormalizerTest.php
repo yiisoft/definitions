@@ -19,6 +19,11 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class NormalizerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        Normalizer::clearCache();
+    }
+
     public function testReference(): void
     {
         $reference = Reference::to('test');
@@ -57,8 +62,31 @@ final class NormalizerTest extends TestCase
         $this->assertSame(GearBox::class, $definition->getClass());
     }
 
-    public function testReferenceDoesNotTriggerAutoload(): void
+    public function testLowercaseClass(): void
     {
+        $class = 'lowercaseautoloadeddefinitiontest' . str_replace('.', '', uniqid('', true));
+        $autoload = static function (string $autoloadedClass) use ($class): void {
+            if ($autoloadedClass === $class) {
+                eval('class ' . $class . ' {}');
+            }
+        };
+
+        spl_autoload_register($autoload);
+        try {
+            /** @var ArrayDefinition $definition */
+            $definition = Normalizer::normalize($class);
+        } finally {
+            spl_autoload_unregister($autoload);
+        }
+
+        $this->assertInstanceOf(ArrayDefinition::class, $definition);
+        $this->assertSame($class, $definition->getClass());
+    }
+
+    public function testCachedReferenceDoesNotTriggerAutoload(): void
+    {
+        Normalizer::normalize('engine');
+
         $autoloadedClasses = [];
         $autoload = static function (string $class) use (&$autoloadedClasses): void {
             $autoloadedClasses[] = $class;
