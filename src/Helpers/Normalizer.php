@@ -34,6 +34,11 @@ final class Normalizer
     private static array $classNames = [];
 
     /**
+     * @var array<class-string, ArrayDefinition>
+     */
+    private static array $classDefinitions = [];
+
+    /**
      * @var array<string, Reference>
      */
     private static array $references = [];
@@ -80,12 +85,12 @@ final class Normalizer
             // Current class
             if ($class === $definition) {
                 /** @psalm-var class-string $definition */
-                return ArrayDefinition::fromPreparedData($definition);
+                return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
             }
 
             if ($class === null && isset(self::$classNames[$definition])) {
                 /** @psalm-var class-string $definition */
-                return ArrayDefinition::fromPreparedData($definition);
+                return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
             }
 
             if ($class === null && $definition !== '') {
@@ -104,7 +109,7 @@ final class Normalizer
                 ) {
                     self::$classNames[$definition] = true;
                     /** @psalm-var class-string $definition */
-                    return ArrayDefinition::fromPreparedData($definition);
+                    return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
                 }
             }
 
