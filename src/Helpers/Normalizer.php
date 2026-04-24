@@ -13,6 +13,7 @@ use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\ValueDefinition;
 
 use function array_key_exists;
+use function count;
 use function is_array;
 use function is_callable;
 use function is_object;
@@ -100,24 +101,42 @@ final class Normalizer
             return self::$references[$definition] ??= Reference::to($definition);
         }
 
-        // Callable definition
-        if (is_callable($definition, true)) {
+        // Callable array definition
+        if (
+            is_array($definition)
+            && isset($definition[0], $definition[1])
+            && count($definition) === 2
+            && is_string($definition[1])
+            && (is_string($definition[0]) || is_object($definition[0]))
+        ) {
             return new CallableDefinition($definition);
         }
 
         // Array definition
         if (is_array($definition)) {
-            $config = $definition;
-            if (!isset($config[ArrayDefinition::CLASS_NAME]) && !array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
-                if ($class === null) {
-                    throw new InvalidConfigException(
-                        'Array definition should contain the key "class": ' . var_export($definition, true),
-                    );
+            if (
+                isset($definition[ArrayDefinition::CLASS_NAME])
+                || $class !== null
+                || array_key_exists(ArrayDefinition::CLASS_NAME, $definition)
+            ) {
+                $config = $definition;
+                if (!isset($config[ArrayDefinition::CLASS_NAME]) && !array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
+                    $config[ArrayDefinition::CLASS_NAME] = $class;
                 }
-                $config[ArrayDefinition::CLASS_NAME] = $class;
+                /** @psalm-var ArrayDefinitionConfig $config */
+                return ArrayDefinition::fromConfig($config);
             }
-            /** @psalm-var ArrayDefinitionConfig $config */
-            return ArrayDefinition::fromConfig($config);
+        }
+
+        // Callable definition
+        if (is_callable($definition, true)) {
+            return new CallableDefinition($definition);
+        }
+
+        if (is_array($definition)) {
+            throw new InvalidConfigException(
+                'Array definition should contain the key "class": ' . var_export($definition, true),
+            );
         }
 
         // Ready object
