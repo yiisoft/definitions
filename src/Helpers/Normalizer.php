@@ -78,11 +78,15 @@ final class Normalizer
 
             if ($class === null && $definition !== '') {
                 $firstCharacter = $definition[0];
+                $isClassLike = ($firstCharacter >= 'A' && $firstCharacter <= 'Z')
+                    || str_contains($definition, '\\');
+
+                if (!$isClassLike && isset(self::$references[$definition])) {
+                    return self::$references[$definition];
+                }
+
                 if (
-                    (
-                        ($firstCharacter >= 'A' && $firstCharacter <= 'Z')
-                        || str_contains($definition, '\\')
-                    )
+                    $isClassLike
                     ? class_exists($definition)
                     : class_exists($definition, false)
                 ) {
