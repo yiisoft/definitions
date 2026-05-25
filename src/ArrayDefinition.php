@@ -197,7 +197,7 @@ final class ArrayDefinition implements DefinitionInterface
             }
 
             $position = strpos($key, '()');
-            if ($position !== false) {
+            if ($position !== false && $position !== 0 && strpos($key, '()', $position + 2) === false) {
                 $methodsAndProperties[$key] = [self::TYPE_METHOD, substr($key, 0, $position), $value];
                 continue;
             }

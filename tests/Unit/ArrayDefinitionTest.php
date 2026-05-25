@@ -65,6 +65,25 @@ final class ArrayDefinitionTest extends TestCase
         self::assertSame([], $definition->getMethodsAndProperties());
     }
 
+    public static function dataConfigWithInvalidMethodKey(): array
+    {
+        return [
+            ['addApp()hm()'],
+            ['()addApp'],
+        ];
+    }
+
+    #[DataProvider('dataConfigWithInvalidMethodKey')]
+    public function testConfigWithInvalidMethodKeyIsIgnored(string $key): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            $key => ['Browser'],
+        ]);
+
+        self::assertSame([], $definition->getMethodsAndProperties());
+    }
+
     public static function dataConstructor(): array
     {
         return [

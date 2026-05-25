@@ -11,6 +11,9 @@ use Yiisoft\Definitions\Tests\Support\Car;
 use Yiisoft\Definitions\Tests\Support\CarFactory;
 use Yiisoft\Definitions\Tests\Support\ColorInterface;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
+use Yiisoft\Definitions\Tests\Support\EngineInterface;
+use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
+use Yiisoft\Definitions\Tests\Support\EngineMarkTwo;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class CallableDefinitionTest extends TestCase
@@ -33,6 +36,30 @@ final class CallableDefinitionTest extends TestCase
         $this->assertInstanceOf(ColorPink::class, $car->getColor());
     }
 
+    public function testDynamicCallableDependenciesAreCachedPerResolvedObject(): void
+    {
+        $definition = new CallableDefinition([EngineAwareCallableFactory::class, 'create']);
+
+        /** @var Car $car */
+        $car = $definition->resolve(
+            new SimpleContainer([
+                EngineAwareCallableFactory::class => new EngineAwareCallableFactory(),
+                EngineInterface::class => new EngineMarkOne(),
+            ]),
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $car->getEngine());
+
+        /** @var Car $car */
+        $car = $definition->resolve(
+            new SimpleContainer([
+                EngineAwareCallableFactory::class => new EngineLessCallableFactory(),
+            ]),
+        );
+
+        $this->assertInstanceOf(EngineMarkTwo::class, $car->getEngine());
+    }
+
     public function testNonExistsClass(): void
     {
         $definition = new CallableDefinition(['NonExistsClass', 'run']);
@@ -40,5 +67,21 @@ final class CallableDefinitionTest extends TestCase
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage('Can not instantiate callable definition. Got array');
         $definition->resolve(new SimpleContainer());
+    }
+}
+
+final class EngineAwareCallableFactory
+{
+    public function create(EngineInterface $engine): Car
+    {
+        return new Car($engine);
+    }
+}
+
+final class EngineLessCallableFactory
+{
+    public function create(): Car
+    {
+        return new Car(new EngineMarkTwo());
     }
 }
