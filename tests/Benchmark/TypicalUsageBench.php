@@ -27,12 +27,19 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
  */
 final class TypicalUsageBench
 {
+    private const MIXED_DEFINITION_COUNT = 120;
+
     private SimpleContainer $container;
     private ArrayDefinition $objectGraphDefinition;
     private ArrayDefinition $methodsAndPropertiesDefinition;
     private CallableDefinition $staticFactoryDefinition;
     private CallableDefinition $serviceFactoryDefinition;
     private Reference $reference;
+
+    /**
+     * @var list<ArrayDefinition|CallableDefinition|Reference>
+     */
+    private array $mixedDefinitions = [];
 
     public function before(): void
     {
@@ -64,6 +71,35 @@ final class TypicalUsageBench
         $this->staticFactoryDefinition = new CallableDefinition(CarFactory::create(...));
         $this->serviceFactoryDefinition = new CallableDefinition([CarFactory::class, 'createWithColor']);
         $this->reference = Reference::to(EngineInterface::class);
+        $this->mixedDefinitions = [];
+
+        for ($i = 0; $i < self::MIXED_DEFINITION_COUNT; $i++) {
+            $type = $i % 5;
+            if ($type === 0) {
+                $this->mixedDefinitions[] = ArrayDefinition::fromConfig([
+                    'class' => Car::class,
+                    '__construct()' => [Reference::to(EngineInterface::class)],
+                    'setColor()' => [Reference::to(ColorInterface::class)],
+                ]);
+            } elseif ($type === 1) {
+                $this->mixedDefinitions[] = ArrayDefinition::fromConfig([
+                    'class' => Phone::class,
+                    '__construct()' => [
+                        'name' => 'Yii Phone',
+                        'version' => '3.0',
+                        'colors' => ['black', 'white'],
+                    ],
+                    '$dev' => true,
+                    'addApp()' => ['Browser', '7'],
+                ]);
+            } elseif ($type === 2) {
+                $this->mixedDefinitions[] = new CallableDefinition(CarFactory::create(...));
+            } elseif ($type === 3) {
+                $this->mixedDefinitions[] = new CallableDefinition([CarFactory::class, 'createWithColor']);
+            } else {
+                $this->mixedDefinitions[] = Reference::to(EngineInterface::class);
+            }
+        }
     }
 
     /**
@@ -118,5 +154,18 @@ final class TypicalUsageBench
     public function benchReferenceResolution(): void
     {
         $this->reference->resolve($this->container);
+    }
+
+    /**
+     * Measures a mixed batch of array, callable, and reference definitions against one reused container.
+     *
+     * @Groups({"mixed", "lookup", "typical"})
+     * @Revs(100)
+     */
+    public function benchMixedDefinitionResolution(): void
+    {
+        foreach ($this->mixedDefinitions as $definition) {
+            $definition->resolve($this->container);
+        }
     }
 }

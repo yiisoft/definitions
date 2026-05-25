@@ -19,11 +19,6 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class NormalizerTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        Normalizer::clearCache();
-    }
-
     public function testReference(): void
     {
         $reference = Reference::to('test');
@@ -51,7 +46,7 @@ final class NormalizerTest extends TestCase
         $this->assertSame(ColorPink::class, $definition->getClass());
     }
 
-    public function testCachedClass(): void
+    public function testClassRepeatedly(): void
     {
         Normalizer::normalize(GearBox::class);
 
@@ -83,34 +78,14 @@ final class NormalizerTest extends TestCase
         $this->assertSame($class, $definition->getClass());
     }
 
-    public function testCachedReferenceDoesNotTriggerAutoload(): void
-    {
-        Normalizer::normalize('engine');
-
-        $autoloadedClasses = [];
-        $autoload = static function (string $class) use (&$autoloadedClasses): void {
-            $autoloadedClasses[] = $class;
-        };
-
-        spl_autoload_register($autoload);
-        try {
-            $definition = Normalizer::normalize('engine');
-        } finally {
-            spl_autoload_unregister($autoload);
-        }
-
-        $this->assertInstanceOf(Reference::class, $definition);
-        $this->assertSame([], $autoloadedClasses);
-    }
-
-    public function testCachedReference(): void
+    public function testReferenceRepeatedly(): void
     {
         Normalizer::normalize('engine');
 
         $this->assertInstanceOf(Reference::class, Normalizer::normalize('engine'));
     }
 
-    public function testCachedReferenceWithoutPlainReferenceFastPath(): void
+    public function testReferenceWithClassRepeatedly(): void
     {
         Normalizer::normalize('engine-with-class', GearBox::class);
 
@@ -182,14 +157,6 @@ final class NormalizerTest extends TestCase
 
         $this->assertInstanceOf(ValueDefinition::class, $definition);
         $this->assertSame($object, $definition->resolve($container));
-    }
-
-    public function testCachedReadyObject(): void
-    {
-        $object = new stdClass();
-        $definition = Normalizer::normalize($object);
-
-        $this->assertSame($definition, Normalizer::normalize($object));
     }
 
     public function testInteger(): void

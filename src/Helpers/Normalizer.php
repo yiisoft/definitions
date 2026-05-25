@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Definitions\Helpers;
 
-use Closure;
-use WeakMap;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\CallableDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
@@ -15,7 +13,6 @@ use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\ValueDefinition;
 
 use function array_key_exists;
-use function count;
 use function is_array;
 use function is_callable;
 use function is_object;
@@ -28,39 +25,6 @@ use function is_string;
  */
 final class Normalizer
 {
-    /**
-     * @var array<class-string, ArrayDefinition>
-     */
-    private static array $classDefinitions = [];
-
-    /**
-     * @var array<string, Reference>
-     */
-    private static array $references = [];
-
-    /**
-     * @var array<string, CallableDefinition>
-     */
-    private static array $callables = [];
-
-    /**
-     * @var WeakMap<object, ValueDefinition>|null
-     */
-    private static ?WeakMap $values = null;
-
-    /**
-     * Clear internal normalization caches.
-     *
-     * This is useful for long-running processes that normalize dynamically generated service IDs.
-     */
-    public static function clearCache(): void
-    {
-        self::$classDefinitions = [];
-        self::$references = [];
-        self::$callables = [];
-        self::$values = null;
-    }
-
     /**
      * Normalize definition to an instance of {@see DefinitionInterface}.
      * Definition may be defined multiple ways:
@@ -91,70 +55,16 @@ final class Normalizer
 
         if (is_string($definition)) {
             // Current class
-            if ($class === $definition) {
+            if (
+                $class === $definition
+                || ($class === null && class_exists($definition))
+            ) {
                 /** @psalm-var class-string $definition */
-                return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
-            }
-
-            if ($class !== null) {
-                // Reference to another class or alias.
-                return Reference::to($definition);
-            }
-
-            if (isset(self::$classDefinitions[$definition])) {
-                /** @psalm-var class-string $definition */
-                return self::$classDefinitions[$definition];
-            }
-
-            if (isset(self::$references[$definition])) {
-                return self::$references[$definition];
-            }
-
-            if ($definition !== '') {
-                if (class_exists($definition)) {
-                    /** @psalm-var class-string $definition */
-                    return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
-                }
+                return ArrayDefinition::fromPreparedData($definition);
             }
 
             // Reference to another class or alias
-            return self::$references[$definition] = Reference::to($definition);
-        }
-
-        if ($definition instanceof Closure) {
-            return new CallableDefinition($definition);
-        }
-
-        // Callable array definition
-        if (
-            is_array($definition)
-            && isset($definition[0], $definition[1])
-            && count($definition) === 2
-            && is_string($definition[1])
-            && (is_string($definition[0]) || is_object($definition[0]))
-        ) {
-            if (is_string($definition[0])) {
-                return self::$callables[$definition[0] . "\0" . $definition[1]]
-                    ??= new CallableDefinition($definition);
-            }
-
-            return new CallableDefinition($definition);
-        }
-
-        // Array definition
-        if (is_array($definition)) {
-            if (
-                isset($definition[ArrayDefinition::CLASS_NAME])
-                || $class !== null
-                || array_key_exists(ArrayDefinition::CLASS_NAME, $definition)
-            ) {
-                $config = $definition;
-                if (!isset($config[ArrayDefinition::CLASS_NAME]) && !array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
-                    $config[ArrayDefinition::CLASS_NAME] = $class;
-                }
-                /** @psalm-var ArrayDefinitionConfig $config */
-                return ArrayDefinition::fromConfig($config);
-            }
+            return Reference::to($definition);
         }
 
         // Callable definition
@@ -163,29 +73,22 @@ final class Normalizer
         }
 
         if (is_array($definition)) {
-            throw new InvalidConfigException(
-                'Array definition should contain the key "class": ' . var_export($definition, true),
-            );
+            $config = $definition;
+            if (!array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
+                if ($class === null) {
+                    throw new InvalidConfigException(
+                        'Array definition should contain the key "class": ' . var_export($definition, true),
+                    );
+                }
+                $config[ArrayDefinition::CLASS_NAME] = $class;
+            }
+            /** @psalm-var ArrayDefinitionConfig $config */
+            return ArrayDefinition::fromConfig($config);
         }
 
         // Ready object
         if (is_object($definition) && !($definition instanceof DefinitionInterface)) {
-            if (self::$values === null) {
-                /** @var WeakMap<object, ValueDefinition> $values */
-                $values = new WeakMap();
-                self::$values = $values;
-            } else {
-                $values = self::$values;
-            }
-
-            $value = $values[$definition] ?? null;
-            if ($value instanceof ValueDefinition) {
-                return $value;
-            }
-
-            $value = new ValueDefinition($definition);
-            $values[$definition] = $value;
-            return $value;
+            return new ValueDefinition($definition);
         }
 
         throw new InvalidConfigException('Invalid definition: ' . var_export($definition, true));

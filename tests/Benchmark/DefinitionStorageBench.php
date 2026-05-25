@@ -35,6 +35,12 @@ final class DefinitionStorageBench
      */
     private array $definitions = [];
 
+    private DefinitionStorage $explicitStorage;
+    private DefinitionStorage $resolvableStorage;
+    private DefinitionStorage $unresolvableStorage;
+    private DefinitionStorage $delegateStorage;
+    private DefinitionStorage $strictStorage;
+
     public function before(): void
     {
         $this->indexes = [];
@@ -47,6 +53,17 @@ final class DefinitionStorageBench
             $this->indexes[] = $i;
             $this->definitions["service$i"] = Car::class;
         }
+
+        $this->explicitStorage = new DefinitionStorage($this->definitions);
+        $this->resolvableStorage = new DefinitionStorage([
+            EngineInterface::class => EngineMarkOne::class,
+        ]);
+        $this->unresolvableStorage = new DefinitionStorage();
+        $this->delegateStorage = new DefinitionStorage();
+        $this->delegateStorage->setDelegateContainer(new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+        ]));
+        $this->strictStorage = new DefinitionStorage([], true);
     }
 
     /**
@@ -62,9 +79,9 @@ final class DefinitionStorageBench
     /**
      * Measures positive lookups of explicitly configured service IDs.
      *
-     * @Groups({"lookup", "storage"})
+     * @Groups({"lookup", "storage", "cold"})
      */
-    public function benchSequentialExplicitLookups(): void
+    public function benchSequentialExplicitLookupsColdStorage(): void
     {
         $storage = new DefinitionStorage($this->definitions);
 
@@ -74,12 +91,24 @@ final class DefinitionStorageBench
     }
 
     /**
+     * Measures positive lookups against a reused definitions storage.
+     *
+     * @Groups({"lookup", "storage", "warm", "typical"})
+     */
+    public function benchSequentialExplicitLookupsWarmStorage(): void
+    {
+        foreach ($this->indexes as $index) {
+            $this->explicitStorage->has("service$index");
+        }
+    }
+
+    /**
      * Measures positive autowiring checks for an object graph.
      *
      * @Groups({"lookup", "storage", "autowire", "typical"})
      * @Revs(100)
      */
-    public function benchResolvableObjectGraph(): void
+    public function benchResolvableObjectGraphColdStorage(): void
     {
         $storage = new DefinitionStorage([
             EngineInterface::class => EngineMarkOne::class,
@@ -89,16 +118,38 @@ final class DefinitionStorageBench
     }
 
     /**
+     * Measures positive autowiring checks for an object graph against reused storage.
+     *
+     * @Groups({"lookup", "storage", "autowire", "warm", "typical"})
+     * @Revs(100)
+     */
+    public function benchResolvableObjectGraphWarmStorage(): void
+    {
+        $this->resolvableStorage->has(Car::class);
+    }
+
+    /**
      * Measures negative autowiring checks for a missing dependency.
      *
      * @Groups({"lookup", "storage", "autowire", "typical"})
      * @Revs(100)
      */
-    public function benchUnresolvableObjectGraph(): void
+    public function benchUnresolvableObjectGraphColdStorage(): void
     {
         $storage = new DefinitionStorage();
 
         $storage->has(Car::class);
+    }
+
+    /**
+     * Measures negative autowiring checks for a missing dependency against reused storage.
+     *
+     * @Groups({"lookup", "storage", "autowire", "warm", "typical"})
+     * @Revs(100)
+     */
+    public function benchUnresolvableObjectGraphWarmStorage(): void
+    {
+        $this->unresolvableStorage->has(Car::class);
     }
 
     /**
@@ -107,7 +158,7 @@ final class DefinitionStorageBench
      * @Groups({"lookup", "storage", "delegate", "typical"})
      * @Revs(100)
      */
-    public function benchResolvableObjectGraphWithDelegate(): void
+    public function benchResolvableObjectGraphWithDelegateColdStorage(): void
     {
         $storage = new DefinitionStorage();
         $storage->setDelegateContainer(new SimpleContainer([
@@ -118,16 +169,25 @@ final class DefinitionStorageBench
     }
 
     /**
+     * Measures fallback through a delegate container against reused storage.
+     *
+     * @Groups({"lookup", "storage", "delegate", "warm", "typical"})
+     * @Revs(100)
+     */
+    public function benchResolvableObjectGraphWithDelegateWarmStorage(): void
+    {
+        $this->delegateStorage->has(Car::class);
+    }
+
+    /**
      * Measures strict mode misses where class names are not implicitly resolvable.
      *
      * @Groups({"lookup", "storage", "strict"})
      */
     public function benchStrictModeClassMisses(): void
     {
-        $storage = new DefinitionStorage([], true);
-
         foreach ($this->indexes as $_index) {
-            $storage->has(EngineMarkOne::class);
+            $this->strictStorage->has(EngineMarkOne::class);
         }
     }
 }
