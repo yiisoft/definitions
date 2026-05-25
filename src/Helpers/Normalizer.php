@@ -96,16 +96,21 @@ final class Normalizer
                 return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);
             }
 
-            if ($class === null && isset(self::$classDefinitions[$definition])) {
+            if ($class !== null) {
+                // Reference to another class or alias.
+                return self::$references[$definition] ??= Reference::to($definition);
+            }
+
+            if (isset(self::$classDefinitions[$definition])) {
                 /** @psalm-var class-string $definition */
                 return self::$classDefinitions[$definition];
             }
 
-            if ($class === null && isset(self::$references[$definition])) {
+            if (isset(self::$references[$definition])) {
                 return self::$references[$definition];
             }
 
-            if ($class === null && $definition !== '') {
+            if ($definition !== '') {
                 if (class_exists($definition)) {
                     /** @psalm-var class-string $definition */
                     return self::$classDefinitions[$definition] ??= ArrayDefinition::fromPreparedData($definition);

@@ -20,7 +20,6 @@ use function gettype;
 use function is_array;
 use function is_string;
 use function sprintf;
-use function str_contains;
 use function strpos;
 use function substr;
 
@@ -203,9 +202,8 @@ final class ArrayDefinition implements DefinitionInterface
                 continue;
             }
 
-            $position = strpos($key, '$');
-            if ($position !== false && !str_contains(substr($key, $position + 1), '$')) {
-                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, substr($key, $position + 1), $value];
+            if (($key[0] ?? '') === '$') {
+                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, substr($key, 1), $value];
             }
         }
 

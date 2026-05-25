@@ -53,9 +53,7 @@ final class DefinitionStorage
     public function has(string $id): bool
     {
         if (isset($this->definitions[$id])) {
-            if ($this->buildStack !== []) {
-                $this->buildStack = [];
-            }
+            $this->buildStack = [];
             return true;
         }
 

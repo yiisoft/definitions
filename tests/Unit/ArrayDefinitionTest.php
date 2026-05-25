@@ -55,6 +55,16 @@ final class ArrayDefinitionTest extends TestCase
         self::assertSame([], $definition->getMethodsAndProperties());
     }
 
+    public function testConfigWithDollarInMiddleIsIgnored(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            'ignored$dev' => true,
+        ]);
+
+        self::assertSame([], $definition->getMethodsAndProperties());
+    }
+
     public static function dataConstructor(): array
     {
         return [
