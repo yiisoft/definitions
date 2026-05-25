@@ -98,7 +98,7 @@ final class Normalizer
 
             if ($class !== null) {
                 // Reference to another class or alias.
-                return self::$references[$definition] ??= Reference::to($definition);
+                return Reference::to($definition);
             }
 
             if (isset(self::$classDefinitions[$definition])) {
@@ -118,7 +118,7 @@ final class Normalizer
             }
 
             // Reference to another class or alias
-            return self::$references[$definition] ??= Reference::to($definition);
+            return self::$references[$definition] = Reference::to($definition);
         }
 
         if ($definition instanceof Closure) {

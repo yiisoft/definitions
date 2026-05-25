@@ -117,6 +117,30 @@ final class NormalizerTest extends TestCase
         $this->assertInstanceOf(Reference::class, Normalizer::normalize('engine-with-class'));
     }
 
+    public function testReferenceWithClassDoesNotPreventLaterClassDetection(): void
+    {
+        $class = 'contextreferencethenautoloadeddefinitiontest' . str_replace('.', '', uniqid('', true));
+
+        $this->assertInstanceOf(Reference::class, Normalizer::normalize($class, GearBox::class));
+
+        $autoload = static function (string $autoloadedClass) use ($class): void {
+            if ($autoloadedClass === $class) {
+                eval('class ' . $class . ' {}');
+            }
+        };
+
+        spl_autoload_register($autoload);
+        try {
+            /** @var ArrayDefinition $definition */
+            $definition = Normalizer::normalize($class);
+        } finally {
+            spl_autoload_unregister($autoload);
+        }
+
+        $this->assertInstanceOf(ArrayDefinition::class, $definition);
+        $this->assertSame($class, $definition->getClass());
+    }
+
     public function testArray(): void
     {
         /** @var ArrayDefinition $definition */
