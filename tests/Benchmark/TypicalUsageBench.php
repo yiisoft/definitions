@@ -21,7 +21,7 @@ use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 /**
- * @Iterations(5)
+ * @Iterations(15)
  * @Revs(1000)
  * @BeforeMethods({"before"})
  */
@@ -106,7 +106,7 @@ final class TypicalUsageBench
      * Measures explicit array definitions with constructor, setter, and reference resolution.
      *
      * @Groups({"definition", "lookup", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchArrayDefinitionObjectGraph(): void
     {
@@ -117,7 +117,7 @@ final class TypicalUsageBench
      * Measures constructor arguments, public property assignment, and method calls.
      *
      * @Groups({"definition", "lookup", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchArrayDefinitionMethodsAndProperties(): void
     {
@@ -128,7 +128,7 @@ final class TypicalUsageBench
      * Measures a static callable factory with autowired arguments.
      *
      * @Groups({"factory", "lookup", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchStaticFactoryDefinition(): void
     {
@@ -139,7 +139,7 @@ final class TypicalUsageBench
      * Measures a callable factory resolved as a service before invocation.
      *
      * @Groups({"factory", "lookup", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchServiceFactoryDefinition(): void
     {
@@ -150,6 +150,7 @@ final class TypicalUsageBench
      * Measures direct reference resolution against a PSR container.
      *
      * @Groups({"reference", "lookup", "typical"})
+     * @Revs(10000)
      */
     public function benchReferenceResolution(): void
     {
@@ -160,7 +161,7 @@ final class TypicalUsageBench
      * Measures a mixed batch of array, callable, and reference definitions against one reused container.
      *
      * @Groups({"mixed", "lookup", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchMixedDefinitionResolution(): void
     {

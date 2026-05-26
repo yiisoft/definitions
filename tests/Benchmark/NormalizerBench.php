@@ -31,7 +31,7 @@ use Yiisoft\Definitions\Tests\Support\Table;
 use Yiisoft\Definitions\Tests\Support\Tree;
 
 /**
- * @Iterations(5)
+ * @Iterations(15)
  * @Revs(1000)
  * @Groups({"normalizer"})
  * @BeforeMethods({"before"})

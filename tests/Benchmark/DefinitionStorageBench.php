@@ -17,7 +17,7 @@ use Yiisoft\Definitions\Tests\Support\EngineMarkOne;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 /**
- * @Iterations(5)
+ * @Iterations(15)
  * @Revs(1000)
  * @BeforeMethods({"before"})
  */
@@ -109,7 +109,7 @@ final class DefinitionStorageBench
      * Measures positive autowiring checks for an object graph.
      *
      * @Groups({"lookup", "storage", "autowire", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchResolvableObjectGraphColdStorage(): void
     {
@@ -124,7 +124,7 @@ final class DefinitionStorageBench
      * Measures positive autowiring checks for an object graph against reused storage.
      *
      * @Groups({"lookup", "storage", "autowire", "warm", "typical"})
-     * @Revs(100)
+     * @Revs(10000)
      */
     public function benchResolvableObjectGraphWarmStorage(): void
     {
@@ -135,7 +135,7 @@ final class DefinitionStorageBench
      * Measures negative autowiring checks for a missing dependency.
      *
      * @Groups({"lookup", "storage", "autowire", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchUnresolvableObjectGraphColdStorage(): void
     {
@@ -148,7 +148,7 @@ final class DefinitionStorageBench
      * Measures negative autowiring checks for a missing dependency against reused storage.
      *
      * @Groups({"lookup", "storage", "autowire", "warm", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchUnresolvableObjectGraphWarmStorage(): void
     {
@@ -159,7 +159,7 @@ final class DefinitionStorageBench
      * Measures fallback through a delegate container when a dependency is not explicitly defined.
      *
      * @Groups({"lookup", "storage", "delegate", "typical"})
-     * @Revs(100)
+     * @Revs(1000)
      */
     public function benchResolvableObjectGraphWithDelegateColdStorage(): void
     {
@@ -175,7 +175,7 @@ final class DefinitionStorageBench
      * Measures fallback through a delegate container against reused storage.
      *
      * @Groups({"lookup", "storage", "delegate", "warm", "typical"})
-     * @Revs(100)
+     * @Revs(10000)
      */
     public function benchResolvableObjectGraphWithDelegateWarmStorage(): void
     {
