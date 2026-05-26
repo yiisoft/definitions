@@ -36,7 +36,7 @@ final class CallableDefinitionTest extends TestCase
         $this->assertInstanceOf(ColorPink::class, $car->getColor());
     }
 
-    public function testDynamicCallableDependenciesAreCachedPerResolvedObject(): void
+    public function testDynamicCallableUsesResolvedObjectSignature(): void
     {
         $definition = new CallableDefinition([EngineAwareCallableFactory::class, 'create']);
 

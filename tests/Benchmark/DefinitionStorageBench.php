@@ -64,6 +64,9 @@ final class DefinitionStorageBench
             EngineInterface::class => new EngineMarkOne(),
         ]));
         $this->strictStorage = new DefinitionStorage([], true);
+
+        $this->resolvableStorage->has(Car::class);
+        $this->delegateStorage->has(Car::class);
     }
 
     /**

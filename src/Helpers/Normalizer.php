@@ -72,6 +72,7 @@ final class Normalizer
             return new CallableDefinition($definition);
         }
 
+        // Array definition
         if (is_array($definition)) {
             $config = $definition;
             if (!array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {

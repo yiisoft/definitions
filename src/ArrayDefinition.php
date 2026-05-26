@@ -43,11 +43,6 @@ final class ArrayDefinition implements DefinitionInterface
     private ?ContainerInterface $referenceContainer = null;
 
     /**
-     * @var array<string,array<string,ParameterDefinition>>
-     */
-    private array $methodDependencies = [];
-
-    /**
      * @psalm-param class-string $class
      * @psalm-param array<string, MethodOrPropertyItem> $methodsAndProperties
      */
@@ -118,21 +113,20 @@ final class ArrayDefinition implements DefinitionInterface
         $resolvedConstructorArguments = $this->resolveFunctionArguments(
             $container,
             DefinitionExtractor::fromClassName($class),
-            $this->constructorArguments,
+            $this->getConstructorArguments(),
         );
 
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...$resolvedConstructorArguments);
 
-        foreach ($this->methodsAndProperties as $item) {
+        foreach ($this->getMethodsAndProperties() as $item) {
             [$type, $name, $value] = $item;
             if ($type === self::TYPE_METHOD) {
                 /** @var array $value */
                 if (method_exists($object, $name)) {
                     $resolvedMethodArguments = $this->resolveFunctionArguments(
                         $container,
-                        $this->methodDependencies[$name]
-                            ??= DefinitionExtractor::fromFunction(new ReflectionMethod($object, $name)),
+                        DefinitionExtractor::fromFunction(new ReflectionMethod($object, $name)),
                         $value,
                     );
                 } else {
@@ -177,7 +171,6 @@ final class ArrayDefinition implements DefinitionInterface
             }
         }
         $new->methodsAndProperties = $methodsAndProperties;
-        $new->methodDependencies = [];
 
         return $new;
     }
