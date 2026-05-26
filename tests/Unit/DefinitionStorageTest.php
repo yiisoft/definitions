@@ -83,7 +83,7 @@ final class DefinitionStorageTest extends TestCase
     {
         $storage = new DefinitionStorage(['existing' => 'anything']);
 
-        $this->assertFalse($storage->has(NonExisitng::class));
+        $this->assertFalse($storage->has(NonExisting::class));
         $this->assertNotSame([], $storage->getBuildStack());
 
         $this->assertTrue($storage->has('existing'));
@@ -93,8 +93,8 @@ final class DefinitionStorageTest extends TestCase
     public function testNonExistingService(): void
     {
         $storage = new DefinitionStorage([]);
-        $this->assertFalse($storage->has(NonExisitng::class));
-        $this->assertSame([NonExisitng::class], $storage->getBuildStack());
+        $this->assertFalse($storage->has(NonExisting::class));
+        $this->assertSame([NonExisting::class], $storage->getBuildStack());
     }
 
     public function testServiceWithNonExistingDependency(): void
@@ -170,8 +170,8 @@ final class DefinitionStorageTest extends TestCase
         $container = new SimpleContainer([]);
         $storage = new DefinitionStorage([]);
         $storage->setDelegateContainer($container);
-        $this->assertFalse($storage->has(\NonExisitng::class));
-        $this->assertSame([\NonExisitng::class], $storage->getBuildStack());
+        $this->assertFalse($storage->has(\NonExisting::class));
+        $this->assertSame([\NonExisting::class], $storage->getBuildStack());
     }
 
     public function testServiceWithNonExistingUnionTypes(): void
