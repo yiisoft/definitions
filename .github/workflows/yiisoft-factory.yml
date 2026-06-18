@@ -23,6 +23,8 @@ on:
 
 name: yiisoft-factory
 
+permissions:
+  contents: read
 jobs:
   phpunit:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
@@ -41,25 +43,27 @@ jobs:
 
     steps:
       - name: Checkout Yii Definitions
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           path: definitions-repo
+          persist-credentials: false
 
       - name: Checkout Yii Factory
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           path: factory-repo
           repository: 'yiisoft/factory'
+          persist-credentials: false
 
       - name: Install PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45
         with:
           php-version: 8.2
           tools: composer:v2
           coverage: none
 
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v3"
+        uses: ramsey/composer-install@a8d0d959dab41457692a5e2041bd9b757a119e3f
         with:
           working-directory: factory-repo
 
