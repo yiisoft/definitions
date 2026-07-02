@@ -23,6 +23,12 @@ on:
 
 name: yiisoft-di
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 jobs:
   phpunit:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
@@ -42,25 +48,27 @@ jobs:
 
     steps:
       - name: Checkout Yii Definitions
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           path: definitions-repo
+          persist-credentials: false
 
       - name: Checkout Yii DI
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           path: di-repo
           repository: 'yiisoft/di'
+          persist-credentials: false
 
       - name: Install PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: 8.2
           tools: composer:v2
           coverage: none
 
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v3"
+        uses: ramsey/composer-install@a8d0d959dab41457692a5e2041bd9b757a119e3f # 3.2.1
         with:
           working-directory: di-repo
 
