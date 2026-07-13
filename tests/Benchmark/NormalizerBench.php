@@ -30,6 +30,8 @@ use Yiisoft\Definitions\Tests\Support\RedChair;
 use Yiisoft\Definitions\Tests\Support\Table;
 use Yiisoft\Definitions\Tests\Support\Tree;
 
+use function count;
+
 /**
  * @Iterations(15)
  * @Revs(1000)

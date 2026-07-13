@@ -170,8 +170,8 @@ final class DefinitionStorageTest extends TestCase
         $container = new SimpleContainer([]);
         $storage = new DefinitionStorage([]);
         $storage->setDelegateContainer($container);
-        $this->assertFalse($storage->has(\NonExisting::class));
-        $this->assertSame([\NonExisting::class], $storage->getBuildStack());
+        $this->assertFalse($storage->has(NonExisting::class));
+        $this->assertSame([NonExisting::class], $storage->getBuildStack());
     }
 
     public function testServiceWithNonExistingUnionTypes(): void
