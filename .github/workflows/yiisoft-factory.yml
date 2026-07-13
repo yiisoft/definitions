@@ -1,34 +1,24 @@
+name: yiisoft-factory
+
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
-
+    paths: &paths
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/yiisoft-di.yml'
+      - 'composer.json'
+      - 'phpunit.xml.dist'
   push:
-    branches:
-      - master
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
+    branches: ['master']
+    paths: *paths
 
-name: yiisoft-factory
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
 jobs:
   phpunit:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
@@ -44,6 +34,7 @@ jobs:
           - "8.2"
           - "8.3"
           - "8.4"
+          - "8.5"
 
     steps:
       - name: Checkout Yii Definitions

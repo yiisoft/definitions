@@ -1,34 +1,24 @@
+name: yiisoft-di
+
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
-
+    paths: &paths
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/yiisoft-di.yml'
+      - 'composer.json'
+      - 'phpunit.xml.dist'
   push:
-    branches:
-      - master
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
+    branches: ['master']
+    paths: *paths
 
-name: yiisoft-di
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
 jobs:
   phpunit:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
