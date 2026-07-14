@@ -13,15 +13,15 @@ use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Helpers\ArrayDefinitionHelper;
 use Yiisoft\Definitions\Helpers\DefinitionExtractor;
 use Yiisoft\Definitions\Helpers\DefinitionResolver;
-use Yiisoft\Definitions\Tests\Unit\Helpers\DefinitionValidatorTest;
 
 use function array_key_exists;
 use function call_user_func_array;
-use function count;
 use function gettype;
 use function is_array;
 use function is_string;
 use function sprintf;
+use function strpos;
+use function substr;
 
 /**
  * Builds an object by array config.
@@ -185,19 +185,18 @@ final class ArrayDefinition implements DefinitionInterface
         $methodsAndProperties = [];
 
         foreach ($config as $key => $value) {
-            if ($key === self::CONSTRUCTOR) {
+            if ($key === self::CONSTRUCTOR || $key === self::CLASS_NAME) {
                 continue;
             }
 
-            /**
-             * @infection-ignore-all Explode limit does not affect the result.
-             *
-             * @see DefinitionValidatorTest::testIncorrectMethodName()
-             */
-            if (count($methodArray = explode('()', $key, 2)) === 2) {
-                $methodsAndProperties[$key] = [self::TYPE_METHOD, $methodArray[0], $value];
-            } elseif (count($propertyArray = explode('$', $key)) === 2) {
-                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, $propertyArray[1], $value];
+            $position = strpos($key, '()');
+            if ($position !== false && $position !== 0 && !str_contains(substr($key, $position + 2), '()')) {
+                $methodsAndProperties[$key] = [self::TYPE_METHOD, substr($key, 0, $position), $value];
+                continue;
+            }
+
+            if (($key[0] ?? '') === '$') {
+                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, substr($key, 1), $value];
             }
         }
 

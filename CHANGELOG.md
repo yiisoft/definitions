@@ -4,6 +4,7 @@
 
 - Enh #112: Explicitly import constants in "use" section (@mspirkov)
 - Enh #113: Remove unnecessary files from Composer package (@mspirkov)
+- Enh #114: Improve array definition config parsing and add benchmarks (@samdark)
 
 ## 3.4.1 December 02, 2025
 

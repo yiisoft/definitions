@@ -36,6 +36,54 @@ final class ArrayDefinitionTest extends TestCase
         self::assertInstanceOf(Phone::class, $definition->resolve($container));
     }
 
+    public function testPreparedDataWithArguments(): void
+    {
+        $definition = ArrayDefinition::fromPreparedData(Phone::class, ['Yii Phone']);
+
+        self::assertSame(Phone::class, $definition->getClass());
+        self::assertSame(['Yii Phone'], $definition->getConstructorArguments());
+        self::assertSame([], $definition->getMethodsAndProperties());
+    }
+
+    public function testConfigWithIgnoredKey(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            'ignored' => true,
+        ]);
+
+        self::assertSame([], $definition->getMethodsAndProperties());
+    }
+
+    public function testConfigWithDollarInMiddleIsIgnored(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            'ignored$dev' => true,
+        ]);
+
+        self::assertSame([], $definition->getMethodsAndProperties());
+    }
+
+    public static function dataConfigWithInvalidMethodKey(): array
+    {
+        return [
+            ['addApp()hm()'],
+            ['()addApp'],
+        ];
+    }
+
+    #[DataProvider('dataConfigWithInvalidMethodKey')]
+    public function testConfigWithInvalidMethodKeyIsIgnored(string $key): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            $key => ['Browser'],
+        ]);
+
+        self::assertSame([], $definition->getMethodsAndProperties());
+    }
+
     public static function dataConstructor(): array
     {
         return [

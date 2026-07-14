@@ -38,6 +38,13 @@ final class DefinitionValidatorTest extends TestCase
         ]);
     }
 
+    public function testCallable(): void
+    {
+        DefinitionValidator::validate(CarFactory::create(...));
+
+        $this->expectNotToPerformAssertions();
+    }
+
     public static function dataInvalidClass(): array
     {
         return [
