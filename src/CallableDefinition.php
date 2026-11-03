@@ -24,17 +24,14 @@ use function is_object;
 final class CallableDefinition implements DefinitionInterface
 {
     /**
-     * @var array|callable
-     * @psalm-var callable|array{0:class-string,1:string}
+     * @var array{0:class-string,1:string}|callable
      */
     private $callable;
 
     /**
-     * @param array|callable $callable Callable to be used for building
+     * @param array{0:class-string,1:string}|callable $callable Callable to be used for building
      * an object. Dependencies are determined and passed based
      * on the types of arguments in the callable signature.
-     *
-     * @psalm-param callable|array{0:class-string,1:string} $callable
      */
     public function __construct(array|callable $callable)
     {
@@ -60,7 +57,7 @@ final class CallableDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param callable|array{0:class-string,1:string} $callable
+     * @param array{0:class-string,1:string}|callable $callable
      */
     private function prepareClosure(array|callable $callable, ContainerInterface $container): Closure
     {
@@ -70,6 +67,7 @@ final class CallableDefinition implements DefinitionInterface
                 $callable[0] = $container->get($callable[0]);
             }
         }
+        /** @var callable $callable */
 
         return Closure::fromCallable($callable);
     }

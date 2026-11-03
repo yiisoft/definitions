@@ -67,7 +67,6 @@ final class ReferencesArray
      * @throws InvalidConfigException
      *
      * @return Reference[]
-     * @psalm-suppress DocblockTypeContradiction
      */
     public static function from(array $ids): array
     {

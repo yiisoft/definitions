@@ -13,7 +13,11 @@ use function is_string;
 final class ArrayDefinitionHelper
 {
     /**
+     * @param array<mixed> ...$configs
+     *
      * @throws InvalidConfigException
+     *
+     * @return array<mixed>
      */
     public static function merge(array ...$configs): array
     {
@@ -58,6 +62,12 @@ final class ArrayDefinitionHelper
         return $result;
     }
 
+    /**
+     * @param array<mixed> $argumentsA
+     * @param array<mixed> $argumentsB
+     *
+     * @return array<mixed>
+     */
     public static function mergeArguments(array $argumentsA, array $argumentsB): array
     {
         foreach ($argumentsB as $name => $argument) {

@@ -23,9 +23,9 @@ final class DefinitionResolver
      *
      * @param ContainerInterface $container Container to get dependencies from.
      * @param ContainerInterface|null $referenceContainer Container to get references from.
-     * @param array $definitions Definitions to resolve.
+     * @param array<mixed> $definitions Definitions to resolve.
      *
-     * @return array The resolved dependencies.
+     * @return array<mixed> The resolved dependencies.
      */
     public static function resolveArray(
         ContainerInterface $container,
@@ -69,6 +69,8 @@ final class DefinitionResolver
 
     /**
      * @throws InvalidConfigException
+     *
+     * @return array<mixed>|ReferenceInterface|ValueDefinition
      */
     public static function ensureResolvable(mixed $value): array|ReferenceInterface|ValueDefinition
     {

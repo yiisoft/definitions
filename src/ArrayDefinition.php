@@ -26,8 +26,8 @@ use function sprintf;
 /**
  * Builds an object by array config.
  *
- * @psalm-type MethodOrPropertyItem = array{0:string,1:string,2:mixed}
- * @psalm-type ArrayDefinitionConfig = array{class:class-string,'__construct()'?:array}&array<string, mixed>
+ * @phpstan-type MethodOrPropertyItem = array{0:string,1:string,2:mixed}
+ * @phpstan-type ArrayDefinitionConfig = array{class:class-string,'__construct()'?:array<mixed>}&array<string, mixed>
  */
 final class ArrayDefinition implements DefinitionInterface
 {
@@ -43,8 +43,9 @@ final class ArrayDefinition implements DefinitionInterface
     private ?ContainerInterface $referenceContainer = null;
 
     /**
-     * @psalm-param class-string $class
-     * @psalm-param array<string, MethodOrPropertyItem> $methodsAndProperties
+     * @param class-string $class
+     * @param array<mixed> $constructorArguments
+     * @param array<string, MethodOrPropertyItem> $methodsAndProperties
      */
     private function __construct(
         private string $class,
@@ -65,7 +66,7 @@ final class ArrayDefinition implements DefinitionInterface
     /**
      * Create ArrayDefinition from array config.
      *
-     * @psalm-param ArrayDefinitionConfig $config
+     * @param ArrayDefinitionConfig $config
      */
     public static function fromConfig(array $config): self
     {
@@ -77,8 +78,9 @@ final class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param class-string $class
-     * @psalm-param array<string, MethodOrPropertyItem> $methodsAndProperties
+     * @param class-string $class
+     * @param array<mixed> $constructorArguments
+     * @param array<string, MethodOrPropertyItem> $methodsAndProperties
      */
     public static function fromPreparedData(string $class, array $constructorArguments = [], array $methodsAndProperties = []): self
     {
@@ -86,20 +88,23 @@ final class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-return class-string
+     * @return class-string
      */
     public function getClass(): string
     {
         return $this->class;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getConstructorArguments(): array
     {
         return $this->constructorArguments;
     }
 
     /**
-     * @psalm-return array<string, MethodOrPropertyItem>
+     * @return array<string, MethodOrPropertyItem>
      */
     public function getMethodsAndProperties(): array
     {
@@ -116,13 +121,12 @@ final class ArrayDefinition implements DefinitionInterface
             $this->getConstructorArguments(),
         );
 
-        /** @psalm-suppress MixedMethodCall */
         $object = new $class(...$resolvedConstructorArguments);
 
         foreach ($this->getMethodsAndProperties() as $item) {
             [$type, $name, $value] = $item;
             if ($type === self::TYPE_METHOD) {
-                /** @var array $value */
+                /** @var array<mixed> $value */
                 if (method_exists($object, $name)) {
                     $resolvedMethodArguments = $this->resolveFunctionArguments(
                         $container,
@@ -132,6 +136,7 @@ final class ArrayDefinition implements DefinitionInterface
                 } else {
                     $resolvedMethodArguments = $value;
                 }
+                // @phpstan-ignore argument.type
                 $setter = call_user_func_array([$object, $name], $resolvedMethodArguments);
                 if ($setter instanceof $object) {
                     /** @var object $object */
@@ -163,8 +168,8 @@ final class ArrayDefinition implements DefinitionInterface
             if ($item[0] === self::TYPE_PROPERTY) {
                 $methodsAndProperties[$key] = $item;
             } elseif ($item[0] === self::TYPE_METHOD) {
-                /** @psalm-suppress MixedArgument */
                 $arguments = isset($methodsAndProperties[$key])
+                    // @phpstan-ignore argument.type, argument.type
                     ? ArrayDefinitionHelper::mergeArguments($methodsAndProperties[$key][2], $item[2])
                     : $item[2];
                 $methodsAndProperties[$key] = [$item[0], $item[1], $arguments];
@@ -176,9 +181,9 @@ final class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array<string, mixed> $config
+     * @param array<string, mixed> $config
      *
-     * @psalm-return array<string, MethodOrPropertyItem>
+     * @return array<string, MethodOrPropertyItem>
      */
     private static function getMethodsAndPropertiesFromConfig(array $config): array
     {
@@ -206,8 +211,9 @@ final class ArrayDefinition implements DefinitionInterface
 
     /**
      * @param array<string,ParameterDefinition> $dependencies
+     * @param array<mixed> $arguments
      *
-     * @psalm-return list<mixed>
+     * @return list<mixed>
      */
     private function resolveFunctionArguments(
         ContainerInterface $container,
@@ -268,6 +274,8 @@ final class ArrayDefinition implements DefinitionInterface
     }
 
     /**
+     * @param array<mixed> $arguments
+     *
      * @throws InvalidConfigException
      */
     private function isIntegerIndexed(array $arguments): bool
