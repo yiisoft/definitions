@@ -61,14 +61,10 @@ final class ParameterDefinition implements DefinitionInterface
         }
 
         $typeName = $type->getName();
-        /**
-         * @psalm-suppress TypeDoesNotContainType
-         * @see https://github.com/vimeo/psalm/issues/6756
-         */
         if ($typeName === 'self') {
             // If type name is "self", it means that called class and
             // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
-            /** @psalm-suppress PossiblyNullReference */
+            // @phpstan-ignore method.nonObject
             $typeName = $this->parameter->getDeclaringClass()->getName();
         }
 
@@ -143,23 +139,15 @@ final class ParameterDefinition implements DefinitionInterface
         $class = implode('|', $types);
 
         foreach ($types as $type) {
-            /**
-             * @psalm-suppress DocblockTypeContradiction Need for PHP 8.1 only
-             */
             if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
                 continue;
             }
 
             $typeName = $type->getName();
-            /**
-             * @psalm-suppress TypeDoesNotContainType
-             *
-             * @link https://github.com/vimeo/psalm/issues/6756
-             */
             if ($typeName === 'self') {
                 // If type name is "self", it means that called class and
                 // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
-                /** @psalm-suppress PossiblyNullReference */
+                // @phpstan-ignore method.nonObject
                 $typeName = $this->parameter->getDeclaringClass()->getName();
             }
 

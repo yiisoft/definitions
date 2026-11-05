@@ -62,7 +62,7 @@ final class DynamicReferencesArray
      * ],
      * ```
      *
-     * @param array $definitions Name-reference pairs.
+     * @param array<mixed> $definitions Name-reference pairs.
      *
      * @throws InvalidConfigException
      *

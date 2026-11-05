@@ -21,7 +21,7 @@ use function is_string;
 /**
  * Normalizer definition from configuration to an instance of {@see DefinitionInterface}.
  *
- * @psalm-import-type ArrayDefinitionConfig from ArrayDefinition
+ * @phpstan-import-type ArrayDefinitionConfig from ArrayDefinition
  */
 final class Normalizer
 {
@@ -59,7 +59,7 @@ final class Normalizer
                 $class === $definition
                 || ($class === null && class_exists($definition))
             ) {
-                /** @psalm-var class-string $definition */
+                /** @var class-string $definition */
                 return ArrayDefinition::fromPreparedData($definition);
             }
 
@@ -83,7 +83,7 @@ final class Normalizer
                 }
                 $config[ArrayDefinition::CLASS_NAME] = $class;
             }
-            /** @psalm-var ArrayDefinitionConfig $config */
+            /** @var ArrayDefinitionConfig $config */
             return ArrayDefinition::fromConfig($config);
         }
 

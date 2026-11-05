@@ -27,7 +27,7 @@ final class DefinitionStorage
     private ?ContainerInterface $delegateContainer = null;
 
     /**
-     * @param array $definitions Definitions to store.
+     * @param array<mixed> $definitions Definitions to store.
      * @param bool $useStrictMode If every dependency should be defined explicitly including classes.
      */
     public function __construct(
@@ -157,19 +157,11 @@ final class DefinitionStorage
                     $isUnionTypeResolvable = false;
                     $unionTypes = [];
                     foreach ($type->getTypes() as $unionType) {
-                        /**
-                         * @psalm-suppress DocblockTypeContradiction Need for PHP 8.1 only
-                         */
                         if (!$unionType instanceof ReflectionNamedType || $unionType->isBuiltin()) {
                             continue;
                         }
 
                         $typeName = $unionType->getName();
-                        /**
-                         * @psalm-suppress TypeDoesNotContainType
-                         *
-                         * @link https://github.com/vimeo/psalm/issues/6756
-                         */
                         if ($typeName === 'self' || $typeName === $id) {
                             continue;
                         }
@@ -201,11 +193,6 @@ final class DefinitionStorage
                 // Our parameter has a class type hint
                 if (!$type->isBuiltin()) {
                     $typeName = $type->getName();
-                    /**
-                     * @psalm-suppress TypeDoesNotContainType
-                     *
-                     * @link https://github.com/vimeo/psalm/issues/6756
-                     */
                     if ($typeName === 'self') {
                         throw new CircularReferenceException(
                             sprintf(

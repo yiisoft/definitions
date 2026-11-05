@@ -60,15 +60,14 @@ final class DefinitionValidator
         }
 
         throw new InvalidConfigException(
-            'Invalid definition: '
-            . ($definition === '' ? 'empty string.' : var_export($definition, true)),
+            'Invalid definition: ' . var_export($definition, true),
         );
     }
 
     /**
      * Validates that array definition is valid. Throws exception otherwise.
      *
-     * @param array $definition Array definition to validate.
+     * @param array<mixed> $definition Array definition to validate.
      *
      * @throws InvalidConfigException If definition is not valid.
      * @throws ReflectionException
@@ -142,6 +141,11 @@ final class DefinitionValidator
         return !($value instanceof DefinitionInterface) || $value instanceof ReferenceInterface;
     }
 
+    /**
+     * @param string[] $classPublicMethods
+     * @param string[] $classPublicProperties
+     * @param ReflectionClass<object> $classReflection
+     */
     private static function generatePossibleMessage(
         string $key,
         array $classPublicMethods,
@@ -184,6 +188,7 @@ final class DefinitionValidator
     }
 
     /**
+     * @param ReflectionClass<object> $classReflection
      * @param string[] $classPublicMethods
      *
      * @throws InvalidConfigException
@@ -230,6 +235,7 @@ final class DefinitionValidator
     }
 
     /**
+     * @param ReflectionClass<object> $classReflection
      * @param string[] $classPublicProperties
      *
      * @throws InvalidConfigException
@@ -348,9 +354,7 @@ final class DefinitionValidator
 
         $modifiers = $property->getModifiers();
 
-        /**
-         * @psalm-suppress UndefinedConstant, MixedOperand Needs for PHP 8.3 or lower
-         */
+        // @phpstan-ignore classConstant.notFound, classConstant.notFound, binaryOp.invalid (needed for PHP 8.3 or lower)
         return ($modifiers & (ReflectionProperty::IS_PRIVATE_SET | ReflectionProperty::IS_PROTECTED_SET)) === 0;
     }
 }

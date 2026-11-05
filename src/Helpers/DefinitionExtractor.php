@@ -20,19 +20,18 @@ use Yiisoft\Definitions\ParameterDefinition;
 final class DefinitionExtractor
 {
     /**
-     * @psalm-var array<string, array<string, ParameterDefinition>>
+     * @var array<string, array<string, ParameterDefinition>>
      */
     private static array $dependencies = [];
 
     /**
      * Extract dependency definitions from type hints of a class constructor parameters.
      *
-     * @psalm-param class-string $class
+     * @param class-string $class
      *
      * @throws NotInstantiableException
      *
-     * @return ParameterDefinition[]
-     * @psalm-return array<string, ParameterDefinition>
+     * @return array<string, ParameterDefinition>
      */
     public static function fromClassName(string $class): array
     {
@@ -42,7 +41,7 @@ final class DefinitionExtractor
 
         try {
             $reflectionClass = new ReflectionClass($class);
-        } catch (ReflectionException) {
+        } catch (ReflectionException) { // @phpstan-ignore catch.neverThrown (class may not exist despite "class-string" type)
             throw new NotInstantiableClassException($class);
         }
 
@@ -60,8 +59,7 @@ final class DefinitionExtractor
     /**
      * Extract dependency definitions from type hints of a function.
      *
-     * @return ParameterDefinition[]
-     * @psalm-return array<string, ParameterDefinition>
+     * @return array<string, ParameterDefinition>
      */
     public static function fromFunction(ReflectionFunctionAbstract $reflectionFunction): array
     {

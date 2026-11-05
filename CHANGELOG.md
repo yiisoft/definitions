@@ -2,8 +2,10 @@
 
 ## 3.4.2 under development
 
+- Chg #130: Replace Psalm with PHPStan (@vjik)
 - Enh #112: Explicitly import constants in "use" section (@mspirkov)
 - Enh #113: Remove unnecessary files from Composer package (@mspirkov)
+- Enh #130: Remove unreachable empty string check in `DefinitionValidator::validate()` (@vjik)
 
 ## 3.4.1 December 02, 2025
 
