@@ -1,5 +1,9 @@
 # Yii Definitions Change Log
 
+## 3.4.3 under development
+
+- no changes in this release.
+
 ## 3.4.2 November 11, 2026
 
 - Chg #130: Replace Psalm with PHPStan (@vjik)
