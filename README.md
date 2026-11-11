@@ -25,7 +25,7 @@ The following are provided:
 
 ## Requirements
 
-- PHP 8.1 - 8.5.
+- PHP 8.1 - 8.6.
 
 ## Installation
 

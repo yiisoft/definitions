@@ -6,6 +6,7 @@
 - Enh #112: Explicitly import constants in "use" section (@mspirkov)
 - Enh #113: Remove unnecessary files from Composer package (@mspirkov)
 - Enh #130: Remove unreachable empty string check in `DefinitionValidator::validate()` (@vjik)
+- Enh #131: Add PHP 8.6 support (@vjik)
 
 ## 3.4.1 December 02, 2025
 
