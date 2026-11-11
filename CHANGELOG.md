@@ -1,6 +1,6 @@
 # Yii Definitions Change Log
 
-## 3.4.2 under development
+## 3.4.2 November 11, 2026
 
 - Chg #130: Replace Psalm with PHPStan (@vjik)
 - Enh #112: Explicitly import constants in "use" section (@mspirkov)
