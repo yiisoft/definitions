@@ -12,6 +12,7 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
+use function array_key_exists;
 use function count;
 use function in_array;
 use function is_array;
@@ -26,7 +27,7 @@ use const PHP_VERSION_ID;
  * Definition validator checks if definition is valid.
  *
  * @phpstan-import-type ArrayDefinitionConfig from ArrayDefinition
- * @phpstan-type ArrayDefinitionConfigWithOptionalClassName = array{class?: class-string|null, '__construct()'?: array<mixed>, ...<string, mixed>}
+ * @phpstan-type ArrayDefinitionConfigWithOptionalClassName = array{class?: class-string, '__construct()'?: array<mixed>, ...<string, mixed>}
  */
 final class DefinitionValidator
 {
@@ -82,9 +83,9 @@ final class DefinitionValidator
     public static function validateArrayDefinition(array $definition, ?string $id = null): void
     {
         /** @var class-string $className */
-        $className = $definition[ArrayDefinition::CLASS_NAME] ?? $id ?? throw new InvalidConfigException(
-            'Invalid definition: no class name specified.',
-        );
+        $className = array_key_exists(ArrayDefinition::CLASS_NAME, $definition)
+            ? $definition[ArrayDefinition::CLASS_NAME]
+            : ($id ?? throw new InvalidConfigException('Invalid definition: no class name specified.'));
         self::validateString($className);
         $classReflection = new ReflectionClass($className);
         $classPublicMethods = [];
@@ -208,10 +209,8 @@ final class DefinitionValidator
         mixed $value,
     ): void {
         $hasMethod = $classReflection->hasMethod($methodName);
-        // Magic methods may intercept the call, but reflection does not know about it.
-        $hasMagicCall = $classReflection->hasMethod('__call') || $classReflection->hasMethod('__callStatic');
-
-        if (!$hasMethod && !$hasMagicCall) {
+        // `__call` may intercept the call, but reflection does not know about it.
+        if (!$hasMethod && !$classReflection->hasMethod('__call')) {
             $possiblePropertiesMessage = $classPublicMethods === []
                 ? 'No public methods available to call.'
                 : sprintf(

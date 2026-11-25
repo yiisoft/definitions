@@ -5,7 +5,11 @@
 - Enh #133: Add `@phpstan-assert` annotations to `DefinitionValidator` and improve PHPStan type aliases in 
   `ArrayDefinition` and `DefinitionValidator` (@vjik)
 - Bug #133: In `DefinitionValidator`, require arguments of a method call to be an array even when the class has `__call`
-  or `__callStatic` (@vjik)
+  (@vjik)
+- Bug #133: In `DefinitionValidator`, do not accept a call of an undeclared method in classes that only have
+  `__callStatic` because such a call cannot be resolved (@vjik)
+- Bug #133: In `DefinitionValidator`, reject an explicit `null` as a class name in array definition instead of
+  falling back to definition ID (@vjik)
 
 ## 3.4.2 November 11, 2026
 
