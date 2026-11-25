@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Yiisoft\Definitions\ArrayDefinition;
@@ -16,6 +17,7 @@ use Yiisoft\Definitions\Tests\Support\CarFactory;
 use Yiisoft\Definitions\Tests\Support\ColorPink;
 use Yiisoft\Definitions\Tests\Support\GearBox;
 use Yiisoft\Definitions\Tests\Support\MagicCall;
+use Yiisoft\Definitions\Tests\Support\MagicStaticCall;
 use Yiisoft\Definitions\Tests\Support\Phone;
 use Yiisoft\Definitions\Tests\Support\ReadonlyProperty;
 use Yiisoft\Definitions\Tests\Support\Recorder;
@@ -118,6 +120,15 @@ final class DefinitionValidatorTest extends TestCase
         DefinitionValidator::validate($definition);
     }
 
+    #[TestWith([null])]
+    #[TestWith(['pink_color'])]
+    public function testNullClassNameInArrayDefinition(?string $id): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: class name must be a non-empty string, got null.');
+        DefinitionValidator::validateArrayDefinition(['class' => null], $id);
+    }
+
     public static function dataInvalidStringDefinition(): array
     {
         return [
@@ -168,6 +179,14 @@ final class DefinitionValidatorTest extends TestCase
                 'Invalid definition: class "stdClass" does not have the public method with name "addApp". No public methods available to call.',
             ],
             [
+                MagicStaticCall::class,
+                ['add()' => ['test']],
+                sprintf(
+                    'Invalid definition: class "%s" does not have the public method with name "add". No public methods available to call.',
+                    MagicStaticCall::class,
+                ),
+            ],
+            [
                 Recorder::class,
                 ['__call()' => ['test magic method']],
                 sprintf('Invalid definition: method "%s::__call()" must be public.', Recorder::class),
@@ -185,6 +204,22 @@ final class DefinitionValidatorTest extends TestCase
                 ArrayDefinition::CLASS_NAME => $class,
             ], $methodCalls),
         );
+    }
+
+    #[TestWith(['test', 'string'])]
+    #[TestWith([42, 'int'])]
+    #[TestWith([null, 'null'])]
+    public function testMagicMethodCallWithNonArrayArguments(mixed $arguments, string $type): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Invalid definition: incorrect method "add()" arguments. Expected array, got "' . $type . '". '
+            . 'Probably you should wrap them into square brackets.',
+        );
+        DefinitionValidator::validateArrayDefinition([
+            'class' => MagicCall::class,
+            'add()' => $arguments,
+        ]);
     }
 
     public static function dataErrorOnPropertyOrMethodTypo(): array

@@ -12,6 +12,7 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 
+use function array_key_exists;
 use function count;
 use function in_array;
 use function is_array;
@@ -24,6 +25,9 @@ use const PHP_VERSION_ID;
 
 /**
  * Definition validator checks if definition is valid.
+ *
+ * @phpstan-import-type ArrayDefinitionConfig from ArrayDefinition
+ * @phpstan-type ArrayDefinitionConfigWithOptionalClassName = array{class?: class-string, '__construct()'?: array<mixed>, ...<string, mixed>}
  */
 final class DefinitionValidator
 {
@@ -34,6 +38,8 @@ final class DefinitionValidator
      *
      * @throws InvalidConfigException If definition is not valid.
      * @throws ReflectionException
+     *
+     * @phpstan-assert object|non-empty-string|array<mixed> $definition
      */
     public static function validate(mixed $definition, ?string $id = null): void
     {
@@ -71,13 +77,15 @@ final class DefinitionValidator
      *
      * @throws InvalidConfigException If definition is not valid.
      * @throws ReflectionException
+     *
+     * @phpstan-assert ($id is null ? ArrayDefinitionConfig : ArrayDefinitionConfigWithOptionalClassName) $definition
      */
     public static function validateArrayDefinition(array $definition, ?string $id = null): void
     {
         /** @var class-string $className */
-        $className = $definition[ArrayDefinition::CLASS_NAME] ?? $id ?? throw new InvalidConfigException(
-            'Invalid definition: no class name specified.',
-        );
+        $className = array_key_exists(ArrayDefinition::CLASS_NAME, $definition)
+            ? $definition[ArrayDefinition::CLASS_NAME]
+            : ($id ?? throw new InvalidConfigException('Invalid definition: no class name specified.'));
         self::validateString($className);
         $classReflection = new ReflectionClass($className);
         $classPublicMethods = [];
@@ -200,13 +208,9 @@ final class DefinitionValidator
         string $className,
         mixed $value,
     ): void {
-        if (!$classReflection->hasMethod($methodName)) {
-            if ($classReflection->hasMethod('__call') || $classReflection->hasMethod('__callStatic')) {
-                /**
-                 * Magic method may intercept the call, but reflection does not know about it.
-                 */
-                return;
-            }
+        $hasMethod = $classReflection->hasMethod($methodName);
+        // `__call` may intercept the call, but reflection does not know about it.
+        if (!$hasMethod && !$classReflection->hasMethod('__call')) {
             $possiblePropertiesMessage = $classPublicMethods === []
                 ? 'No public methods available to call.'
                 : sprintf(
@@ -221,7 +225,7 @@ final class DefinitionValidator
                 ),
             );
         }
-        if (!in_array($methodName, $classPublicMethods, true)) {
+        if ($hasMethod && !in_array($methodName, $classPublicMethods, true)) {
             throw new InvalidConfigException(
                 sprintf(
                     'Invalid definition: method "%s" must be public.',
@@ -280,6 +284,8 @@ final class DefinitionValidator
 
     /**
      * @throws InvalidConfigException
+     *
+     * @phpstan-assert array<mixed> $value
      */
     private static function validateConstructor(mixed $value): void
     {
@@ -322,6 +328,8 @@ final class DefinitionValidator
 
     /**
      * @throws InvalidConfigException
+     *
+     * @phpstan-assert non-empty-string $class
      */
     private static function validateString(mixed $class): void
     {

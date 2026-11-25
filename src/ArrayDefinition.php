@@ -26,8 +26,8 @@ use function sprintf;
 /**
  * Builds an object by array config.
  *
- * @phpstan-type MethodOrPropertyItem = array{0:string,1:string,2:mixed}
- * @phpstan-type ArrayDefinitionConfig = array{class:class-string,'__construct()'?:array<mixed>}&array<string, mixed>
+ * @phpstan-type MethodOrPropertyItem = array{0: self::TYPE_METHOD|self::TYPE_PROPERTY, 1: string, 2: mixed}
+ * @phpstan-type ArrayDefinitionConfig = array{class: class-string, '__construct()'?: array<mixed>, ...<string, mixed>}
  */
 final class ArrayDefinition implements DefinitionInterface
 {
