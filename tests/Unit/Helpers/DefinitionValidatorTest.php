@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Definitions\Tests\Unit\Helpers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Yiisoft\Definitions\ArrayDefinition;
@@ -185,6 +186,22 @@ final class DefinitionValidatorTest extends TestCase
                 ArrayDefinition::CLASS_NAME => $class,
             ], $methodCalls),
         );
+    }
+
+    #[TestWith(['test', 'string'])]
+    #[TestWith([42, 'int'])]
+    #[TestWith([null, 'null'])]
+    public function testMagicMethodCallWithNonArrayArguments(mixed $arguments, string $type): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Invalid definition: incorrect method "add()" arguments. Expected array, got "' . $type . '". '
+            . 'Probably you should wrap them into square brackets.',
+        );
+        DefinitionValidator::validateArrayDefinition([
+            'class' => MagicCall::class,
+            'add()' => $arguments,
+        ]);
     }
 
     public static function dataErrorOnPropertyOrMethodTypo(): array

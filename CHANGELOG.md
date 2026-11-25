@@ -2,7 +2,10 @@
 
 ## 3.4.3 under development
 
-- no changes in this release.
+- Enh #133: Add `@phpstan-assert` annotations to `DefinitionValidator` and improve PHPStan type aliases in 
+  `ArrayDefinition` and `DefinitionValidator` (@vjik)
+- Bug #133: In `DefinitionValidator`, require arguments of a method call to be an array even when the class has `__call`
+  or `__callStatic` (@vjik)
 
 ## 3.4.2 November 11, 2026
 
